@@ -1,0 +1,30 @@
+Corpus probability: 2.8735674599795922E-11
+Delta LogProb: -1.0337297636693163
+
+
+S S PP 0.14712824658117044
+S VP NP 0.0
+S NP VP 1.0
+VP VP PP 0.14711034506670828
+VP V NP 1.0
+VP V PP 0.0
+NP NP PP 9.485998882805041E-21
+NP DET Nbar 0.5
+NP DET N 0.5
+PP PREP NP 1.0
+Nbar ADJ N 1.0
+Nbar N PP 1.0
+
+PREP under 1.0
+PREP over 0.0
+ADJ frightening 0.0
+ADJ green 1.0
+ADJ delicious 0.0
+DET the 0.5
+DET a 0.5
+N sauerkraut 0.5
+N dolly 0.6666666666666665
+N chicken 0.5
+V eats 1.0
+V drinks 0.0
+V saw 1.0

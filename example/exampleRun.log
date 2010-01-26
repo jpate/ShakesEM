@@ -1,0 +1,1425 @@
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 0 stopping
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 stopping
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 stopping
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 stopping
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 stopping
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 0 stopping
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 stopping
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 5 with parser 1
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 1 stopping
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 0 stopping
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Beginning to parse...
+
+
+Parser 1 stopping
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 stopping
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 0 stopping
+Starting sentence number 3 with parser 1
+Starting sentence number 4 with parser 0
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 1
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 stopping
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 stopping
+Starting sentence number 3 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 1
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 0
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 1
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 1
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 0
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 1
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 stopping
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 1
+Starting sentence number 4 with parser 0
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 1
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 1
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 stopping
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 1
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 stopping
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Starting sentence number 4 with parser 1
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 10 with parser 1
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 stopping
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 1
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 1 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 0
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 0
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 4 with parser 0
+Starting sentence number 5 with parser 1
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 0
+Parser 1 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 1
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 0
+Parser 1 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Parser 0 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 1 stopping
+Parser 0 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 1
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Parser 1 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 8 with parser 1
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 0
+Parser 0 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 0
+Parser 0 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Sending sentence number 1 to parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 6 with parser 1
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 stopping
+Parser 1 stopping
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Starting sentence number 3 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Starting sentence number 5 with parser 0
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Starting sentence number 7 with parser 0
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 9 with parser 1
+Parser 1 parsed the sentence: "the dolly saw a chicken under the dolly"
+Starting sentence number 10 with parser 0
+Parser 0 parsed the sentence: "a green chicken eats the sauerkraut"
+Beginning to parse...
+
+
+Sending sentence number 0 to parser 0
+Sending sentence number 1 to parser 1
+Parser 0 stopping
+Parser 0 parsed the sentence: "the green sauerkraut eats a dolly"
+Parser 1 stopping
+Parser 1 parsed the sentence: "the sauerkraut eats a dolly under the chicken"
+Starting sentence number 3 with parser 0
+Parser 0 parsed the sentence: "the chicken eats the green dolly"
+Starting sentence number 4 with parser 1
+Parser 1 parsed the sentence: "a dolly saw the green dolly"
+Starting sentence number 5 with parser 0
+Starting sentence number 6 with parser 1
+Parser 0 parsed the sentence: "the green sauerkraut saw a chicken under the dolly"
+Starting sentence number 7 with parser 0
+Parser 1 parsed the sentence: "the sauerkraut eats the chicken"
+Parser 0 parsed the sentence: "a dolly under the chicken saw the sauerkraut"
+Starting sentence number 8 with parser 1
+Parser 1 parsed the sentence: "a dolly eats the chicken"
+Starting sentence number 9 with parser 0
+Starting sentence number 10 with parser 1
+Parser 1 parsed the sentence: "a green chicken eats the sauerkraut"
+Parser 0 parsed the sentence: "the dolly saw a chicken under the dolly"
+Parser 0 stopping
+Parser 1 stopping
