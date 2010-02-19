@@ -1440,6 +1440,8 @@ package ShakesEM {
 
     def parserConstructor:ArrayBuffer[ShakesDistributedParser]
 
+    def cleanup:{}
+
     def useGrammar(g:ShakesPCNF):Unit
     var iterationNum = 0
     var deltaLogProb = 1.0
@@ -1448,6 +1450,7 @@ package ShakesEM {
 
 
     def act() {
+      //trapExit = true
       var iterationNum = 0
       var deltaLogProb = 1.0
       var lastCorpusLogProb = 0.0
@@ -1555,7 +1558,13 @@ package ShakesEM {
         iterationNum = iterationNum + 1
 
 
+
       }
+      useGrammar( g1 )
+
+      cleanup
+
+      exit()
     }
   }
 

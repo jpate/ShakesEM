@@ -24,8 +24,8 @@ object trainVanillaByIter {
 
     trainingCorpus.readCorpus( trainYieldFile )
 
-    println(initGram)
-    println(trainingCorpus)
+    //println(initGram)
+    //println(trainingCorpus)
 
     object manager extends ShakesParserManager( initGram, trainingCorpus ) {
       def stoppingCondition( numIters:Int, x:Double ) = 
@@ -42,6 +42,7 @@ object trainVanillaByIter {
       }
 
       def useGrammar( trainedGram: ShakesPCNF) { }
+      def cleanup = ()
     }
 
     manager.start
@@ -71,8 +72,8 @@ object trainAndPrintVanillaByIter {
 
     trainingCorpus.readCorpus( trainYieldFile )
 
-    println(initGram)
-    println(trainingCorpus)
+    //println(initGram)
+    //println(trainingCorpus)
 
     object manager extends ShakesParserManager( initGram, trainingCorpus ) {
       def stoppingCondition( numIters:Int, x:Double ) = 
@@ -89,6 +90,7 @@ object trainAndPrintVanillaByIter {
       }
 
       def useGrammar( trainedGram: ShakesPCNF) { println(trainedGram) }
+      def cleanup = ()
     }
 
     manager.start
@@ -118,8 +120,8 @@ object trainAndPrintBracketedByIter {
 
     trainingCorpus.readCorpus( trainYieldSpec )
 
-    println(initGram)
-    println(trainingCorpus)
+    //println(initGram)
+    //println(trainingCorpus)
 
     object manager extends ShakesParserManager( initGram, trainingCorpus ) {
 
@@ -138,8 +140,8 @@ object trainAndPrintBracketedByIter {
       //def parserConstructor(id:Int) = new ShakesEstimatingParser( id, g1, wordScale )
 
 
-
       def useGrammar( trainedGram: ShakesPCNF) { println(trainedGram) }
+      def cleanup = ()
     }
 
     manager.start
@@ -185,7 +187,7 @@ object trainAndEvaluateBracketedToConvergence {
           while(true) {
             receive {
               case intermediateGram:ShakesPCNF =>
-                if( iterNum % 2 == 0 | iterNum == maxIter - 1)
+                if( iterNum % 2 == 0 )
                 {
                   g = intermediateGram
                   testCorpus.foreach{ testSentence =>
@@ -196,10 +198,12 @@ object trainAndEvaluateBracketedToConvergence {
                     println("Iter" + iterNum + ": " + parseString )
                   }
                 }
+              case Stop => {
+                println("VitActor exiting.")
+                exit()
+              }
             }
             iterNum = iterNum + 1
-            if( iterNum >= maxIter )
-              exit()
           }
         }
       }
@@ -207,6 +211,7 @@ object trainAndEvaluateBracketedToConvergence {
 
       def useGrammar( trainedGram: ShakesPCNF) {
         VitActor ! g1
+
         val bw = new BufferedWriter(new
         FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
         bw.write(
@@ -220,7 +225,6 @@ object trainAndEvaluateBracketedToConvergence {
           g1.toString
         );
         bw.close();
-        //println( VitActor.parseString )
       }
 
       def parserConstructor = {
@@ -234,7 +238,8 @@ object trainAndEvaluateBracketedToConvergence {
       }
 
       def stoppingCondition( n:Int, deltaLogProb:Double ) = 
-        deltaLogProb <= tolerance
+        deltaLogProb < tolerance
+      def cleanup = { VitActor ! Stop }
     }
 
     manager.start
@@ -281,8 +286,7 @@ object trainAndEvaluateVanillaToConvergence {
           while(true) {
             receive {
               case intermediateGram:ShakesPCNF =>
-                if( //iterNum % 2 == 0 |
-                    iterNum == maxIter - 1)
+                if( iterNum % 2 == 0 )
                 {
                   g = intermediateGram
                   testCorpus.foreach{ testSentence =>
@@ -291,15 +295,14 @@ object trainAndEvaluateVanillaToConvergence {
                     resize( words.size + 1 )
                     populateChart( words )
                     println("Iter" + iterNum + ": " + parseString )
-                    println(g)
                   }
-
-
                 }
+              case Stop => {
+                println("VitActor exiting.")
+                exit()
+              }
             }
             iterNum = iterNum + 1
-            if( iterNum >= maxIter )
-              exit()
           }
         }
       }
@@ -335,7 +338,8 @@ object trainAndEvaluateVanillaToConvergence {
       }
 
       def stoppingCondition( n:Int, deltaLogProb:Double ) = 
-        deltaLogProb <= tolerance
+        deltaLogProb < tolerance
+      def cleanup = { VitActor ! Stop }
     }
     manager.start
   }
@@ -380,7 +384,7 @@ object trainAndEvaluateBracketedByIter {
           while(true) {
             receive {
               case intermediateGram:ShakesPCNF =>
-                if( iterNum % 2 == 0 | iterNum == maxIter - 1)
+                if( iterNum % 2 == 0 )
                 {
                   g = intermediateGram
                   testCorpus.foreach{ testSentence =>
@@ -391,10 +395,12 @@ object trainAndEvaluateBracketedByIter {
                     println("Iter" + iterNum + ": " + parseString )
                   }
                 }
+              case Stop => {
+                println("VitActor exiting.")
+                exit()
+              }
             }
             iterNum = iterNum + 1
-            if( iterNum >= maxIter )
-              exit()
           }
         }
       }
@@ -430,6 +436,7 @@ object trainAndEvaluateBracketedByIter {
 
       def stoppingCondition( numIters:Int, x:Double ) = 
         numIters >= maxIter
+      def cleanup = { VitActor ! Stop }
     }
 
     manager.start
@@ -443,6 +450,7 @@ object trainAndEvaluateVanillaByIter {
     import collection.mutable.ArrayBuffer
     import Math._
     import scala.io.Source._
+    import scala.actors.Exit
 
     val gramFile = args(0)
     val lexFile = args(1)
@@ -465,39 +473,41 @@ object trainAndEvaluateVanillaByIter {
     val testCorpus = fromFile(testStringsPath).getLines.toList.filter(_.length >
       0).map(_.replace("\n","")).toArray
 
+    object VitActor
+      extends ShakesViterbiParser(initGram,10000) with Actor {
+      var iterNum = 0
+      def act = {
+        trapExit = true
+        while(true) {
+          receive {
+            case intermediateGram:ShakesPCNF =>
+              if( iterNum % 2 == 0 )
+              {
+                g = intermediateGram
+                testCorpus.foreach{ testSentence =>
+                  val words = testSentence.split(' ')
+                  clear
+                  resize( words.size + 1 )
+                  populateChart( words )
+                  println("Iter" + iterNum + ": " + parseString )
+                  //println(g)
+                }
+
+
+              }
+            case Stop => {
+              println("VitActor exiting.")
+              exit()
+            }
+          }
+          iterNum = iterNum + 1
+        }
+      }
+    }
 
     object manager extends ShakesParserManager( initGram, trainingCorpus ) {
       import java.io._
 
-      object VitActor
-        extends ShakesViterbiParser(initGram,10000) with Actor {
-        var iterNum = 0
-        def act = {
-          while(true) {
-            receive {
-              case intermediateGram:ShakesPCNF =>
-                if( //iterNum % 2 == 0 |
-                    iterNum == maxIter - 1)
-                {
-                  g = intermediateGram
-                  testCorpus.foreach{ testSentence =>
-                    val words = testSentence.split(' ')
-                    clear
-                    resize( words.size + 1 )
-                    populateChart( words )
-                    println("Iter" + iterNum + ": " + parseString )
-                    println(g)
-                  }
-
-
-                }
-            }
-            iterNum = iterNum + 1
-            if( iterNum >= maxIter )
-              exit()
-          }
-        }
-      }
       VitActor.start
 
       def useGrammar( trainedGram: ShakesPCNF) {
@@ -532,7 +542,10 @@ object trainAndEvaluateVanillaByIter {
       def stoppingCondition( numIters:Int, x:Double ) = 
         numIters >= maxIter
 
+      def cleanup = { VitActor ! Stop }
     }
+
+
     manager.start
   }
 }
