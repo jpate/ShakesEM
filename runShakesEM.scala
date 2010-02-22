@@ -162,7 +162,6 @@ object trainAndEvaluateBracketedToConvergence {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val tolerance = args(5).toDouble
-    val gramFilePrefix = args(6)
 
     val wordScale = 10000
 
@@ -212,6 +211,7 @@ object trainAndEvaluateBracketedToConvergence {
       def useGrammar( trainedGram: ShakesPCNF) {
         VitActor ! g1
 
+        /*
         val bw = new BufferedWriter(new
         FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
         bw.write(
@@ -225,6 +225,7 @@ object trainAndEvaluateBracketedToConvergence {
           g1.toString
         );
         bw.close();
+        */
       }
 
       def parserConstructor = {
@@ -260,7 +261,6 @@ object trainAndEvaluateVanillaToConvergence {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val tolerance = args(5).toDouble
-    val gramFilePrefix = args(6)
 
     val wordScale = 10000
 
@@ -311,6 +311,7 @@ object trainAndEvaluateVanillaToConvergence {
       def useGrammar( trainedGram: ShakesPCNF) {
         VitActor ! g1
 
+        /*
         val bw = new BufferedWriter(new
         FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
         bw.write(
@@ -324,6 +325,7 @@ object trainAndEvaluateVanillaToConvergence {
           g1.toString
         );
         bw.close();
+        */
         //println( VitActor.parseString )
       }
 
@@ -359,7 +361,6 @@ object trainAndEvaluateBracketedByIter {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val maxIter = args(5).toInt
-    val gramFilePrefix = args(6)
 
     val wordScale = 10000
 
@@ -370,6 +371,8 @@ object trainAndEvaluateBracketedByIter {
 
     val trainingCorpus = new BracketedCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
+
+    println(trainingCorpus)
 
     val testCorpus = fromFile(testStringsPath).getLines.toList.filter(_.length >
       0).map(_.replace("\n","")).toArray
@@ -394,6 +397,27 @@ object trainAndEvaluateBracketedByIter {
                     populateChart( words )
                     println("Iter" + iterNum + ": " + parseString )
                   }
+
+
+                  /*
+                  println("WRITING GRAMMAR FOR ITERATION " + iterNum)
+                  val bw = new BufferedWriter(new
+                  FileWriter(gramFilePrefix+"Iter"+iterNum,false));
+                  bw.write(
+                    "Corpus log probability: " +
+                    corpusLogProb +
+                    "\nCorpus probability: " +
+                    exp(corpusLogProb) +
+                    "\nDelta LogProb: " +
+                    deltaLogProb +
+                    "\n\n" +
+                    g1.toString
+                  );
+                  bw.close();
+                  */
+
+
+
                 }
               case Stop => {
                 println("VitActor exiting.")
@@ -408,19 +432,6 @@ object trainAndEvaluateBracketedByIter {
 
       def useGrammar( trainedGram: ShakesPCNF) {
         VitActor ! g1
-        val bw = new BufferedWriter(new
-        FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
-        bw.write(
-          "Corpus log probability: " +
-          corpusLogProb +
-          "\nCorpus probability: " +
-          exp(corpusLogProb) +
-          "\nDelta LogProb: " +
-          deltaLogProb +
-          "\n\n" +
-          g1.toString
-        );
-        bw.close();
         //println( VitActor.parseString )
       }
 
@@ -458,7 +469,6 @@ object trainAndEvaluateVanillaByIter {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val maxIter = args(5).toInt
-    val gramFilePrefix = args(6)
 
     val wordScale = 10000
 
@@ -513,6 +523,7 @@ object trainAndEvaluateVanillaByIter {
       def useGrammar( trainedGram: ShakesPCNF) {
         VitActor ! g1
 
+        /*
         val bw = new BufferedWriter(new
         FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
         bw.write(
@@ -526,6 +537,7 @@ object trainAndEvaluateVanillaByIter {
           g1.toString
         );
         bw.close();
+        */
         //println( VitActor.parseString )
       }
 

@@ -73,7 +73,6 @@ package ShakesEM {
     }
 
 
-
     /**
     * Re-estimates a PCFG based on the counts in f, g, and h. All the action of
     * this function lies in its side-effects.
@@ -149,6 +148,33 @@ package ShakesEM {
           lexicon(pos)(word) = lexicon(pos)(word) / posTotal
         )
       }
+    }
+
+
+    def randomizeGrammar( nonTermCount:Int, termSymbols:List[String],
+                          randSeed:Int, centeredOn:Int) {
+      import scala.util.Random
+
+      val nonTermSymbols = "S" :: (
+         ( (1 to nonTermCount - 1) toList ) map ( "N" + _ )
+      )
+
+      val r = new Random( randSeed )
+
+      val allSymbols:List[String] = nonTermSymbols ::: termSymbols
+
+      for( lhs <- nonTermSymbols ) 
+        for( left <- allSymbols )
+          for( right <- allSymbols )
+            phrases(lhs)(left)(right) = r.nextDouble + centeredOn
+
+
+      for( pos <- nonTermSymbols )
+        for( word <- termSymbols )
+          lexicon( pos ) ( word ) = r.nextDouble + centeredOn
+
+      normalize
+      preCalcExps
     }
 
 
@@ -1265,9 +1291,11 @@ package ShakesEM {
             println("Parser " + id + " stopping")
             exit()
           }
+          /*
           case w:Any => {
             println( "wtf" + w )
           }
+          */
         }
       }
     }
@@ -1381,6 +1409,7 @@ package ShakesEM {
       }
     }
     def lexFill( w:String, index:Int) {
+      //println( w + ": \t" + g.lexExps(w) )
       val mlePOS = g.lexExps(w).foldLeft(g.lexExps(w)(0))( (l1, l2) =>
         if( l1._2 > l2._2 )
           l1 else l2
@@ -1549,6 +1578,9 @@ package ShakesEM {
         g2 = g1.countlessCopy
 
         deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
+
+        println("Iteration " + iterationNum + " corpusLogProb: " + corpusLogProb)
+        println("Iteration " + iterationNum + " deltaLogProb: " + deltaLogProb)
 
         useGrammar( g1 )
 
