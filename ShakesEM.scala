@@ -905,6 +905,11 @@ package ShakesEM {
     def size = chart.size
 
     /**
+    * @return The root cell of the chart
+    */
+    def root = chart(0)( size - 1)
+
+    /**
     *  Resize the chart.
     *  @param The new size for the chart
     */
@@ -1098,6 +1103,14 @@ package ShakesEM {
           synFill(i, j)
         }
       }
+
+      /*
+      if( !root.contains("S") )
+        println("SENTENCE DID NOT PARSE") 
+      else
+        println("SENTENCE " + s.mkString(""," ","") + " PARSED")
+      */
+
       chartDescent( computeOPWithEstimates )
     }
 
@@ -1281,6 +1294,8 @@ package ShakesEM {
 
             populateChart(words)
 
+            if( !root.contains("S") )
+              println("WARNING: SENTENCE DID NOT PARSE")
 
             val scaledBy = pow( wordScale, size - 1 )
 
@@ -1372,6 +1387,9 @@ package ShakesEM {
 
 
             populateChart(words)
+
+            if( !root.contains("S") )
+              println("WARNING: SENTENCE DID NOT PARSE")
 
             val scaledBy = pow( wordScale , size - 1 )
             sender ! (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
@@ -1579,8 +1597,8 @@ package ShakesEM {
 
         deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
 
-        println("Iteration " + iterationNum + " corpusLogProb: " + corpusLogProb)
-        println("Iteration " + iterationNum + " deltaLogProb: " + deltaLogProb)
+        println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
+        println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
 
         useGrammar( g1 )
 
@@ -1597,6 +1615,72 @@ package ShakesEM {
       cleanup
 
       exit()
+    }
+  }
+
+  abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
+    extends ShakesViterbiParser(initGram,ws) with Actor {
+    var iterNum = 0
+    var lastGo = false
+    var testCorpus:List[String]
+    def act = {
+      while(true) {
+        receive {
+          case intermediateGram:ShakesPCNF =>
+            if( iterNum % 2 == 0  | lastGo)
+            {
+              g = intermediateGram
+              testCorpus.foreach{ testSentence =>
+                val words = testSentence.split(' ')
+                clear
+                resize( words.size + 1 )
+                populateChart( words )
+                println("Parses.Iter" + iterNum + ": " + parseString )
+              }
+  
+  
+              /*
+              println("WRITING GRAMMAR FOR ITERATION " + iterNum)
+              val bw = new BufferedWriter(new
+              FileWriter(gramFilePrefix+"Iter"+iterNum,false));
+              bw.write(
+                "Corpus log probability: " +
+                corpusLogProb +
+                "\nCorpus probability: " +
+                exp(corpusLogProb) +
+                "\nDelta LogProb: " +
+                deltaLogProb +
+                "\n\n" +
+                g1.toString
+              );
+              bw.close();
+              */
+  
+              if( lastGo ) {
+                println("VitActor exiting.")
+                println(g.toString.split("\n").
+                  map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
+                )
+                exit()
+              }
+                
+  
+            }
+          
+          case Stop => {
+            lastGo = true
+            /*
+            println("VitActor exiting.")
+            println(g.toString.split("\n").
+              map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
+            )
+            exit()
+            */
+          }
+        }
+        if(!lastGo)
+          iterNum = iterNum + 1
+      }
     }
   }
 
