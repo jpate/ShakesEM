@@ -162,6 +162,7 @@ object trainAndEvaluateBracketedToConvergence {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val tolerance = args(5).toDouble
+    val randSeed = args(6).toInt
 
     val wordScale = 10000
 
@@ -174,7 +175,7 @@ object trainAndEvaluateBracketedToConvergence {
     //initGram.readGrammar(gramFile)
     //initGram.readLexicon(lexFile)
 
-    initGram.randomizeGrammar( nonTermCount, termList, 16, 100 )
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, 100 )
 
     val trainingCorpus = new BracketedCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
@@ -234,6 +235,7 @@ object trainAndEvaluateVanillaToConvergence {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val tolerance = args(5).toDouble
+    val randSeed = args(6).toInt
 
     val wordScale = 10000
 
@@ -246,7 +248,7 @@ object trainAndEvaluateVanillaToConvergence {
     //initGram.readGrammar(gramFile)
     //initGram.readLexicon(lexFile)
 
-    initGram.randomizeGrammar( nonTermCount, termList, 16, 100 )
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, 100 )
 
     val trainingCorpus = new StringsOnlyCorpus
     trainingCorpus.readCorpus( trainYieldPath )
@@ -320,6 +322,7 @@ object trainAndEvaluateBracketedByIter {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val maxIter = args(5).toInt
+    val randSeed = args(6).toInt
 
     val wordScale = 10000
 
@@ -332,7 +335,7 @@ object trainAndEvaluateBracketedByIter {
     //initGram.readGrammar(gramFile)
     //initGram.readLexicon(lexFile)
 
-    initGram.randomizeGrammar( nonTermCount, termList, 16, 100 )
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, 100 )
 
     val trainingCorpus = new BracketedCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
@@ -395,6 +398,7 @@ object trainAndEvaluateVanillaByIter {
     val testStringsPath = args(3)
     val numParsers = args(4).toInt
     val maxIter = args(5).toInt
+    val randSeed = args(6).toInt
 
     val wordScale = 10000
 
@@ -407,7 +411,7 @@ object trainAndEvaluateVanillaByIter {
     //initGram.readGrammar(gramFile)
     //initGram.readLexicon(lexFile)
 
-    initGram.randomizeGrammar( nonTermCount, termList, 16, 100 )
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, 100 )
 
     //println(initGram)
 
