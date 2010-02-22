@@ -97,6 +97,54 @@ object trainAndPrintVanillaByIter {
   }
 }
 
+object trainAndPrintVanillaToConvergence{
+  def main( args: Array[String] ) {
+    import scala.collection.mutable.ArrayBuffer
+    import Math._
+    import scala.io.Source
+
+    var gramFile = args(0)
+    var lexFile = args(1)
+    var trainYieldFile = args(2)
+    var numParsers = args(3).toInt
+    var tolerance = args(4).toDouble
+
+    val wordScale = 10000
+
+    val initGram = new ShakesPCNF
+
+    initGram.readGrammar(gramFile)
+    initGram.readLexicon(lexFile)
+
+    val trainingCorpus = new StringsOnlyCorpus
+
+    trainingCorpus.readCorpus( trainYieldFile )
+
+    //println(initGram)
+    //println(trainingCorpus)
+
+    object manager extends ShakesParserManager( initGram, trainingCorpus ) {
+      def stoppingCondition( n:Int, deltaLogProb:Double ) = 
+        abs(deltaLogProb) < tolerance
+
+      def parserConstructor = {
+        val someParsers = new ArrayBuffer[ShakesDistributedParser]
+
+        (0 to (numParsers-1) ) foreach(
+          someParsers += new ShakesEstimatingParser( _, g1, wordScale
+          )
+        )
+        someParsers
+      }
+
+      def useGrammar( trainedGram: ShakesPCNF) { println(trainedGram) }
+      def cleanup = ()
+    }
+
+    manager.start
+  }
+}
+
 object trainAndPrintBracketedByIter {
   def main( args: Array[String] ) {
     import collection.mutable.ArrayBuffer
