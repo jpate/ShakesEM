@@ -245,7 +245,7 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
       VitActor.start
 
       def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-        VitActor ! g1
+        VitActor ! (g1,iterNum)
 
         //val vit = new ShakesViterbiParser(trainedGram, wordScale)
         //

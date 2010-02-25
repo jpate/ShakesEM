@@ -925,7 +925,7 @@ package ShakesEM {
 
     /**
     *  Resize the chart.
-    *  @param The new size for the chart
+    *  @param sentLen The new size for the chart
     */
     def resize(sentLen:Int) = chart.resize(sentLen)
 
@@ -1538,7 +1538,7 @@ package ShakesEM {
           parsers(id) ! trainingCorpus(id)
         }
 
-        var sentenceNumber = parsers.size
+        var sentenceNumber = parsers.size - 1
         var numFinishedParsers = 0
 
         while( numFinishedParsers < parsers.size ) {
@@ -1596,7 +1596,7 @@ package ShakesEM {
               if( sentenceNumber >= trainingCorpus.size) {
                 numFinishedParsers = numFinishedParsers + 1
               } else {
-                if( sentenceNumber % 100 == 0 )
+                //if( sentenceNumber % 100 == 0 )
                   println(
                     "Starting sentence number " + sentenceNumber  + " with parser " +
                     id
@@ -1653,7 +1653,9 @@ package ShakesEM {
             if( iterNum % 2 == 0  | lastGo)
             {
               g = intermediateGram
+              //println(g("S"))
               testCorpus.foreach{ testSentence =>
+                println( testSentence )
                 val words = testSentence.split(' ')
                 clear
                 resize( words.size + 1 )
