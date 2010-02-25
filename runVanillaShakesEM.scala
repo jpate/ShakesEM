@@ -16,6 +16,7 @@ object trainAndEvaluateVanillaToConvergence {
     val numParsers = args(4).toInt
     val tolerance = args(5).toDouble
     val randSeed = args(6).toInt
+    val randomBase = args(7).toInt
 
     val wordScale = 10000
 
@@ -28,7 +29,7 @@ object trainAndEvaluateVanillaToConvergence {
     //initGram.readGrammar(gramFile)
     //initGram.readLexicon(lexFile)
 
-    initGram.randomizeGrammar( nonTermCount, termList, randSeed, 0 )
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
 
     val trainingCorpus = new StringsOnlyCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
