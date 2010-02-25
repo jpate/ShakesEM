@@ -271,8 +271,7 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
         iterNum > minIter && abs(deltaLogProb) < tolerance
       def cleanup = {
-        VitActor ! Stop 
-        VitActor ! g1
+        VitActor ! (g1,Stop)
       }
     }
 

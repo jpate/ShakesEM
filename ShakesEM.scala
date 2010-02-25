@@ -1596,7 +1596,7 @@ package ShakesEM {
               if( sentenceNumber >= trainingCorpus.size) {
                 numFinishedParsers = numFinishedParsers + 1
               } else {
-                //if( sentenceNumber % 100 == 0 )
+                if( sentenceNumber % 100 == 0 )
                   println(
                     "Starting sentence number " + sentenceNumber  + " with parser " +
                     id
@@ -1644,18 +1644,16 @@ package ShakesEM {
   abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
     extends ShakesViterbiParser(initGram,ws) with Actor {
     //var iterNum = 0
-    var lastGo = false
+    //var lastGo = false
     var testCorpus:List[String]
     def act = {
       while(true) {
         receive {
           case (intermediateGram:ShakesPCNF, iterNum:Int) =>
-            if( iterNum % 2 == 0  | lastGo)
+            if( iterNum % 2 == 0 )
             {
               g = intermediateGram
-              //println(g("S"))
               testCorpus.foreach{ testSentence =>
-                println( testSentence )
                 val words = testSentence.split(' ')
                 clear
                 resize( words.size + 1 )
@@ -1681,24 +1679,33 @@ package ShakesEM {
               bw.close();
               */
   
-              if( lastGo ) {
-                println("VitActor exiting.")
-                println(g.toString.split("\n").
-                  map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
-                )
-                exit()
-              }
+              //if( lastGo ) {
+              //  println("VitActor exiting.")
+              //  println(g.toString.split("\n").
+              //    map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
+              //  )
+              //  exit()
+              //}
             }
           
-          case Stop => {
-            lastGo = true
-            /*
+          case (intermediateGram:ShakesPCNF, Stop) => {
+            //lastGo = true
+
+            g = intermediateGram
+            testCorpus.foreach{ testSentence =>
+              val words = testSentence.split(' ')
+              clear
+              resize( words.size + 1 )
+              populateChart( words )
+              println("Parses.Converged" + ": " + parseString )
+            }
+
             println("VitActor exiting.")
-            println(g.toString.split("\n").
-              map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
-            )
+            //println(g.toString.split("\n").
+            //  map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
+            //)
             exit()
-            */
+
           }
         }
       }
