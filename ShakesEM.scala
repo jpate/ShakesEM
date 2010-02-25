@@ -73,11 +73,15 @@ package ShakesEM {
     }
 
 
+    //var reestimateCounter = 0
+
     /**
     * Re-estimates a PCFG based on the counts in f, g, and h. All the action of
     * this function lies in its side-effects.
     */
     def reestimateRules {
+      //reestimateCounter = reestimateCounter + 1
+      //println("REESTIMATION NUMBER" + reestimateCounter)
       f.keys.foreach{ lhs =>
         f (lhs) .keys.foreach{ left =>
           f (lhs)(left) .keys.foreach{ right =>
@@ -449,7 +453,7 @@ package ShakesEM {
           )
         )
       )
-      lexExps.clear
+
       lexicon.keys.foreach( pos =>
         lexicon (pos) .keys.foreach ( word =>
           lexExps(word) = (pos, lexicon(pos)(word)) ::
@@ -480,6 +484,15 @@ package ShakesEM {
         )
       )
       copy.preCalcExps
+      copy
+    }
+    
+    def copy:ShakesPCNF = {
+      val copy = new ShakesPCNF
+      copy.phrases = phrases
+      copy.lexicon = lexicon
+      copy.phrExps = phrExps
+      copy.lexExps = lexExps
       copy
     }
 
@@ -703,6 +716,7 @@ package ShakesEM {
           backMatcher = new ArrayBuffer[ArrayBuffer[(String,String)]]
           0 to (length-1) foreach( i => backMatcher += new ArrayBuffer[(String,String)])
         }
+
 
         if( !ipSetYet | prob > ip ) {
           backMatcher .clear
@@ -1294,8 +1308,10 @@ package ShakesEM {
 
             populateChart(words)
 
-            if( !root.contains("S") )
+            if( !root.contains("S") ) {
               println("WARNING: SENTENCE DID NOT PARSE")
+              println( s )
+            }
 
             val scaledBy = pow( wordScale, size - 1 )
 
@@ -1324,8 +1340,9 @@ package ShakesEM {
   * whatever starts it).
   * @param g The grammar that this parser should use when parsing a sentence and
   * producing partial counts.
+  * @param ws Amount to scale terminal probabilities by
   */
-  case class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
+  class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
     extends ShakesEstimatingParser(id,grammar,ws) {
     import Math._
     import collection.mutable.{HashSet,HashMap}
@@ -1365,6 +1382,8 @@ package ShakesEM {
         List.range(0,j-1).reverse.foreach{ i =>
           if( isCompatible( i, j ) )
             synFill(i, j)
+          //else
+            //println("skipped cell " + (i,j))
         }
       }
       chartDescent( computeOPWithEstimates )
@@ -1388,8 +1407,10 @@ package ShakesEM {
 
             populateChart(words)
 
-            if( !root.contains("S") )
+            if( !root.contains("S") ) {
               println("WARNING: SENTENCE DID NOT PARSE")
+              println( s )
+            }
 
             val scaledBy = pow( wordScale , size - 1 )
             sender ! (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
@@ -1480,6 +1501,7 @@ package ShakesEM {
     //var trainingCorpus:ShakesTrainCorpus
     var g1 = initGram
     var g2:ShakesPCNF = g1.countlessCopy
+    //g2.reestimateCounter = g1.reestimateCounter
 
     //var parsers:Array[ShakesDistributedParser]
 
@@ -1489,7 +1511,7 @@ package ShakesEM {
 
     def cleanup:{}
 
-    def useGrammar(g:ShakesPCNF):Unit
+    def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
     var iterationNum = 0
     var deltaLogProb = 1.0
     var lastCorpusLogProb = 0.0
@@ -1498,16 +1520,15 @@ package ShakesEM {
 
     def act() {
       //trapExit = true
-      var iterationNum = 0
-      var deltaLogProb = 1.0
-      var lastCorpusLogProb = 0.0
-      var corpusLogProb = 0.0
+      iterationNum = 0
+      deltaLogProb = 1.0
+      lastCorpusLogProb = 0.0
+      corpusLogProb = 0.0
 
       while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
 
         val parsers = parserConstructor
 
-        
 
         parsers.foreach( _.start )
 
@@ -1575,7 +1596,7 @@ package ShakesEM {
               if( sentenceNumber >= trainingCorpus.size) {
                 numFinishedParsers = numFinishedParsers + 1
               } else {
-                if( sentenceNumber % 1000 == 0 )
+                if( sentenceNumber % 100 == 0 )
                   println(
                     "Starting sentence number " + sentenceNumber  + " with parser " +
                     id
@@ -1594,13 +1615,15 @@ package ShakesEM {
 
         g1 = g2
         g2 = g1.countlessCopy
+        //g2.reestimateCounter = g1.reestimateCounter
+
 
         deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
 
         println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
         println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
 
-        useGrammar( g1 )
+        useGrammar( g1 , iterationNum)
 
         lastCorpusLogProb = corpusLogProb
         corpusLogProb = 0.0
@@ -1610,7 +1633,7 @@ package ShakesEM {
 
 
       }
-      useGrammar( g1 )
+      useGrammar( g1, iterationNum )
 
       cleanup
 
@@ -1620,13 +1643,13 @@ package ShakesEM {
 
   abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
     extends ShakesViterbiParser(initGram,ws) with Actor {
-    var iterNum = 0
+    //var iterNum = 0
     var lastGo = false
     var testCorpus:List[String]
     def act = {
       while(true) {
         receive {
-          case intermediateGram:ShakesPCNF =>
+          case (intermediateGram:ShakesPCNF, iterNum:Int) =>
             if( iterNum % 2 == 0  | lastGo)
             {
               g = intermediateGram
@@ -1663,8 +1686,6 @@ package ShakesEM {
                 )
                 exit()
               }
-                
-  
             }
           
           case Stop => {
@@ -1678,8 +1699,6 @@ package ShakesEM {
             */
           }
         }
-        if(!lastGo)
-          iterNum = iterNum + 1
       }
     }
   }
