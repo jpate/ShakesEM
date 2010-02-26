@@ -44,23 +44,23 @@ object trainAndEvaluateVanillaMinIterAndConvergence {
 
 
 
-      ////object VitActor extends EvaluationActor(initGram,10000) {
-      ////  var testCorpus = testStrings
-      ////}
-      ////VitActor.start
+      object VitActor extends EvaluationActor(initGram,10000) {
+        var testCorpus = testStrings
+      }
+      VitActor.start
 
       def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-        //VitActor ! g1
+        VitActor ! (g1,iterNum)
 
-        val vit = new ShakesViterbiParser(trainedGram, wordScale)
-        
-        for( s <- testStrings ) {
-          val testWords = s.split(' ')
-          vit.resize( testWords.size + 1 )
-          vit.populateChart( testWords )
-          if( iterNum % 2 == 0 )
-            println( "Iter" + iterNum + ":" + vit.parseString )
-        }
+        //val vit = new ShakesViterbiParser(trainedGram, wordScale)
+        //
+        //for( s <- testStrings ) {
+        //  val testWords = s.split(' ')
+        //  vit.resize( testWords.size + 1 )
+        //  vit.populateChart( testWords )
+        //  if( iterNum % 2 == 0 )
+        //    println( "Iter" + iterNum + ":" + vit.parseString )
+        //}
       }
 
       def parserConstructor = {
@@ -76,8 +76,7 @@ object trainAndEvaluateVanillaMinIterAndConvergence {
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
         iterNum > minIter && abs(deltaLogProb) < tolerance
       def cleanup = {
-        //VitActor ! Stop 
-        //VitActor ! g1
+        VitActor ! (g1,Stop)
       }
     }
 
