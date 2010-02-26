@@ -219,7 +219,7 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
     println("nonTermCount: " + nonTermCount )
     println("termFile: " + termFile )
     println("trainYieldSpec: "+  trainYieldSpec )
-    println("testStringsPath: "    testStringsPath )
+    println("testStringsPath: " +   testStringsPath )
     println("numParsers: "+    numParsers )
     println("minIter: " +    minIter )
     println("tolerance: " + tolerance )
