@@ -21,6 +21,21 @@ object trainAndEvaluateVanillaMinIterAndConvergence {
 
     val wordScale = 10000
 
+
+
+    println("nonTermCount: " + nonTermCount )
+    println("termFile: " + termFile )
+    println("trainYieldSpec: "+  trainYieldSpec )
+    println("testStringsPath: "    testStringsPath )
+    println("numParsers: "+    numParsers )
+    println("minIter: " +    minIter )
+    println("tolerance: " + tolerance )
+    println("randSeed: " + randSeed )
+    println("randomBase: " + randomBase )
+    println("wordScale: " + wordScale )
+
+    println("\n\n\n====\n\n\n")
+
     val initGram = new ShakesPCNF
 
     val termList =
