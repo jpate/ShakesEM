@@ -1658,6 +1658,12 @@ package ShakesEM {
                 clear
                 resize( words.size + 1 )
                 populateChart( words )
+
+              if( !root.contains("S") ) {
+                println("WARNING: SENTENCE DID NOT PARSE")
+                println( s )
+              }
+
                 println("Parses.Iter" + iterNum + ": " + parseString )
               }
   
