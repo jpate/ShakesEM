@@ -1660,7 +1660,7 @@ package ShakesEM {
 
               if( !root.contains("S") ) {
                 println("WARNING: SENTENCE DID NOT PARSE")
-                println( s )
+                println( testSentence )
               }
 
                 println("Parses.Iter" + iterNum + ": " + parseString )
