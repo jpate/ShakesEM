@@ -1,10 +1,9 @@
 /**
 * ShakesEM is a package for running EM for Probabilistic Context Free Grammars,
 * implemented in Scala using the Actors library to allow parallel processing
-* over multiple cores. This is the first release of the package and implements
-* only vanilla EM. I'm fairly sure it computes what I say it does, but there's
-* also almost definitely a lot of room for improvement in speed and space
-* efficiency.
+* over multiple cores. This version implements both vanilla EM and the
+* modification to EM in Pereira and Schabes (1992) for partially bracketed
+* corpora
 *
 * Copyright 2010 John K Pate
 * Distributed under the GNU General Public License
