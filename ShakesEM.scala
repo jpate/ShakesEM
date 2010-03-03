@@ -20,12 +20,14 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 *
-* @version 0.20
+* @version 0.20_akkaActors
 * @author John K Pate
 */
 package ShakesEM {
-  import scala.actors.Actor
-  import scala.actors.Actor._
+  //import scala.actors.Actor
+  //import scala.actors.Actor._
+  import se.scalablesolutions.akka.actor.Actor
+  import se.scalablesolutions.akka.actor.Actor._
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
@@ -1293,7 +1295,7 @@ package ShakesEM {
     /**
     * Use this as an actor
     */
-    def act() {
+    def receive = {
       import Math._
       loop {
         react {
@@ -1389,7 +1391,7 @@ package ShakesEM {
       chartDescent( computeOPWithEstimates )
     }
 
-    override def act() {
+    override def receive {
       loop {
         react {
           case Tuple2(s:String,b:HashSet[(Int,Int)]) => {  
@@ -1518,7 +1520,7 @@ package ShakesEM {
     var corpusLogProb = 0.0
 
 
-    def act() {
+    def receive {
       //trapExit = true
       iterationNum = 0
       deltaLogProb = 1.0
