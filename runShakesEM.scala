@@ -247,9 +247,10 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
       0).map(_.replace("\n",""))
 
 
-    object manager extends ShakesParserManager( initGram, trainingCorpus ) {
+    object manager extends ShakesParserManager( initGram ) {
       import java.io._
 
+      val trainCorpus = trainingCorpus
 
 
       object VitActor extends EvaluationActor(initGram,10000) {
@@ -258,7 +259,7 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
       VitActor.start
 
       def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-        VitActor ! (g1,iterNum)
+        VitActor ! Tuple2(g1,iterNum)
 
         //val vit = new ShakesViterbiParser(trainedGram, wordScale)
         //
@@ -284,7 +285,7 @@ object trainAndEvaluateBracketedMinIterAndConvergence {
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
         iterNum > minIter && abs(deltaLogProb) < tolerance
       def cleanup = {
-        VitActor ! (g1,Stop)
+        VitActor ! Tuple2(g1,Stop)
       }
     }
 
@@ -328,9 +329,10 @@ object trainAndEvaluateBracketedToConvergence {
       0).map(_.replace("\n",""))
 
 
-    object manager extends ShakesParserManager( initGram, trainingCorpus ) {
+    object manager extends ShakesParserManager( initGram ) {
       import java.io._
 
+      val trainCorpus = trainingCorpus
 
 
       ////object VitActor extends EvaluationActor(initGram,10000) {
@@ -499,8 +501,10 @@ object trainAndEvaluateBracketedByIter {
       0).map(_.replace("\n","")).toList
 
 
-    object manager extends ShakesParserManager( initGram, trainingCorpus ) {
+    object manager extends ShakesParserManager( initGram ) {
       import java.io._
+
+      val trainCorpus = trainingCorpus
 
       object VitActor extends EvaluationActor(initGram,10000) {
         var testCorpus = testStrings
@@ -508,8 +512,8 @@ object trainAndEvaluateBracketedByIter {
 
       VitActor.start
 
-      def useGrammar( trainedGram: ShakesPCNF, n:Int) {
-        VitActor ! g1.copy
+      def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
+        VitActor ! Tuple2(g1.copy, iterNum)
         //println( VitActor.parseString )
       }
 
@@ -527,8 +531,8 @@ object trainAndEvaluateBracketedByIter {
         numIters >= maxIter
 
       def cleanup = {
-        VitActor ! Stop 
-        VitActor ! g1.copy
+        VitActor ! Tuple2(g1.copy,Stop)
+        //VitActor ! 
       }
     }
 
@@ -574,8 +578,11 @@ object trainAndEvaluateBracketedByIterAndReadGrammar {
       0).map(_.replace("\n","")).toList
 
 
-    object manager extends ShakesParserManager( initGram, trainingCorpus ) {
+    object manager extends ShakesParserManager( initGram ) {
       import java.io._
+
+      val trainCorpus = trainingCorpus
+
 
       ////object VitActor extends EvaluationActor(initGram,10000) {
       ////  var testCorpus = testStrings
@@ -594,6 +601,9 @@ object trainAndEvaluateBracketedByIterAndReadGrammar {
           vit.populateChart( testWords )
           println( "Iter" + iterNum + ":" + vit.parseString )
         }
+
+        if( iterNum == 1 )
+          println( trainedGram )
 
       }
 

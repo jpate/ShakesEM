@@ -1343,7 +1343,8 @@ package ShakesEM {
 
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ):Boolean
       def parserConstructor:ArrayBuffer[ShakesDistributedParser]
-      def useGrammar(g:ShakesPCNF):Unit
+      def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
+      def cleanup:Unit
 
       var g1 = initGram
       var g2 = g1.countlessCopy
@@ -1357,8 +1358,9 @@ package ShakesEM {
 
       var stringID = 0
 
-      val parsers = parserConstructor
+      var parsers = parserConstructor
       var numFinishedParsers = 0
+
 
 
       parsers.foreach( p =>
@@ -1426,7 +1428,7 @@ package ShakesEM {
             parsers(id) !  trainCorpus( stringID )
             stringID += 1
           } else {
-            //parsers(id) ! Stop
+            parsers(id) ! Stop
             numFinishedParsers += 1
 
             if( numFinishedParsers >= parsers.size ) {  // we have results from
@@ -1438,7 +1440,7 @@ package ShakesEM {
               deltaLogProb = (lastCorpusLogProb - corpusLogProb) /
                 abs(corpusLogProb)
 
-              useGrammar( g1 )
+              useGrammar( g1, iterNum )
 
               println("corpusLogProb.Iter"+iterNum + ": "+ corpusLogProb)
               println("deltaLogProb.Iter"+iterNum + ": "+ deltaLogProb)
@@ -1451,10 +1453,11 @@ package ShakesEM {
                 numFinishedParsers = 0
                 lastCorpusLogProb = corpusLogProb
                 corpusLogProb = 0.0
+                parsers = parserConstructor
 
                 parsers foreach( p =>
                   {
-                    //p.start
+                    p.start
                     println("Sending " + trainCorpus( stringID ) + " to parser " +
                     stringID )
                     p ! trainCorpus( stringID )
@@ -1462,7 +1465,7 @@ package ShakesEM {
                   }
                 )
               } else {
-                parsers foreach( _ ! Stop )
+                cleanup
                 exit
               }
             }
