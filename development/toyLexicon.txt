@@ -1,0 +1,13 @@
+V eats 0.3
+V drinks 0.3
+V saw 0.4
+DET the 0.7
+DET a 0.3
+N dolly 0.4
+N chicken 0.3
+N sauerkraut 0.3
+ADJ green 0.4
+ADJ delicious 0.1
+ADJ frightening 0.5
+PREP under 0.8
+PREP over 0.2
