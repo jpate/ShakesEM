@@ -1,5 +1,144 @@
 import ShakesEM._
 
+object StartRemoteActor {
+  import se.scalablesolutions.akka.remote.{RemoteNode,RemoteClient}
+
+  val g = new ShakesPCNF
+
+  g.readGrammar("toyGrammar.txt")
+  g.readLexicon("toyLexicon.txt")
+
+  RemoteNode.start("localhost",9990)
+  RemoteNode.register("parsingService", new ShakesBracketedParser(0, g, 10000) )
+}
+
+object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
+  def main( args: Array[String] ) {
+    import se.scalablesolutions.akka.remote.{RemoteClient,RemoteNode}
+//    import scala.actors.Actor
+//    import scala.actors.Actor._
+    import collection.mutable.ArrayBuffer
+    import Math._
+    import scala.io.Source._
+    import se.scalablesolutions.akka.remote.RemoteServer
+    import se.scalablesolutions.akka.actor.Actor
+    import se.scalablesolutions.akka.actor.Actor._
+ 
+ 
+    val nonTermCount = args(0).toInt
+    val termFile = args(1)
+    val trainYieldSpec = args(2)
+    val testStringsPath = args(3)
+    val hostNamesFile = args(4)
+    val minIter = args(5).toInt
+    val tolerance = args(6).toDouble
+    val randSeed = args(7).toInt
+    val randomBase = args(8).toInt
+
+    val wordScale = 10000
+
+    println("nonTermCount: " + nonTermCount )
+    println("termFile: " + termFile )
+    println("trainYieldSpec: "+  trainYieldSpec )
+    println("testStringsPath: " +   testStringsPath )
+    println("hostNamesFile: " + hostNamesFile )
+    println("minIter: " +    minIter )
+    println("tolerance: " + tolerance )
+    println("randSeed: " + randSeed )
+    println("randomBase: " + randomBase )
+    println("wordScale: " + wordScale )
+
+    println("\n\n\n====\n\n\n")
+
+
+    val initGram = new ShakesPCNF
+
+    val termList =
+      fromFile( termFile ).getLines.toList.filter( _.length > 0 ).
+      map (_.replace("\n",""))
+
+    //initGram.readGrammar(gramFile)
+    //initGram.readLexicon(lexFile)
+
+    initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
+
+    val trainingCorpus = new BracketedCorpus
+    trainingCorpus.readCorpus( trainYieldSpec )
+
+    val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
+      0).map(_.replace("\n",""))
+
+    val hostnames = fromFile(hostNamesFile).getLines.toList.filter(_.length >
+      0).map(_.replace("\n",""))
+
+
+    //hostnames foreach( host => {
+    //    val myServer = new RemoteServer
+    //    myServer.start(host, 9990)
+    //    //println("STARTING HOST" + host )
+    //    //RemoteNode.start( host, 9990) 
+    //  }
+    //)
+
+//    val doubleHostnames = hostnames ::: hostnames // start up two actors on each remote
+//                                        // node
+
+    object manager extends ShakesRemoteParserManager( initGram ) {
+      import java.io._
+
+      val trainCorpus = trainingCorpus
+
+
+      object VitActor extends EvaluationActor(initGram,10000) {
+        var testCorpus = testStrings
+      }
+      VitActor.start
+
+      def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
+        VitActor ! Tuple2(g1,iterNum)
+
+        //val vit = new ShakesViterbiParser(trainedGram, wordScale)
+        //
+        //for( s <- testStrings ) {
+        //  val testWords = s.split(' ')
+        //  vit.resize( testWords.size + 1 )
+        //  vit.populateChart( testWords )
+        //  if( iterNum % 2 == 0 )
+        //    println( "Iter" + iterNum + ":" + vit.parseString )
+        //}
+      }
+
+      def parserConstructor = {
+        val someParsers = new ArrayBuffer[Actor]
+
+        //(0 to (hostnames.size-1) ) foreach( id => {
+            //class thisActor extends ShakesBracketedParser( id, g1, wordScale)
+            //val thisParser = new ShakesBracketedParser( 0, g1, wordScale)
+            //RemoteNode.start( "localhost", 9990 )
+            //RemoteNode.register(  "parsingService",
+            //                      new ShakesBracketedParser(0, g1, wordScale )
+            //)
+            val thisParser =
+              RemoteClient.actorFor("parsingService","localhost",9990)
+            //thisParser.start
+            //thisParser makeRemote( "localhost" , 9999 )
+            someParsers += thisParser
+         // }
+        //)
+        someParsers
+      }
+
+      def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
+        iterNum > minIter && abs(deltaLogProb) < tolerance
+      def cleanup = {
+        VitActor ! Tuple2(g1,Stop)
+      }
+    }
+
+    manager.start
+  }
+}
+
 
 ////object trainVanillaByIter {
 ////  def main( args: Array[String] ) {
