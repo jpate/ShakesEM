@@ -24,7 +24,7 @@
 package ShakesEM {
   //import scala.actors.Actor
   //import scala.actors.Actor._
-  import se.scalablesolutions.akka.actor.Actor
+  import se.scalablesolutions.akka.actor.{RemoteActor,Actor}
   import se.scalablesolutions.akka.actor.Actor._
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
@@ -1083,24 +1083,14 @@ package ShakesEM {
   }
 
   abstract class ShakesDistributedParser extends ShakesFullCYKParser with Actor
+  abstract class ShakesRemoteParser(host:String,port:Int) extends
+    RemoteActor(host,port) with ShakesFullCYKParser
 
-  /**
-  * This provides a real parser that can provide a parse chart with partial
-  * estimates all filled in.
-  *
-  * @param id Parser id so parser can identify itself to parser managers, etc.
-  * @param grammar The grammar the parser should use
-  * @param ws The factor by which to scale words while parsing (to avoid
-  * underflow)
-  */
-  class ShakesEstimatingParser(id:Int,grammar:ShakesPCNF,ws:Int)
-    extends ShakesDistributedParser {//with ShakesFullCYKParser with Actor { 
+  trait EstimatingDefinitions extends ShakesParser {
     import Math._
     import collection.mutable.HashMap
 
-    var g = grammar
-    var wordScale = ws
-    
+
     /*
     * This is the CYK parsing algorithm. Same time complexity as Earley for
     * completely ambiguous grammars, so (since we're doing full grammar
@@ -1291,6 +1281,28 @@ package ShakesEM {
     }
 
 
+
+  }
+
+  /**
+  * This provides a real remote parser that can provide a parse chart with partial
+  * estimates all filled in.
+  *
+  * @param id Parser id so parser can identify itself to parser managers, etc.
+  * @param grammar The grammar the parser should use
+  * @param ws The factor by which to scale words while parsing (to avoid
+  * underflow)
+  */
+  class
+  ShakesRemoteEstimatingParser(id:Int,grammar:ShakesPCNF,ws:Int,host:String,port:Int)
+    extends ShakesRemoteParser(host,port) with EstimatingDefinitions {//with ShakesFullCYKParser with Actor { 
+    import Math._
+    import collection.mutable.HashMap
+
+    var g = grammar
+    var wordScale = ws
+    //var id = idNum
+
     /**
     * Use this as an actor
     */
@@ -1322,6 +1334,59 @@ package ShakesEM {
         exit
       }
     }
+    
+  }
+
+  /**
+  * This provides a real parser that can provide a parse chart with partial
+  * estimates all filled in.
+  *
+  * @param id Parser id so parser can identify itself to parser managers, etc.
+  * @param grammar The grammar the parser should use
+  * @param ws The factor by which to scale words while parsing (to avoid
+  * underflow)
+  */
+  class ShakesEstimatingParser(id:Int,grammar:ShakesPCNF,ws:Int)
+    extends ShakesDistributedParser with EstimatingDefinitions {//with ShakesFullCYKParser with Actor { 
+    import Math._
+    import collection.mutable.HashMap
+
+    var g = grammar
+    var wordScale = ws
+    //var id = idNum
+
+    /**
+    * Use this as an actor
+    */
+    def receive = {
+      case s:String => {  // If we get a sentence, then parse it and send the
+                          // counts back
+        f_i.clear
+        g_i.clear
+        h_i.clear
+
+        val words = s.split(' ')
+        resize( words.size+1 )
+
+        populateChart(words)
+
+        if( !root.contains("S") ) {
+          println("WARNING: SENTENCE DID NOT PARSE")
+          println( s )
+        }
+
+        val scaledBy = pow( wordScale, size - 1 )
+
+
+        //sender ! (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+        reply (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+      }
+      case Stop => {      // If we get the stop signal, then shut down.
+        println("Parser " + id + " stopping")
+        exit
+      }
+    }
+    
   }
 
   //case class ToParse(s:String)

@@ -3,16 +3,18 @@ import ShakesEM._
 object StartRemoteActor {
   import se.scalablesolutions.akka.remote.{RemoteNode,RemoteClient}
 
-  val g = new ShakesPCNF
+  def main(args:Array[String]) {
+    val g = new ShakesPCNF
 
-  g.readGrammar("toyGrammar.txt")
-  g.readLexicon("toyLexicon.txt")
+    g.readGrammar("toyGrammar.txt")
+    g.readLexicon("toyLexicon.txt")
 
-  RemoteNode.start("localhost",9990)
-  RemoteNode.register("parsingService", new ShakesBracketedParser(0, g, 10000) )
+    RemoteNode.start("localhost",9990)
+    RemoteNode.register("parsingService", new ShakesBracketedParser(0, g, 10000) )
+  }
 }
 
-object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
+object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
   def main( args: Array[String] ) {
     import se.scalablesolutions.akka.remote.{RemoteClient,RemoteNode}
 //    import scala.actors.Actor
@@ -62,7 +64,7 @@ object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
 
     initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
 
-    val trainingCorpus = new BracketedCorpus
+    val trainingCorpus = new StringsOnlyCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
 
     val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
@@ -111,6 +113,10 @@ object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
       def parserConstructor = {
         val someParsers = new ArrayBuffer[Actor]
 
+        val thisParser = new ShakesRemoteEstimatingParser( 0, g1, wordScale,
+        "localhost",9990 )
+
+
         //(0 to (hostnames.size-1) ) foreach( id => {
             //class thisActor extends ShakesBracketedParser( id, g1, wordScale)
             //val thisParser = new ShakesBracketedParser( 0, g1, wordScale)
@@ -118,8 +124,8 @@ object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
             //RemoteNode.register(  "parsingService",
             //                      new ShakesBracketedParser(0, g1, wordScale )
             //)
-            val thisParser =
-              RemoteClient.actorFor("parsingService","localhost",9990)
+            //val thisParser =
+            //  RemoteClient.actorFor("parsingService","localhost",9990)
             //thisParser.start
             //thisParser makeRemote( "localhost" , 9999 )
             someParsers += thisParser
