@@ -1303,6 +1303,8 @@ package ShakesEM {
     var wordScale = ws
     //var id = idNum
 
+    start
+
     /**
     * Use this as an actor
     */

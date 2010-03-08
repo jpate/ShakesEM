@@ -1,18 +1,18 @@
 import ShakesEM._
 
-object StartRemoteActor {
-  import se.scalablesolutions.akka.remote.{RemoteNode,RemoteClient}
-
-  def main(args:Array[String]) {
-    val g = new ShakesPCNF
-
-    g.readGrammar("toyGrammar.txt")
-    g.readLexicon("toyLexicon.txt")
-
-    RemoteNode.start("localhost",9990)
-    RemoteNode.register("parsingService", new ShakesBracketedParser(0, g, 10000) )
-  }
-}
+//object StartRemoteActor {
+//  import se.scalablesolutions.akka.remote.{RemoteNode,RemoteClient}
+//
+//  def main(args:Array[String]) {
+//    val g = new ShakesPCNF
+//
+//    g.readGrammar("toyGrammar.txt")
+//    g.readLexicon("toyLexicon.txt")
+//
+//    RemoteNode.start("localhost",9990)
+//    RemoteNode.register("parsingService", new ShakesRemoteEstimatingParser(0, g, 10000) )
+//  }
+//}
 
 object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
   def main( args: Array[String] ) {
