@@ -1083,8 +1083,8 @@ package ShakesEM {
   }
 
   abstract class ShakesDistributedParser extends ShakesFullCYKParser with Actor
-  abstract class ShakesRemoteParser(host:String,port:Int) extends
-    RemoteActor(host,port) with ShakesFullCYKParser
+//  abstract class ShakesRemoteParser(host:String,port:Int) extends
+//    RemoteActor(host,port) with ShakesFullCYKParser
 
   trait EstimatingDefinitions extends ShakesParser {
     import Math._
@@ -1341,7 +1341,7 @@ package ShakesEM {
   * This provides a real parser that can provide a parse chart with partial
   * estimates all filled in.
   */
-  abstract class ShakesEstimatingParser //(id:Int,grammar:ShakesPCNF,ws:Int)
+  class ShakesEstimatingParser //(id:Int,grammar:ShakesPCNF,ws:Int)
     extends ShakesDistributedParser with EstimatingDefinitions {//with ShakesFullCYKParser with Actor { 
     import Math._
     import collection.mutable.HashMap
@@ -1350,6 +1350,7 @@ package ShakesEM {
                             //  parse.
     //var id = idNum
 
+    var wordScale = 10000
 
 
     /**
@@ -1390,154 +1391,156 @@ package ShakesEM {
   //case class ToParse(s:String)
 
 
-    /**
-    * Create many estimating parsers and estimate a grammar. Use this by
-    * implementing useGrammar (this receives the trained grammar after every
-    * iteration), stoppingCondition (iterations continue until this returns true),
-    * and parserConstructor (builds an array of parsers)
-    * @param initGram The initial random grammar
-    * @param trainingCorpus The training corpus the parsers will use
-    */
-    abstract class ShakesRemoteParserManager(initGram:ShakesPCNF) extends Actor {
-      import Math._
-      import collection.mutable.{HashMap,ArrayBuffer}
+   /**
+   * Create many estimating parsers and estimate a grammar. Use this by
+   * implementing useGrammar (this receives the trained grammar after every
+   * iteration), stoppingCondition (iterations continue until this returns true),
+   * and parserConstructor (builds an array of parsers)
+   * @param initGram The initial random grammar
+   * @param trainingCorpus The training corpus the parsers will use
+   */
+   abstract class ShakesRemoteParserManager extends Actor {
+     import Math._
+     import collection.mutable.{HashMap,ArrayBuffer}
 
-      def stoppingCondition( iterNum:Int, deltaLogProb:Double ):Boolean
-      def parserConstructor:ArrayBuffer[Actor]
-      def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
-      def cleanup:Unit
+     def stoppingCondition( iterNum:Int, deltaLogProb:Double ):Boolean
+     def parserConstructor:ArrayBuffer[Actor]
+     def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
+     def cleanup:Unit
 
-      var g1 = initGram
-      var g2 = g1.countlessCopy
+     var g1:ShakesPCNF
+     var g2:ShakesPCNF
 
-      val trainCorpus:ShakesTrainCorpus
+     var trainCorpus:List[String]
 
-      var iterNum = 0
-      var deltaLogProb = 1.0
-      var lastCorpusLogProb = 0.0
-      var corpusLogProb = 0.0
+     var iterNum = 0
+     var deltaLogProb = 1.0
+     var lastCorpusLogProb = 0.0
+     var corpusLogProb = 0.0
 
-      var stringID = 0
+     var stringID = 0
 
-      var parsers = parserConstructor
-      var numFinishedParsers = 0
-
-
-
-      parsers.foreach( p =>
-        {
-          //p.start
-          println("Sending " + trainCorpus( stringID ) + " to parser " +
-          stringID )
-          p ! trainCorpus( stringID )
-          stringID += 1
-        }
-      )
-
-      def receive = {
-        case (
-          id:Int,
-          scaledStringProb:Double,
-          f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
-          g_i:HashMap[(Int,String,String),Double],
-          h_i:HashMap[(Int,Int,String),Double],
-          scaledBy:Double
-        ) => {
-
-          corpusLogProb = corpusLogProb + Math.log( scaledStringProb ) -
-            Math.log( scaledBy )
-
-          f_i.keys.foreach( lhs =>
-            f_i (lhs) .keys.foreach( left =>
-              f_i (lhs)(left) .keys.foreach{ right =>
-                g2.f (lhs._3)(left)(right) =
-                  g2.f (lhs._3)(left)(right) +
-                  (
-                    f_i (lhs)(left)(right) /
-                    scaledStringProb
-                  )
-              }
-            )
-          )
-          g_i.keys.foreach{ k =>
-            val index = k._1
-            val pos = k._2
-            val word = k._3
-            g2.g( (pos,word) ) = 
-              g2.g( (pos,word) ) +
-              (
-                g_i( k ) /
-                scaledStringProb
-              )
-          }
-          h_i.keys.foreach{ k =>
-            val start = k._1
-            val end = k._2
-            val label = k._3
-            g2.h(label) =
-              g2.h(label) + 
-              (
-                h_i(k) /
-                scaledStringProb
-              )
-          }
-
-          if( stringID < trainCorpus.size ) {
-
-            if( stringID % 100 == 0 )
-              println("Sending " + trainCorpus( stringID ) + " to parser " + id )
-
-            parsers(id) !  trainCorpus( stringID )
-            stringID += 1
-          } else {
-            //parsers(id) ! Stop
-            //parsers(id).stop
-            numFinishedParsers += 1
-
-            if( numFinishedParsers >= parsers.size ) {  // we have results from
-                                                        // every sentence
-              g2.reestimateRules
-              g1 = g2.copy
-              g2 = g1.countlessCopy
-
-              deltaLogProb = (lastCorpusLogProb - corpusLogProb) /
-                abs(corpusLogProb)
-
-              useGrammar( g1, iterNum )
-
-              println("corpusLogProb.Iter"+iterNum + ": "+ corpusLogProb)
-              println("deltaLogProb.Iter"+iterNum + ": "+ deltaLogProb)
+     var parsers = parserConstructor
+     var numFinishedParsers = 0
 
 
-              
-              if( ! stoppingCondition( iterNum, deltaLogProb ) ) {
-                iterNum += 1
-                stringID = 0
-                numFinishedParsers = 0
-                lastCorpusLogProb = corpusLogProb
-                corpusLogProb = 0.0
-                parsers = parserConstructor
 
-                parsers foreach( p =>
-                  {
-                    //p.start
-                    println("Sending " + trainCorpus( stringID ) + " to parser " +
-                    stringID )
-                    p ! trainCorpus( stringID )
-                    stringID += 1
-                  }
-                )
-              } else {
-                cleanup
-                exit
-              }
-            }
-          }
+     println( " > " + trainCorpus.size )
+     parsers.foreach( p =>
+       {
+         //p.start
+         println( stringID )
+         println("Sending " + trainCorpus( stringID ) + " to parser " +
+         stringID )
+         p ! trainCorpus( stringID )
+         stringID += 1
+       }
+     )
 
-      }
+     def receive = {
+       case (
+         id:Int,
+         scaledStringProb:Double,
+         f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+         g_i:HashMap[(Int,String,String),Double],
+         h_i:HashMap[(Int,Int,String),Double],
+         scaledBy:Double
+       ) => {
 
-    }
-  }
+         corpusLogProb = corpusLogProb + Math.log( scaledStringProb ) -
+           Math.log( scaledBy )
+
+         f_i.keys.foreach( lhs =>
+           f_i (lhs) .keys.foreach( left =>
+             f_i (lhs)(left) .keys.foreach{ right =>
+               g2.f (lhs._3)(left)(right) =
+                 g2.f (lhs._3)(left)(right) +
+                 (
+                   f_i (lhs)(left)(right) /
+                   scaledStringProb
+                 )
+             }
+           )
+         )
+         g_i.keys.foreach{ k =>
+           val index = k._1
+           val pos = k._2
+           val word = k._3
+           g2.g( (pos,word) ) = 
+             g2.g( (pos,word) ) +
+             (
+               g_i( k ) /
+               scaledStringProb
+             )
+         }
+         h_i.keys.foreach{ k =>
+           val start = k._1
+           val end = k._2
+           val label = k._3
+           g2.h(label) =
+             g2.h(label) + 
+             (
+               h_i(k) /
+               scaledStringProb
+             )
+         }
+
+         if( stringID < trainCorpus.size ) {
+
+           if( stringID % 100 == 0 )
+             println("Sending " + trainCorpus( stringID ) + " to parser " + id )
+
+           parsers(id) !  trainCorpus( stringID )
+           stringID += 1
+         } else {
+           //parsers(id) ! Stop
+           //parsers(id).stop
+           numFinishedParsers += 1
+
+           if( numFinishedParsers >= parsers.size ) {  // we have results from
+                                                       // every sentence
+             g2.reestimateRules
+             g1 = g2.copy
+             g2 = g1.countlessCopy
+
+             deltaLogProb = (lastCorpusLogProb - corpusLogProb) /
+               abs(corpusLogProb)
+
+             useGrammar( g1, iterNum )
+
+             println("corpusLogProb.Iter"+iterNum + ": "+ corpusLogProb)
+             println("deltaLogProb.Iter"+iterNum + ": "+ deltaLogProb)
+
+
+             
+             if( ! stoppingCondition( iterNum, deltaLogProb ) ) {
+               iterNum += 1
+               stringID = 0
+               numFinishedParsers = 0
+               lastCorpusLogProb = corpusLogProb
+               corpusLogProb = 0.0
+               parsers = parserConstructor
+
+               parsers foreach( p =>
+                 {
+                   //p.start
+                   println("Sending " + trainCorpus( stringID ) + " to parser " +
+                   stringID )
+                   p ! trainCorpus( stringID )
+                   stringID += 1
+                 }
+               )
+             } else {
+               cleanup
+               exit
+             }
+           }
+         }
+
+     }
+
+   }
+ }
 
   
     /**
@@ -1859,7 +1862,7 @@ package ShakesEM {
   * producing partial counts.
   * @param ws Amount to scale terminal probabilities by
   */
-  abstract class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
+  class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
     extends ShakesEstimatingParser /*(id,grammar,ws)*/ {
     import Math._
     import collection.mutable.{HashSet,HashMap}
@@ -2132,11 +2135,6 @@ package ShakesEM {
   }
 
 
-//  abstract class ShakesParserManager {
-//
-//
-//
-//  }
 
 } // END PACKAGE
 

@@ -8,8 +8,6 @@ package ParsingRunners {
 object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
   def main( args: Array[String] ) {
     import se.scalablesolutions.akka.remote.{RemoteClient,RemoteNode}
-//    import scala.actors.Actor
-//    import scala.actors.Actor._
     import collection.mutable.ArrayBuffer
     import Math._
     import scala.io.Source._
@@ -55,8 +53,10 @@ object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
 
     initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
 
-    val trainingCorpus = new StringsOnlyCorpus
+    var trainingCorpus = new StringsOnlyCorpus
     trainingCorpus.readCorpus( trainYieldSpec )
+
+    println( " < " + trainingCorpus.size )
 
     val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
       0).map(_.replace("\n",""))
@@ -65,80 +65,36 @@ object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
       0).map(_.replace("\n",""))
 
 
-    //hostnames foreach( host => {
-    //    val myServer = new RemoteServer
-    //    myServer.start(host, 9990)
-    //    //println("STARTING HOST" + host )
-    //    //RemoteNode.start( host, 9990) 
-    //  }
-    //)
 
-//    val doubleHostnames = hostnames ::: hostnames // start up two actors on each remote
-//                                        // node
+    class ThisManager extends ShakesRemoteParserManager {
 
-    object manager extends ShakesRemoteParserManager( initGram ) {
-      import java.io._
+      var g1 = initGram
+      var g2 = g1.countlessCopy
 
-      val trainCorpus = trainingCorpus
+      var trainCorpus:List[String] = testStrings
 
+      def useGrammar(trainedGram:ShakesPCNF, iterNum:Int) = ()
+      def cleanup = ()
 
-      object VitActor extends EvaluationActor(initGram,10000) {
-        var testCorpus = testStrings
-      }
-      VitActor.start
-
-      def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-        VitActor ! Tuple2(g1,iterNum)
-
-        //val vit = new ShakesViterbiParser(trainedGram, wordScale)
-        //
-        //for( s <- testStrings ) {
-        //  val testWords = s.split(' ')
-        //  vit.resize( testWords.size + 1 )
-        //  vit.populateChart( testWords )
-        //  if( iterNum % 2 == 0 )
-        //    println( "Iter" + iterNum + ":" + vit.parseString )
-        //}
-      }
 
       def parserConstructor = {
         val someParsers = new ArrayBuffer[Actor]
 
+        val thisParser = new ShakesEstimatingParser
 
+        thisParser.makeRemote( "localhost", 9999 )
+        thisParser.start
 
-        //val thisParser = new ShakesEstimatingParser( 0, g1, wordScale )
-
-        object thisRemoteParser extends ShakesEstimatingParser {
-          var wordScale = 10000
-        }
-
-        //RemoteNode.start( "localhost", 9990 )
-        thisRemoteParser.makeRemote( "localhost", 9999 )
-        thisRemoteParser.start
-
-        //(0 to (hostnames.size-1) ) foreach( id => {
-            //class thisActor extends ShakesBracketedParser( id, g1, wordScale)
-            //val thisParser = new ShakesBracketedParser( 0, g1, wordScale)
-            //RemoteNode.start( "localhost", 9990 )
-            //RemoteNode.register(  "parsingService",
-            //                      new ShakesBracketedParser(0, g1, wordScale )
-            //)
-            //val thisParser =
-            //  RemoteClient.actorFor("parsingService","localhost",9990)
-            //thisParser.start
-            //thisParser makeRemote( "localhost" , 9999 )
-          someParsers += thisRemoteParser
-         // }
-        //)
+        someParsers += thisParser
+        println( " | " + someParsers.length)
         someParsers
       }
 
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
         iterNum > minIter && abs(deltaLogProb) < tolerance
-      def cleanup = {
-        VitActor ! Tuple2(g1,Stop)
-      }
     }
+
+    val manager = new ThisManager
 
     manager.start
   }
