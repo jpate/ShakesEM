@@ -3,8 +3,6 @@ package RunShakesEM {
 
   object trainAndEvaluateEstimatingMinIterAndConvergence {
     def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
       import collection.mutable.ArrayBuffer
       import Math._
       import scala.io.Source._
@@ -169,8 +167,6 @@ package RunShakesEM {
 
   object trainAndEvaluateBracketedMinIterAndConvergence {
     def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
       import collection.mutable.ArrayBuffer
       import Math._
       import scala.io.Source._
