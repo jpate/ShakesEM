@@ -80,8 +80,6 @@ package ShakesEM {
     * this function lies in its side-effects.
     */
     def reestimateRules {
-      //reestimateCounter = reestimateCounter + 1
-      //println("REESTIMATION NUMBER" + reestimateCounter)
       f.keys.foreach{ lhs =>
         f (lhs) .keys.foreach{ left =>
           f (lhs)(left) .keys.foreach{ right =>
@@ -724,8 +722,6 @@ package ShakesEM {
           0 to (length-1) foreach( i => backMatcher += new ArrayBuffer[(String,String)])
           backMatcher( split - start ) += (left,right)
 
-          //println( "\t\t"+backMatcher(split-start).size)
-
           setIPProb( prob )
         }
       }
@@ -1119,13 +1115,6 @@ package ShakesEM {
         }
       }
 
-      /*
-      if( !root.contains("S") )
-        println("SENTENCE DID NOT PARSE") 
-      else
-        println("SENTENCE " + s.mkString(""," ","") + " PARSED")
-      */
-
       chartDescent( computeOPWithEstimates )
     }
 
@@ -1366,8 +1355,9 @@ package ShakesEM {
       parsers.foreach( p =>
         {
           p.start
-          println("Sending " + trainCorpus( stringID ) + " to parser " +
-          stringID )
+          if( stringID % 100 == 0 )
+            println("Sending " + trainCorpus( stringID ) + " to parser " +
+            stringID )
           p ! trainCorpus( stringID )
           stringID += 1
         }
@@ -1458,8 +1448,9 @@ package ShakesEM {
                 parsers foreach( p =>
                   {
                     p.start
-                    println("Sending " + trainCorpus( stringID ) + " to parser " +
-                    stringID )
+                    if( stringID % 100 == 0 )
+                      println("Sending " + trainCorpus( stringID ) + " to parser " +
+                      stringID )
                     p ! trainCorpus( stringID )
                     stringID += 1
                   }
@@ -1527,8 +1518,6 @@ package ShakesEM {
         List.range(0,j-1).reverse.foreach{ i =>
           if( isCompatible( i, j ) )
             synFill(i, j)
-          //else
-            //println("skipped cell " + (i,j))
         }
       }
       chartDescent( computeOPWithEstimates )
@@ -1589,7 +1578,6 @@ package ShakesEM {
       }
     }
     def lexFill( w:String, index:Int) {
-      //println( w + ": \t" + g.lexExps(w) )
       val mlePOS = g.lexExps(w).foldLeft(g.lexExps(w)(0))( (l1, l2) =>
         if( l1._2 > l2._2 )
           l1 else l2
@@ -1627,8 +1615,6 @@ package ShakesEM {
 
   abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
     extends ShakesViterbiParser(initGram,ws) with Actor {
-    //var iterNum = 0
-    //var lastGo = false
     var testCorpus:List[String]
     def receive = {
       case (intermediateGram:ShakesPCNF, iterNum:Int) =>
