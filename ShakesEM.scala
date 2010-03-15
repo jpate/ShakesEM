@@ -1413,7 +1413,8 @@ package ShakesEM {
 
           if( stringID < trainCorpus.size ) {
 
-            println("Sending " + trainCorpus( stringID ) + " to parser " + id )
+            if( stringID % 100 == 0 )
+              println("Sending " + stringID + " to parser " + id )
 
             parsers(id) !  trainCorpus( stringID )
             stringID += 1
