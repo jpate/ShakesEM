@@ -542,8 +542,8 @@ object trainAndEvaluateBracketedByIter {
 
 object trainAndEvaluateBracketedByIterAndReadGrammar {
   def main( args: Array[String] ) {
-    import scala.actors.Actor
-    import scala.actors.Actor._
+//    import scala.actors.Actor
+//    import scala.actors.Actor._
     import collection.mutable.ArrayBuffer
     import Math._
     import scala.io.Source._
@@ -602,8 +602,7 @@ object trainAndEvaluateBracketedByIterAndReadGrammar {
           println( "Iter" + iterNum + ":" + vit.parseString )
         }
 
-        if( iterNum == 1 )
-          println( trainedGram )
+        println( trainedGram )
 
       }
 

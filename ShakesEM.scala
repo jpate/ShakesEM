@@ -23,6 +23,7 @@
 * @author John K Pate
 */
 package ShakesEM {
+
   import se.scalablesolutions.akka.actor.Actor
   import se.scalablesolutions.akka.actor.Actor._
   /**
@@ -1914,11 +1915,6 @@ package ShakesEM {
   }
 
 
-//  abstract class ShakesParserManager {
-//
-//
-//
-//  }
 
 } // END PACKAGE
 
