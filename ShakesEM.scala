@@ -19,12 +19,12 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 *
-* @version 0.19
+* @version 0.20_akkaActors
 * @author John K Pate
 */
 package ShakesEM {
-  import scala.actors.Actor
-  import scala.actors.Actor._
+  import se.scalablesolutions.akka.actor.Actor
+  import se.scalablesolutions.akka.actor.Actor._
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
@@ -1094,6 +1094,7 @@ package ShakesEM {
   */
   class ShakesEstimatingParser(id:Int,grammar:ShakesPCNF,ws:Int)
     extends ShakesDistributedParser {//with ShakesFullCYKParser with Actor { 
+    import Math._
     import collection.mutable.HashMap
 
     var g = grammar
@@ -1292,44 +1293,347 @@ package ShakesEM {
     /**
     * Use this as an actor
     */
-    def act() {
-      import Math._
-      loop {
-        react {
-          case s:String => {  // If we get a sentence, then parse it and send the
-                              // counts back
-            f_i.clear
-            g_i.clear
-            h_i.clear
+    def receive = {
+      case s:String => {  // If we get a sentence, then parse it and send the
+                          // counts back
+        f_i.clear
+        g_i.clear
+        h_i.clear
 
-            val words = s.split(' ')
-            resize( words.size+1 )
+        val words = s.split(' ')
+        resize( words.size+1 )
 
-            populateChart(words)
+        populateChart(words)
 
-            if( !root.contains("S") ) {
-              println("WARNING: SENTENCE DID NOT PARSE")
-              println( s )
-            }
-
-            val scaledBy = pow( wordScale, size - 1 )
-
-
-            sender ! (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
-          }
-          case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + id + " stopping")
-            exit()
-          }
-          /*
-          case w:Any => {
-            println( "wtf" + w )
-          }
-          */
+        if( !root.contains("S") ) {
+          println("WARNING: SENTENCE DID NOT PARSE")
+          println( s )
         }
+
+        val scaledBy = pow( wordScale, size - 1 )
+
+
+        //sender ! (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+        reply (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+      }
+      case Stop => {      // If we get the stop signal, then shut down.
+        println("Parser " + id + " stopping")
+        exit
       }
     }
   }
+
+  //case class ToParse(s:String)
+
+
+
+  
+    /**
+    * Create many estimating parsers and estimate a grammar. Use this by
+    * implementing useGrammar (this receives the trained grammar after every
+    * iteration), stoppingCondition (iterations continue until this returns true),
+    * and parserConstructor (builds an array of parsers)
+    * @param initGram The initial random grammar
+    * @param trainingCorpus The training corpus the parsers will use
+    */
+    abstract class ShakesParserManager(initGram:ShakesPCNF) extends Actor {
+      import Math._
+      import collection.mutable.{HashMap,ArrayBuffer}
+
+      def stoppingCondition( iterNum:Int, deltaLogProb:Double ):Boolean
+      def parserConstructor:ArrayBuffer[ShakesDistributedParser]
+      def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
+      def cleanup:Unit
+
+      var g1 = initGram
+      var g2 = g1.countlessCopy
+
+      val trainCorpus:ShakesTrainCorpus
+
+      var iterNum = 0
+      var deltaLogProb = 1.0
+      var lastCorpusLogProb = 0.0
+      var corpusLogProb = 0.0
+
+      var stringID = 0
+
+      var parsers = parserConstructor
+      var numFinishedParsers = 0
+
+
+
+      parsers.foreach( p =>
+        {
+          p.start
+          println("Sending " + trainCorpus( stringID ) + " to parser " +
+          stringID )
+          p ! trainCorpus( stringID )
+          stringID += 1
+        }
+      )
+
+      def receive = {
+        case (
+          id:Int,
+          scaledStringProb:Double,
+          f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+          g_i:HashMap[(Int,String,String),Double],
+          h_i:HashMap[(Int,Int,String),Double],
+          scaledBy:Double
+        ) => {
+
+          corpusLogProb = corpusLogProb + Math.log( scaledStringProb ) -
+            Math.log( scaledBy )
+
+          f_i.keys.foreach( lhs =>
+            f_i (lhs) .keys.foreach( left =>
+              f_i (lhs)(left) .keys.foreach{ right =>
+                g2.f (lhs._3)(left)(right) =
+                  g2.f (lhs._3)(left)(right) +
+                  (
+                    f_i (lhs)(left)(right) /
+                    scaledStringProb
+                  )
+              }
+            )
+          )
+          g_i.keys.foreach{ k =>
+            val index = k._1
+            val pos = k._2
+            val word = k._3
+            g2.g( (pos,word) ) = 
+              g2.g( (pos,word) ) +
+              (
+                g_i( k ) /
+                scaledStringProb
+              )
+          }
+          h_i.keys.foreach{ k =>
+            val start = k._1
+            val end = k._2
+            val label = k._3
+            g2.h(label) =
+              g2.h(label) + 
+              (
+                h_i(k) /
+                scaledStringProb
+              )
+          }
+
+          if( stringID < trainCorpus.size ) {
+
+            println("Sending " + trainCorpus( stringID ) + " to parser " + id )
+
+            parsers(id) !  trainCorpus( stringID )
+            stringID += 1
+          } else {
+            parsers(id) ! Stop
+            numFinishedParsers += 1
+
+            if( numFinishedParsers >= parsers.size ) {  // we have results from
+                                                        // every sentence
+              g2.reestimateRules
+              g1 = g2.copy
+              g2 = g1.countlessCopy
+
+              deltaLogProb = (lastCorpusLogProb - corpusLogProb) /
+                abs(corpusLogProb)
+
+              useGrammar( g1, iterNum )
+
+              println("corpusLogProb.Iter"+iterNum + ": "+ corpusLogProb)
+              println("deltaLogProb.Iter"+iterNum + ": "+ deltaLogProb)
+
+
+              
+              if( ! stoppingCondition( iterNum, deltaLogProb ) ) {
+                iterNum += 1
+                stringID = 0
+                numFinishedParsers = 0
+                lastCorpusLogProb = corpusLogProb
+                corpusLogProb = 0.0
+                parsers = parserConstructor
+
+                parsers foreach( p =>
+                  {
+                    p.start
+                    println("Sending " + trainCorpus( stringID ) + " to parser " +
+                    stringID )
+                    p ! trainCorpus( stringID )
+                    stringID += 1
+                  }
+                )
+              } else {
+                cleanup
+                exit
+              }
+            }
+          }
+
+      }
+
+    }
+  }
+
+  //  /**
+  //  * Create many estimating parsers and estimate a grammar. Use this by
+  //  * implementing useGrammar (this receives the trained grammar after every
+  //  * iteration), stoppingCondition (iterations continue until this returns true),
+  //  * and parserConstructor (builds an array of parsers)
+  //  * @param initGram The initial random grammar
+  //  * @param trainingCorpus The training corpus the parsers will use
+  //  */
+  //  abstract class ShakesParserManager(
+  //    initGram:ShakesPCNF,
+  //    trainingCorpus:ShakesTrainCorpus ) extends Actor {
+  //    import scala.collection.mutable.{ArrayBuffer,HashMap}
+  //    import Math._
+  //
+  //
+  //    //var trainingCorpus:ShakesTrainCorpus
+  //    var g1 = initGram
+  //    var g2:ShakesPCNF = g1.countlessCopy
+  //    //g2.reestimateCounter = g1.reestimateCounter
+  //
+  //    //var parsers:Array[ShakesDistributedParser]
+  //
+  //    def stoppingCondition(n:Int,x:Double):Boolean
+  //
+  //    def parserConstructor:ArrayBuffer[ShakesDistributedParser]
+  //
+  //    def cleanup:{}
+  //
+  //    def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
+  //    var iterationNum = 0
+  //    var deltaLogProb = 1.0
+  //    var lastCorpusLogProb = 0.0
+  //    var corpusLogProb = 0.0
+  //
+  //
+  //    def receive {
+  //      //trapExit = true
+  //      iterationNum = 0
+  //      deltaLogProb = 1.0
+  //      lastCorpusLogProb = 0.0
+  //      corpusLogProb = 0.0
+  //
+  //      while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
+  //
+  //        val parsers = parserConstructor
+  //
+  //
+  //        parsers.foreach( _.start )
+  //
+  //        println("Beginning to parse iteration " + iterationNum + "...\n\n")
+  //        List.range(0, parsers.size).foreach{ id =>
+  //          println( "Sending sentence number " + id + " to parser " + id )
+  //          parsers(id) ! trainingCorpus(id)
+  //        }
+  //
+  //        var sentenceNumber = parsers.size - 1
+  //        var numFinishedParsers = 0
+  //
+  //        while( numFinishedParsers < parsers.size ) {
+  //          receive {
+  //            case (
+  //                    id:Int,
+  //                    scaledStringProb:Double,
+  //                    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+  //                    g_i:HashMap[(Int,String,String),Double],
+  //                    h_i:HashMap[(Int,Int,String),Double],
+  //                    scaledBy:Double
+  //            ) => {
+  //
+  //              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
+  //                log( scaledBy )
+  //
+  //              f_i.keys.foreach( lhs =>
+  //                f_i (lhs) .keys.foreach( left =>
+  //                  f_i (lhs)(left) .keys.foreach{ right =>
+  //                    g2.f (lhs._3)(left)(right) =
+  //                      g2.f (lhs._3)(left)(right) +
+  //                      (
+  //                        f_i (lhs)(left)(right) /
+  //                        scaledStringProb
+  //                      )
+  //                  }
+  //                )
+  //              )
+  //              g_i.keys.foreach{ k =>
+  //                val index = k._1
+  //                val pos = k._2
+  //                val word = k._3
+  //                g2.g( (pos,word) ) = 
+  //                  g2.g( (pos,word) ) +
+  //                  (
+  //                    g_i( k ) /
+  //                    scaledStringProb
+  //                  )
+  //              }
+  //              h_i.keys.foreach{ k =>
+  //                val start = k._1
+  //                val end = k._2
+  //                val label = k._3
+  //                g2.h(label) =
+  //                  g2.h(label) + 
+  //                  (
+  //                    h_i(k) /
+  //                    scaledStringProb
+  //                  )
+  //              }
+  //
+  //
+  //              sentenceNumber = sentenceNumber + 1
+  //
+  //              if( sentenceNumber >= trainingCorpus.size) {
+  //                numFinishedParsers = numFinishedParsers + 1
+  //              } else {
+  //                if( sentenceNumber % 100 == 0 )
+  //                  println(
+  //                    "Starting sentence number " + sentenceNumber  + " with parser " +
+  //                    id
+  //                  )
+  //                parsers(id) ! trainingCorpus(sentenceNumber)
+  //              }
+  //
+  //            }
+  //          }
+  //        }
+  //
+  //
+  //        parsers.foreach( _ ! Stop )
+  //
+  //        g2.reestimateRules
+  //
+  //        g1 = g2
+  //        g2 = g1.countlessCopy
+  //        //g2.reestimateCounter = g1.reestimateCounter
+  //
+  //
+  //        deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
+  //
+  //        println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
+  //        println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
+  //
+  //        useGrammar( g1 , iterationNum)
+  //
+  //        lastCorpusLogProb = corpusLogProb
+  //        corpusLogProb = 0.0
+  //
+  //        iterationNum = iterationNum + 1
+  //
+  //
+  //
+  //      }
+  //      useGrammar( g1, iterationNum )
+  //
+  //      cleanup
+  //
+  //      exit()
+  //    }
+  //  }
+  
+
 
   /**
   * This implements the extension of standard EM from Pereira and Schabes (1992)
@@ -1388,39 +1692,35 @@ package ShakesEM {
       chartDescent( computeOPWithEstimates )
     }
 
-    override def act() {
-      loop {
-        react {
-          case Tuple2(s:String,b:HashSet[(Int,Int)]) => {  
-                              // If we get a sentence, then parse it and send the
-                              // counts back
-            f_i.clear
-            g_i.clear
-            h_i.clear
-            bracketing = b
+    override def receive = {
+      case Tuple2(s:String,b:HashSet[(Int,Int)]) => {
+                          // If we get a sentence, then parse it and send the
+                          // counts back
+        f_i.clear
+        g_i.clear
+        h_i.clear
+        bracketing = b
 
 
-            val words = s.split(' ')
-            resize(words.size + 1)
+        val words = s.split(' ')
+        resize(words.size + 1)
 
 
-            populateChart(words)
+        populateChart(words)
 
-            if( !root.contains("S") ) {
-              println("WARNING: SENTENCE DID NOT PARSE")
-              println( s )
-            }
-
-            val scaledBy = pow( wordScale , size - 1 )
-            sender ! (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
-          }
-          case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + id + " stopping")
-            exit()
-          }
+        if( !root.contains("S") ) {
+          println("WARNING: SENTENCE DID NOT PARSE")
+          println( s )
         }
+
+        val scaledBy = pow( wordScale , size - 1 )
+        //sender ! (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
+        reply (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
       }
-      
+      case Stop => {      // If we get the stop signal, then shut down.
+        println("Parser " + id + " stopping")
+        exit
+      }
     }
   }
 
@@ -1482,237 +1782,46 @@ package ShakesEM {
     def parseString:String = chart(0)(chart.size - 1)("S").viterbiString
   }
 
-  /**
-  * Create many estimating parsers and estimate a grammar. Use this by
-  * implementing useGrammar (this receives the trained grammar after every
-  * iteration), stoppingCondition (iterations continue until this returns true),
-  * and parserConstructor (builds an array of parsers)
-  * @param initGram The initial random grammar
-  * @param trainingCorpus The training corpus the parsers will use
-  */
-  abstract class ShakesParserManager(
-    initGram:ShakesPCNF,
-    trainingCorpus:ShakesTrainCorpus ) extends Actor {
-    import scala.collection.mutable.{ArrayBuffer,HashMap}
-    import Math._
-
-
-    //var trainingCorpus:ShakesTrainCorpus
-    var g1 = initGram
-    var g2:ShakesPCNF = g1.countlessCopy
-    //g2.reestimateCounter = g1.reestimateCounter
-
-    //var parsers:Array[ShakesDistributedParser]
-
-    def stoppingCondition(n:Int,x:Double):Boolean
-
-    def parserConstructor:ArrayBuffer[ShakesDistributedParser]
-
-    def cleanup:{}
-
-    def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
-    var iterationNum = 0
-    var deltaLogProb = 1.0
-    var lastCorpusLogProb = 0.0
-    var corpusLogProb = 0.0
-
-
-    def act() {
-      //trapExit = true
-      iterationNum = 0
-      deltaLogProb = 1.0
-      lastCorpusLogProb = 0.0
-      corpusLogProb = 0.0
-
-      while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
-
-        val parsers = parserConstructor
-
-
-        parsers.foreach( _.start )
-
-        println("Beginning to parse iteration " + iterationNum + "...\n\n")
-        List.range(0, parsers.size).foreach{ id =>
-          println( "Sending sentence number " + id + " to parser " + id )
-          parsers(id) ! trainingCorpus(id)
-        }
-
-        var sentenceNumber = parsers.size - 1
-        var numFinishedParsers = 0
-
-        while( numFinishedParsers < parsers.size ) {
-          receive {
-            case (
-                    id:Int,
-                    scaledStringProb:Double,
-                    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
-                    g_i:HashMap[(Int,String,String),Double],
-                    h_i:HashMap[(Int,Int,String),Double],
-                    scaledBy:Double
-            ) => {
-
-              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
-                log( scaledBy )
-
-              f_i.keys.foreach( lhs =>
-                f_i (lhs) .keys.foreach( left =>
-                  f_i (lhs)(left) .keys.foreach{ right =>
-                    g2.f (lhs._3)(left)(right) =
-                      g2.f (lhs._3)(left)(right) +
-                      (
-                        f_i (lhs)(left)(right) /
-                        scaledStringProb
-                      )
-                  }
-                )
-              )
-              g_i.keys.foreach{ k =>
-                val index = k._1
-                val pos = k._2
-                val word = k._3
-                g2.g( (pos,word) ) = 
-                  g2.g( (pos,word) ) +
-                  (
-                    g_i( k ) /
-                    scaledStringProb
-                  )
-              }
-              h_i.keys.foreach{ k =>
-                val start = k._1
-                val end = k._2
-                val label = k._3
-                g2.h(label) =
-                  g2.h(label) + 
-                  (
-                    h_i(k) /
-                    scaledStringProb
-                  )
-              }
-
-
-              sentenceNumber = sentenceNumber + 1
-
-              if( sentenceNumber >= trainingCorpus.size) {
-                numFinishedParsers = numFinishedParsers + 1
-              } else {
-                if( sentenceNumber % 100 == 0 )
-                  println(
-                    "Starting sentence number " + sentenceNumber  + " with parser " +
-                    id
-                  )
-                parsers(id) ! trainingCorpus(sentenceNumber)
-              }
-
-            }
-          }
-        }
-
-
-        parsers.foreach( _ ! Stop )
-
-        g2.reestimateRules
-
-        g1 = g2
-        g2 = g1.countlessCopy
-        //g2.reestimateCounter = g1.reestimateCounter
-
-
-        deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
-
-        println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
-        println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
-
-        useGrammar( g1 , iterationNum)
-
-        lastCorpusLogProb = corpusLogProb
-        corpusLogProb = 0.0
-
-        iterationNum = iterationNum + 1
-
-
-
-      }
-      useGrammar( g1, iterationNum )
-
-      cleanup
-
-      exit()
-    }
-  }
 
   abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
     extends ShakesViterbiParser(initGram,ws) with Actor {
     //var iterNum = 0
     //var lastGo = false
     var testCorpus:List[String]
-    def act = {
-      while(true) {
-        receive {
-          case (intermediateGram:ShakesPCNF, iterNum:Int) =>
-            if( iterNum % 2 == 0 )
-            {
-              g = intermediateGram
-              testCorpus.foreach{ testSentence =>
-                val words = testSentence.split(' ')
-                clear
-                resize( words.size + 1 )
-                populateChart( words )
+    def receive = {
+      case (intermediateGram:ShakesPCNF, iterNum:Int) =>
+        if( iterNum % 2 == 0 )
+        {
+          g = intermediateGram
+          testCorpus.foreach{ testSentence =>
+            val words = testSentence.split(' ')
+            clear
+            resize( words.size + 1 )
+            populateChart( words )
 
-              if( !root.contains("S") ) {
-                println("WARNING: SENTENCE DID NOT PARSE")
-                println( testSentence )
-              }
+          if( !root.contains("S") ) {
+            println("WARNING: SENTENCE DID NOT PARSE")
+            println( testSentence )
+          }
 
-                println("Parses.Iter" + iterNum + ": " + parseString )
-              }
-  
-  
-              /*
-              println("WRITING GRAMMAR FOR ITERATION " + iterNum)
-              val bw = new BufferedWriter(new
-              FileWriter(gramFilePrefix+"Iter"+iterNum,false));
-              bw.write(
-                "Corpus log probability: " +
-                corpusLogProb +
-                "\nCorpus probability: " +
-                exp(corpusLogProb) +
-                "\nDelta LogProb: " +
-                deltaLogProb +
-                "\n\n" +
-                g1.toString
-              );
-              bw.close();
-              */
-  
-              //if( lastGo ) {
-              //  println("VitActor exiting.")
-              //  println(g.toString.split("\n").
-              //    map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
-              //  )
-              //  exit()
-              //}
-            }
-          
-          case (intermediateGram:ShakesPCNF, Stop) => {
-            //lastGo = true
-
-            g = intermediateGram
-            testCorpus.foreach{ testSentence =>
-              val words = testSentence.split(' ')
-              clear
-              resize( words.size + 1 )
-              populateChart( words )
-              println("Parses.Converged" + ": " + parseString )
-            }
-
-            println("VitActor exiting.")
-            //println(g.toString.split("\n").
-            //  map( "Gram.Iter"+iterNum+": "+ _).mkString("","\n","")
-            //)
-            exit()
-
+            println("Parses.Iter" + iterNum + ": " + parseString )
           }
         }
+      
+      case (intermediateGram:ShakesPCNF, Stop) => {
+
+        g = intermediateGram
+        testCorpus.foreach{ testSentence =>
+          val words = testSentence.split(' ')
+          clear
+          resize( words.size + 1 )
+          populateChart( words )
+          println("Parses.Converged" + ": " + parseString )
+        }
+
+        println("VitActor exiting.")
+        exit
+
       }
     }
   }
@@ -1803,512 +1912,172 @@ package ShakesEM {
     }
     override def toString = strings mkString("","\n","")
   }
+
+
+//  abstract class ShakesParserManager {
+//
+//
+//
+//  }
+
 } // END PACKAGE
 
 
-
-
-
-    //  trait evaluator {
-    //    var initialGrammar = new ShakesPCNF
-    //
-    //    var trainingCorpus:ShakesTrainCorpus
-    //    var testCorpus:List[String] = Nil
-    //    var maxIter = 0
-    //    var maxTolerance = 0D
-    //
-    //    var parserArray:Array[ShakesEstimatingParser]
-    //
-    //    def continueUntil(n:Int,x:Double):Boolean
-    //
-    //    def setMaxIter(n:Int) { maxIter = n }
-    //    def setMaxTolerance(x:Double) { maxTolerance = x }
-    //
-    //    object VitActor
-    //      extends ShakesViterbiParser(initialGrammar,10000) with Actor {
-    //      var iterNum = 0
-    //      def act = {
-    //        while(true) {
-    //          receive {
-    //            case intermediateGram:ShakesPCNF =>
-    //              if( iterNum % 2 == 0 | iterNum == maxIter - 1)
-    //              {
-    //                g = intermediateGram
-    //                testCorpus.foreach{ testSentence =>
-    //                  val words = testSentence.split(' ')
-    //                  clear
-    //                  resize( words.size + 1 )
-    //                  populateChart( words )
-    //                }
-    //              }
-    //          }
-    //          iterNum = iterNum + 1
-    //          if( iterNum >= maxIter )
-    //            exit()
-    //        }
-    //      }
-    //    }
-    //
-    //  }
-    
-    //  trait printer {
-    //    var initialGrammar = new ShakesPCNF
-    //
-    //    var trainingCorpus:ShakesTrainCorpus
-    //    var maxIter = 0
-    //    var maxTolerance = 0D
-    //
-    //    def setMaxIter(n:Int) { maxIter = n }
-    //    def setMaxTolerance(x:Double) { maxTolerance = x }
-    //
-    //    object Manager extends ShakesParserManager(
-    //      initialGrammar,
-    //      trainingCorpus
-    //    ) {
-    //
-    //      def parserConstructor = parserFactory
-    //
-    //      def stoppingCondition(n:Int,x:Double) = continueUntil(n,x)
-    //
-    //      def useGrammar( intermGram:ShakesPCNF ) = {
-    //        println( intermGram )
-    //      }
-    //
-    //    }
-    //  }
-    
-    
-    //  /**
-    //  * Run EM until convergence (change in log probability of a corpus after an
-    //  * iteration is less than some tolerance)
-    //  * @param toParse The sentences to parse.
-    //  * @param g The (initial) grammar to use while parsing.
-    //  * @param numParsers The number of parsers to use.
-    //  * @param tolerance The largest change in log probability we are willing to
-    //  * accept.
-    //  * @param gramFilePrefix The prefix of the path to the file that grammars are
-    //  * written to.
-    //  */
-    //  class ShakesConvergenceManager
-    //  (toParse:List[String], g:ShakesPCNF, numParsers:Int, tolerance:Double,
-    //  gramFilePrefix:String, wordScale:Int) {
-    //    import Math._
-    //
-    //    /**
-    //    * The stop condition function.
-    //    * @param n Ignored, but should be provided. I know there's a more elegant
-    //    * way to handle this but I'm not going to bother just now.
-    //    * @param deltaLogProb The change in probability of the corpus.
-    //    * @return Whether the change in log probability is small enough to stop.
-    //    */
-    //    def underTolerance(n:Int,deltaLogProb:Double) =
-    //      abs(deltaLogProb) <= tolerance
-    //
-    //    def printGrammar(gram:ShakesPCNF) = println(gram)
-    //
-    //    val manager = new ShakesVanillaParserManager( toParse, g, numParsers,
-    //    gramFilePrefix, wordScale) ( underTolerance ) ( printGrammar )
-    //
-    //    manager.start
-    //  }
-    //
-    //  /**
-    //  * Run EM a specific number of iterations.
-    //  * @param toParse The sentences to parse.
-    //  * @param g The (initial) grammar to use while parsing.
-    //  * @param numParsers The number of parsers to use.
-    //  * @param numIterations The number of iterations we would like to run for.
-    //  * @param gramFilePrefix The prefix of the path to the file that grammars are
-    //  * written to.
-    //  */
-    //  class ShakesIterationManager
-    //  (toParse:List[String], g:ShakesPCNF, numParsers:Int, numIterations:Int,
-    //  gramFilePrefix:String, wordScale:Int) {
-    //    /**
-    //    * The stop condition function
-    //    * @param iterationNum The number of iterations we have run
-    //    * @param n Ignored, but should be provided. I know there's a more elegant
-    //    * way to handle this but I'm not going to bother just now.
-    //    * @return Whether we have run enough iterations to stop.
-    //    */
-    //    def iterationLimit(iterationNum:Int,n:Double) =
-    //      iterationNum >= numIterations
-    //
-    //    def printGrammar(gram:ShakesPCNF) = println(gram)
-    //
-    //    val manager = new ShakesVanillaParserManager( toParse,
-    //                      g,
-    //                      numParsers,
-    //                      gramFilePrefix,wordScale) ( iterationLimit ) ( printGrammar )
-    //
-    //
-    //    manager.start
-    //
-    //  }
-    
-    //  /**
-    //  * Run Bracketed EM until convergence (change in log probability of a corpus after an
-    //  * iteration is less than some tolerance)
-    //  * @param toParse The sentences to parse.
-    //  * @param g The (initial) grammar to use while parsing.
-    //  * @param numParsers The number of parsers to use.
-    //  * @param tolerance The largest change in log probability we are willing to
-    //  * accept.
-    //  * @param gramFilePrefix The prefix of the path to the file that grammars are
-    //  * written to.
-    //  * @todo I know there's a better way to manage all these classes that call the
-    //  * bracketed parsers instead of the vanilla parsers.
-    //  */
-    //  class ShakesBracketedConvergenceManager
-    //  (stringsPath:String, bracketsPath:String, g:ShakesPCNF, numParsers:Int, tolerance:Double,
-    //  gramFilePrefix:String, wordScale:Int) {
-    //    import Math._
-    //
-    //    /**
-    //    * The stop condition function.
-    //    * @param n Ignored, but should be provided. I know there's a more elegant
-    //    * way to handle this but I'm not going to bother just now.
-    //    * @param deltaLogProb The change in probability of the corpus.
-    //    * @return Whether the change in log probability is small enough to stop.
-    //    */
-    //    def underTolerance(n:Int,deltaLogProb:Double) =
-    //      abs(deltaLogProb) <= tolerance
-    //
-    //    def printGrammar(gram:ShakesPCNF) = println(gram)
-    //
-    //    val manager = new ShakesBracketedParserManager( stringsPath, bracketsPath, g, numParsers,
-    //    gramFilePrefix, wordScale) ( underTolerance ) ( printGrammar )
-    //
-    //    manager.start
-    //  }
-    //
-    //  class ShakesBracketedIterationManager
-    //  (stringsPath:String, bracketsPath:String, g:ShakesPCNF, numParsers:Int,
-    //  numIterations:Int, gramFilePrefix:String, wordScale:Int) {
-    //    import Math._
-    //
-    //    /**
-    //    * The stop condition function.
-    //    * @param n Ignored, but should be provided. I know there's a more elegant
-    //    * way to handle this but I'm not going to bother just now.
-    //    * @param deltaLogProb The change in probability of the corpus.
-    //    * @return Whether the change in log probability is small enough to stop.
-    //    */
-    //    def iterationLimit(iterationNum:Int,n:Double) =
-    //      iterationNum >= numIterations
-    //
-    //    def printGrammar(gram:ShakesPCNF) = println(gram)
-    //
-    //    val manager = new ShakesBracketedParserManager( stringsPath, bracketsPath, g, numParsers,
-    //    gramFilePrefix,wordScale) ( iterationLimit ) ( printGrammar )
-    //
-    //    manager.start
-    //  }
-    
-    
-    
-    //  /**
-    //  * Starts up a bunch of parsers and farms out the sentences to them for an
-    //  * iteration, updates the grammar, and repeats until the stopping condition is
-    //  * reached.
-    //  * @param toParse The sentences to parse.
-    //  * @param g The (initial) grammar to use while parsing.
-    //  * @param numParsers The number of parsers to use.
-    //  * @param numIterations The number of iterations we would like to run for.
-    //  * @param gramFilePrefix The prefix of the path to the file that grammars are
-    //  * @param stoppingCondtion Are we done yet?
-    //  */
-    //  class ShakesVanillaParserManager
-    //  (toParse:List[String], g:ShakesPCNF,
-    //  numParsers:Int, gramFilePrefix:String, ws:Int)
-    //  ( stoppingCondition: ((Int,Double) => Boolean ) )
-    //  ( useGrammar: (ShakesPCNF) => Unit  ) extends Actor {
-    //    import collection.mutable.{HashMap,Stack}
-    //    import Math._
-    //
-    //    var g1 = g
-    //    var g2 = g1.countlessCopy
-    //
-    //    val stackToParse = new Stack[String]
-    //
-    //
-    //    def act() {
-    //      var iterationNum = 0
-    //      var deltaLogProb = 1.0
-    //      var lastCorpusLogProb = 0.0
-    //      var corpusLogProb = 0.0
-    //
-    //      while( ! stoppingCondition(iterationNum,deltaLogProb) ) {
-    //        import java.io._
-    //        stackToParse ++= toParse
-    //
-    //        /**
-    //        * Let's make as many parsers as we are asked to.
-    //        */
-    //        val parsers:Array[ShakesVanillaEMParser] = Array.fromFunction(
-    //          new ShakesVanillaEMParser(_,g1,ws)
-    //        ) (numParsers)
-    //
-    //        parsers.foreach( _.start )
-    //
-    //        println("Beginning to parse iteration " + iterationNum + "...\n\n")
-    //        List.range(0,parsers.size).foreach{ id =>
-    //          println( "Sending sentence number " + id + " to parser " + id )
-    //          parsers(id) ! stackToParse.pop
-    //        }
-    //
-    //        var sentenceNumber = parsers.size
-    //        var numFinishedParsers = 0
-    //        while( numFinishedParsers < numParsers ) {
-    //          receive {
-    //            case (
-    //                    id:Int,
-    //                    scaledStringProb:Double,
-    //                    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
-    //                    g_i:HashMap[(Int,String,String),Double],
-    //                    h_i:HashMap[(Int,Int,String),Double],
-    //                    scaledBy:Double
-    //            ) => {
-    //
-    //              corpusLogProb = corpusLogProb + log( scaledStringProb ) - log( scaledBy
-    //              )
-    //
-    //              f_i.keys.foreach( lhs =>
-    //                f_i (lhs) .keys.foreach( left =>
-    //                  f_i (lhs)(left) .keys.foreach{ right =>
-    //                    g2.f (lhs._3)(left)(right) =
-    //                      g2.f (lhs._3)(left)(right) +
-    //                      (
-    //                        f_i (lhs)(left)(right) /
-    //                        scaledStringProb
-    //                      )
-    //                  }
-    //                )
-    //              )
-    //              g_i.keys.foreach{ k =>
-    //                val index = k._1
-    //                val pos = k._2
-    //                val word = k._3
-    //                g2.g( (pos,word) ) = 
-    //                  g2.g( (pos,word) ) +
-    //                  (
-    //                    g_i( k ) /
-    //                    scaledStringProb
-    //                  )
-    //              }
-    //              h_i.keys.foreach{ k =>
-    //                val start = k._1
-    //                val end = k._2
-    //                val label = k._3
-    //                g2.h(label) =
-    //                  g2.h(label) + 
-    //                  (
-    //                    h_i(k) / scaledStringProb
-    //                  )
-    //              }
-    //
-    //
-    //              sentenceNumber = sentenceNumber + 1
-    //
-    //              if( stackToParse.isEmpty) {
-    //                numFinishedParsers = numFinishedParsers + 1
-    //              } else {
-    //                if( sentenceNumber % 1000 == 0 )
-    //                  println(
-    //                    "Starting sentence number " + sentenceNumber  + " with parser " +
-    //                    id
-    //                  )
-    //                parsers(id) ! stackToParse.pop
-    //              }
-    //
-    //            }
-    //          }
-    //        }
-    //
-    //
-    //        // Out of sentences
-    //        parsers.foreach( _ ! Stop )
-    //  
-    //        // Fill g2 with the reestimated counts for the rules.
-    //        g2.reestimateRules
-    //
-    //        g1 = g2
-    //        g2 = g1.countlessCopy
-    //
-    //        deltaLogProb = (lastCorpusLogProb - corpusLogProb)/abs(corpusLogProb)
-    //
-    //
-    //        //// Write grammar from this iteration to file. How do you get a value out
-    //        //// of an actor without sending it as a message to another actor?
-    //        //val bw = new BufferedWriter(new
-    //        //FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
-    //        //bw.write(
-    //        //  "Corpus log probability: " +
-    //        //  corpusLogProb +
-    //        //  "\nCorpus probability: " +
-    //        //  exp(corpusLogProb) +
-    //        //  "\nDelta LogProb: " +
-    //        //  deltaLogProb +
-    //        //  "\n\n" +
-    //        //  g1.toString
-    //        //);
-    //        //bw.close();
-    //
-    //        useGrammar( g1 )
-    //
-    //        lastCorpusLogProb = corpusLogProb
-    //        corpusLogProb = 0.0
-    //
-    //        iterationNum = iterationNum + 1
-    //      }
-    //
-    //    }
-    //  }
-    
-    
-    //  /**
-    //  * Starts up parsers which use a partial bracketing to ignore certain
-    //  * sub-derivations when estimating counts.
-    //  *
-    //  */
-    //  class ShakesBracketedParserManager
-    //  (stringsPath:String, bracketsPath:String, g:ShakesPCNF, numParsers:Int,
-    //  gramFilePrefix:String, wordScale:Int)
-    //  ( stoppingCondition: ((Int,Double) => Boolean ) )
-    //  ( useGrammar: (ShakesPCNF) => Unit ) extends Actor {
-    //    import collection.mutable.HashMap
-    //    import Math._
-    //    var g1 = g
-    //    var g2 = g1.countlessCopy
-    //    
-    //    val corpus = new BracketedCorpus
-    //    corpus.readCorpus( stringsPath, bracketsPath )
-    //    val corpusSize = corpus.size
-    //
-    //    def act() {
-    //      var iterationNum = 0
-    //      var deltaLogProb = 1.0
-    //      var lastCorpusLogProb = 0.0
-    //      var corpusLogProb = 0.0
-    //
-    //      while( !stoppingCondition( iterationNum, deltaLogProb) ) {
-    //        import java.io._
-    //
-    //        val parsers:Array[ShakesBracketedParser] = Array.fromFunction(
-    //          new ShakesBracketedParser(_,g1,wordScale)
-    //        ) ( if( numParsers <= corpus.size ) numParsers else corpus.size )
-    //
-    //        parsers.foreach( _.start )
-    //        
-    //        println("Beginning to parse iteration " + iterationNum + "...\n\n")
-    //        List.range(0, parsers.size).foreach{ id =>
-    //          println( "Sending sentence number " + id + " to parser " + id )
-    //          parsers(id) ! corpus(id)
-    //        }
-    //
-    //        var sentenceNumber = parsers.size
-    //        var numFinishedParsers = 0
-    //        while( numFinishedParsers < parsers.size ) {
-    //          receive {
-    //            case (
-    //                    id:Int,
-    //                    scaledStringProb:Double,
-    //                    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
-    //                    g_i:HashMap[(Int,String,String),Double],
-    //                    h_i:HashMap[(Int,Int,String),Double],
-    //                    scaledBy:Double
-    //            ) => {
-    //
-    //              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
-    //                log( scaledBy )
-    //
-    //              f_i.keys.foreach( lhs =>
-    //                f_i (lhs) .keys.foreach( left =>
-    //                  f_i (lhs)(left) .keys.foreach{ right =>
-    //                    g2.f (lhs._3)(left)(right) =
-    //                      g2.f (lhs._3)(left)(right) +
-    //                      (
-    //                        f_i (lhs)(left)(right) /
-    //                        scaledStringProb
-    //                      )
-    //                  }
-    //                )
-    //              )
-    //              g_i.keys.foreach{ k =>
-    //                val index = k._1
-    //                val pos = k._2
-    //                val word = k._3
-    //                g2.g( (pos,word) ) = 
-    //                  g2.g( (pos,word) ) +
-    //                  (
-    //                    g_i( k ) /
-    //                    scaledStringProb
-    //                  )
-    //              }
-    //              h_i.keys.foreach{ k =>
-    //                val start = k._1
-    //                val end = k._2
-    //                val label = k._3
-    //                g2.h(label) =
-    //                  g2.h(label) + 
-    //                  (
-    //                    h_i(k) /
-    //                    scaledStringProb
-    //                  )
-    //              }
-    //
-    //
-    //
-    //              sentenceNumber = sentenceNumber + 1
-    //
-    //              if( sentenceNumber >= corpus.size) {
-    //                numFinishedParsers = numFinishedParsers + 1
-    //              } else {
-    //                if( sentenceNumber % 1000 == 0 )
-    //                  println(
-    //                    "Starting sentence number " + sentenceNumber  + " with parser " +
-    //                    id
-    //                  )
-    //                parsers(id) ! corpus(sentenceNumber)
-    //              }
-    //
-    //            }
-    //          }
-    //        }
-    //
-    //        parsers.foreach( _ ! Stop )
-    //
-    //        // Fill g2 with the reestimated counts for the rules.
-    //        g2.reestimateRules
-    //
-    //
-    //        g1 = g2
-    //        g2 = g1.countlessCopy
-    //
-    //        deltaLogProb = (lastCorpusLogProb - corpusLogProb)/abs(corpusLogProb)
-    //
-    //        //// Write grammar from this iteration to file. How do you get a value out
-    //        //// of an actor without sending it as a message to another actor?
-    //        //val bw = new BufferedWriter(new
-    //        //FileWriter(gramFilePrefix+"Iter"+iterationNum,false));
-    //        //bw.write(
-    //        //  "Corpus log probability: " +
-    //        //  corpusLogProb +
-    //        //  "\nCorpus probability: " +
-    //        //  exp(corpusLogProb) +
-    //        //  "\nDelta LogProb: " +
-    //        //  deltaLogProb +
-    //        //  "\n\n" +
-    //        //  g1.toString
-    //        //);
-    //        //bw.close();
-    //
-    //        useGrammar( g1 )
-    //
-    //        lastCorpusLogProb = corpusLogProb
-    //        corpusLogProb = 0.0
-    //
-    //        iterationNum = iterationNum + 1
-    //      }
-    //    }
-    //  }
+  //  /**
+  //  * Create many estimating parsers and estimate a grammar. Use this by
+  //  * implementing useGrammar (this receives the trained grammar after every
+  //  * iteration), stoppingCondition (iterations continue until this returns true),
+  //  * and parserConstructor (builds an array of parsers)
+  //  * @param initGram The initial random grammar
+  //  * @param trainingCorpus The training corpus the parsers will use
+  //  */
+  //  abstract class ShakesParserManager(
+  //    initGram:ShakesPCNF,
+  //    trainingCorpus:ShakesTrainCorpus ) extends Actor {
+  //    import scala.collection.mutable.{ArrayBuffer,HashMap}
+  //    import Math._
+  //
+  //
+  //    //var trainingCorpus:ShakesTrainCorpus
+  //    var g1 = initGram
+  //    var g2:ShakesPCNF = g1.countlessCopy
+  //    //g2.reestimateCounter = g1.reestimateCounter
+  //
+  //    //var parsers:Array[ShakesDistributedParser]
+  //
+  //    def stoppingCondition(n:Int,x:Double):Boolean
+  //
+  //    def parserConstructor:ArrayBuffer[ShakesDistributedParser]
+  //
+  //    def cleanup:{}
+  //
+  //    def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
+  //    var iterationNum = 0
+  //    var deltaLogProb = 1.0
+  //    var lastCorpusLogProb = 0.0
+  //    var corpusLogProb = 0.0
+  //
+  //
+  //    def receive {
+  //      //trapExit = true
+  //      iterationNum = 0
+  //      deltaLogProb = 1.0
+  //      lastCorpusLogProb = 0.0
+  //      corpusLogProb = 0.0
+  //
+  //      while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
+  //
+  //        val parsers = parserConstructor
+  //
+  //
+  //        parsers.foreach( _.start )
+  //
+  //        println("Beginning to parse iteration " + iterationNum + "...\n\n")
+  //        List.range(0, parsers.size).foreach{ id =>
+  //          println( "Sending sentence number " + id + " to parser " + id )
+  //          parsers(id) ! trainingCorpus(id)
+  //        }
+  //
+  //        var sentenceNumber = parsers.size - 1
+  //        var numFinishedParsers = 0
+  //
+  //        while( numFinishedParsers < parsers.size ) {
+  //          receive {
+  //            case (
+  //                    id:Int,
+  //                    scaledStringProb:Double,
+  //                    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+  //                    g_i:HashMap[(Int,String,String),Double],
+  //                    h_i:HashMap[(Int,Int,String),Double],
+  //                    scaledBy:Double
+  //            ) => {
+  //
+  //              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
+  //                log( scaledBy )
+  //
+  //              f_i.keys.foreach( lhs =>
+  //                f_i (lhs) .keys.foreach( left =>
+  //                  f_i (lhs)(left) .keys.foreach{ right =>
+  //                    g2.f (lhs._3)(left)(right) =
+  //                      g2.f (lhs._3)(left)(right) +
+  //                      (
+  //                        f_i (lhs)(left)(right) /
+  //                        scaledStringProb
+  //                      )
+  //                  }
+  //                )
+  //              )
+  //              g_i.keys.foreach{ k =>
+  //                val index = k._1
+  //                val pos = k._2
+  //                val word = k._3
+  //                g2.g( (pos,word) ) = 
+  //                  g2.g( (pos,word) ) +
+  //                  (
+  //                    g_i( k ) /
+  //                    scaledStringProb
+  //                  )
+  //              }
+  //              h_i.keys.foreach{ k =>
+  //                val start = k._1
+  //                val end = k._2
+  //                val label = k._3
+  //                g2.h(label) =
+  //                  g2.h(label) + 
+  //                  (
+  //                    h_i(k) /
+  //                    scaledStringProb
+  //                  )
+  //              }
+  //
+  //
+  //              sentenceNumber = sentenceNumber + 1
+  //
+  //              if( sentenceNumber >= trainingCorpus.size) {
+  //                numFinishedParsers = numFinishedParsers + 1
+  //              } else {
+  //                if( sentenceNumber % 100 == 0 )
+  //                  println(
+  //                    "Starting sentence number " + sentenceNumber  + " with parser " +
+  //                    id
+  //                  )
+  //                parsers(id) ! trainingCorpus(sentenceNumber)
+  //              }
+  //
+  //            }
+  //          }
+  //        }
+  //
+  //
+  //        parsers.foreach( _ ! Stop )
+  //
+  //        g2.reestimateRules
+  //
+  //        g1 = g2
+  //        g2 = g1.countlessCopy
+  //        //g2.reestimateCounter = g1.reestimateCounter
+  //
+  //
+  //        deltaLogProb = (lastCorpusLogProb - corpusLogProb) / abs(corpusLogProb)
+  //
+  //        println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
+  //        println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
+  //
+  //        useGrammar( g1 , iterationNum)
+  //
+  //        lastCorpusLogProb = corpusLogProb
+  //        corpusLogProb = 0.0
+  //
+  //        iterationNum = iterationNum + 1
+  //
+  //
+  //
+  //      }
+  //      useGrammar( g1, iterationNum )
+  //
+  //      cleanup
+  //
+  //      exit()
+  //    }
+  //  }
+  
