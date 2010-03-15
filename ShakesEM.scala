@@ -1356,7 +1356,7 @@ package ShakesEM {
         {
           p.start
           if( stringID % 100 == 0 )
-            println("Sending " + trainCorpus( stringID ) + " to parser " +
+            println("Sending sentence " +  stringID + " to parser " +
             stringID )
           p ! trainCorpus( stringID )
           stringID += 1
