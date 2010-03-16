@@ -1332,8 +1332,7 @@ package ShakesEM {
 
       def stoppingCondition( iterNum:Int, deltaLogProb:Double ):Boolean
       def parserConstructor:ArrayBuffer[ShakesDistributedParser]
-      def useGrammar(g:ShakesPCNF,iterNum:Int):Unit
-      def cleanup:Unit
+      def useGrammar(g:ShakesPCNF):Unit
 
       var g1 = initGram
       var g2 = g1.countlessCopy
@@ -1347,9 +1346,8 @@ package ShakesEM {
 
       var stringID = 0
 
-      var parsers = parserConstructor
+      val parsers = parserConstructor
       var numFinishedParsers = 0
-
 
 
       parsers.foreach( p =>
@@ -1417,7 +1415,7 @@ package ShakesEM {
             parsers(id) !  trainCorpus( stringID )
             stringID += 1
           } else {
-            parsers(id) ! Stop
+            //parsers(id) ! Stop
             numFinishedParsers += 1
 
             if( numFinishedParsers >= parsers.size ) {  // we have results from
@@ -1429,7 +1427,7 @@ package ShakesEM {
               deltaLogProb = (lastCorpusLogProb - corpusLogProb) /
                 abs(corpusLogProb)
 
-              useGrammar( g1, iterNum )
+              useGrammar( g1 )
 
               println("corpusLogProb.Iter"+iterNum + ": "+ corpusLogProb)
               println("deltaLogProb.Iter"+iterNum + ": "+ deltaLogProb)
@@ -1442,20 +1440,25 @@ package ShakesEM {
                 numFinishedParsers = 0
                 lastCorpusLogProb = corpusLogProb
                 corpusLogProb = 0.0
-                parsers = parserConstructor
 
                 parsers foreach( p =>
                   {
+<<<<<<< HEAD
                     p.start
                     if( stringID % 100 == 0 )
                       println("Sending sentence " + trainCorpus( stringID ) + " to parser " +
                       stringID )
+=======
+                    //p.start
+                    println("Sending " + trainCorpus( stringID ) + " to parser " +
+                    stringID )
+>>>>>>> 92651b2... this all seems to work. remote actors next.
                     p ! trainCorpus( stringID )
                     stringID += 1
                   }
                 )
               } else {
-                cleanup
+                parsers foreach( _ ! Stop )
                 exit
               }
             }
