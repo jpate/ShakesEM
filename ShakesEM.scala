@@ -1355,9 +1355,7 @@ package ShakesEM {
       parsers.foreach( p =>
         {
           p.start
-          if( stringID % 100 == 0 )
-            println("Sending sentence " +  stringID + " to parser " +
-            stringID )
+          println("Sending sentence " +  stringID + " to parser " + stringID )
           p ! trainCorpus( stringID )
           stringID += 1
         }
@@ -1450,7 +1448,7 @@ package ShakesEM {
                   {
                     p.start
                     if( stringID % 100 == 0 )
-                      println("Sending " + trainCorpus( stringID ) + " to parser " +
+                      println("Sending sentence " + trainCorpus( stringID ) + " to parser " +
                       stringID )
                     p ! trainCorpus( stringID )
                     stringID += 1
