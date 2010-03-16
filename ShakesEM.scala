@@ -1443,16 +1443,10 @@ package ShakesEM {
 
                 parsers foreach( p =>
                   {
-<<<<<<< HEAD
                     p.start
                     if( stringID % 100 == 0 )
                       println("Sending sentence " + trainCorpus( stringID ) + " to parser " +
                       stringID )
-=======
-                    //p.start
-                    println("Sending " + trainCorpus( stringID ) + " to parser " +
-                    stringID )
->>>>>>> 92651b2... this all seems to work. remote actors next.
                     p ! trainCorpus( stringID )
                     stringID += 1
                   }
