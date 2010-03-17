@@ -1294,8 +1294,8 @@ package ShakesEM {
     */
     def act() {
       import Math._
-      loop {
-        react {
+      while(true) {
+        receive {
           case s:String => {  // If we get a sentence, then parse it and send the
                               // counts back
             f_i.clear
@@ -1389,8 +1389,8 @@ package ShakesEM {
     }
 
     override def act() {
-      loop {
-        react {
+      while(true) {
+        receive {
           case Tuple2(s:String,b:HashSet[(Int,Int)]) => {  
                               // If we get a sentence, then parse it and send the
                               // counts back
