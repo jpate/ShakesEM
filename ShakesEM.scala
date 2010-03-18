@@ -25,7 +25,7 @@
 package ShakesEM {
   import scala.actors.Actor
   import scala.actors.Actor._
-  import collection.mutable.HashMap
+  import collection.mutable.{HashMap,HashSet}
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
@@ -565,8 +565,9 @@ package ShakesEM {
   case object Stop
   case class RightHandSide(leftChild:String,rightChild:String)
   case class Bracketing(leftSpanPoint:Int,rightSpanPoint:Int)
-  abstract class ToParse(s:String,b:Bracketing)
-  case class BracketedToParse(s:String,b:Bracketing)
+  abstract class ToParse
+  case class BracketedToParse(s:String,b:HashSet[Bracketing]) extends ToParse
+  case class StringToParse(s:String) extends ToParse
 
   /**
   * This defines what a parser must have, without giving an explicit definition
@@ -582,6 +583,8 @@ package ShakesEM {
 
     val id:Int
     var g:ShakesPCNF
+    def firstStart:Unit //  What happens when we first start?
+                          //  Remote actors register with the node
 
     abstract class Entry(label:String) {
       import collection.mutable.ArrayBuffer
@@ -1280,13 +1283,6 @@ package ShakesEM {
         }
       }
 
-      /*
-      if( !root.contains("S") )
-        println("SENTENCE DID NOT PARSE") 
-      else
-        println("SENTENCE " + s.mkString(""," ","") + " PARSED")
-      */
-
       chartDescent( computeOPWithEstimates )
     }
 
@@ -1295,9 +1291,10 @@ package ShakesEM {
     */
     def act() {
       import Math._
+      firstStart
       while(true) {
         receive {
-          case s:String => {  // If we get a sentence, then parse it and send the
+          case StringToParse(s:String) => {  // If we get a sentence, then parse it and send the
                               // counts back
             f_i.clear
             g_i.clear
@@ -1315,6 +1312,7 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale, size - 1 )
 
+            println( chart )
 
             sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i)
           }
@@ -1322,6 +1320,7 @@ package ShakesEM {
             println("Parser " + id + " stopping")
             exit()
           }
+          case trainedGram:ShakesPCNF => g = trainedGram
         }
       }
     }
@@ -1343,6 +1342,42 @@ package ShakesEM {
     import collection.mutable.{HashMap,HashSet}
     import Math.pow
     var bracketing:HashSet[Bracketing] = new HashSet // Initialize to empty set
+
+    def lexFill(w:String,index:Int) {
+      g.lexExps(w).foreach{ pos =>
+        val l = new LexEntry(pos._1)
+        l.newExpansion(
+          w,w,
+          index,index,index+1,
+          wordScale * pos._2
+        )
+        chart(index)(index+1) += Pair( pos._1, l)
+      }
+    }
+
+    /**
+    * Fills in one (non-terminal) span's worth of the chart.
+    * @param start The start index of the span.
+    * @param end The end index of the span.
+    */
+    def synFill( start:Int, end:Int) {
+      start+1 to (end-1) foreach{ k =>
+        chart(start)(k).keys.foreach{ left =>
+          chart(k)(end).keys.foreach{ right =>
+            g.phrExps (left)(right) .foreach{ phrase =>
+              val thisprob = phrase._2 * 
+                              chart(start)(k)(left).ip *
+                              chart(k)(end)(right).ip
+                chart(start)(end)(phrase._1).newExpansion(
+                  left, right,
+                  start,k,end,
+                  thisprob
+                )
+            }
+          }
+        }
+      }
+    }
 
     def isCompatible(start:Int, end:Int):Boolean =
       ! bracketing.exists{ span =>
@@ -1381,11 +1416,9 @@ package ShakesEM {
       chartDescent( computeOPWithEstimates )
     }
 
-    def firstStarted:Unit //  What happens when we first start?
-                          //  Remote actors register with the node
 
     def act() {
-      firstStarted
+      firstStart
       while(true) {
         receive {
           case BracketedToParse(s:String,b:HashSet[Bracketing]) => {  
@@ -1408,6 +1441,8 @@ package ShakesEM {
               println( s )
             }
 
+            println( chart )
+
             val scaledBy = pow( wordScale , size - 1 )
             sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i)
           }
@@ -1415,6 +1450,7 @@ package ShakesEM {
             println("Parser " + id + " stopping")
             exit()
           }
+          case trainedGram:ShakesPCNF => g = trainedGram
         }
       }
     }
@@ -1488,6 +1524,7 @@ package ShakesEM {
     import scala.actors.remote.RemoteActor._
     val host:String
     val port:Int
+    var g = new ShakesPCNF
     def firstStart = {
       alive( port )
       register( 'parser, self )
@@ -1498,23 +1535,23 @@ package ShakesEM {
   //abstract class ShakesDistributedParser extends ShakesFullCYKParser with Actor
 
 
-  /**
-  * This implements the extension of standard EM from Pereira and Schabes (1992)
-  * by simply overriding the relevant methods from the ShakesParser class.
-  * 
-  * @param id The id number of this parser (so it can identify itself easily to
-  * whatever starts it).
-  * @param g The grammar that this parser should use when parsing a sentence and
-  * producing partial counts.
-  * @param ws Amount to scale terminal probabilities by
-  */
-  class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
-    extends ShakesEstimatingParser(id,grammar,ws) {
-    import Math._
-    import collection.mutable.{HashSet,HashMap}
-
-
-  }
+      //  /**
+      //  * This implements the extension of standard EM from Pereira and Schabes (1992)
+      //  * by simply overriding the relevant methods from the ShakesParser class.
+      //  * 
+      //  * @param id The id number of this parser (so it can identify itself easily to
+      //  * whatever starts it).
+      //  * @param g The grammar that this parser should use when parsing a sentence and
+      //  * producing partial counts.
+      //  * @param ws Amount to scale terminal probabilities by
+      //  */
+      //  class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
+      //    extends ShakesEstimatingParser(id,grammar,ws) {
+      //    import Math._
+      //    import collection.mutable.{HashSet,HashMap}
+      //
+      //
+      //  }
 
       ///**
       //* Create many estimating parsers and estimate a grammar. Use this by
@@ -1758,7 +1795,7 @@ package ShakesEM {
   * file(s)
   */
   trait ShakesTrainCorpus {
-    def apply(n:Int):Any
+    def apply(n:Int):ToParse
     def size:Int
     def readCorpus(pathSpecifier:String)
   }
@@ -1818,7 +1855,7 @@ package ShakesEM {
         }
       )
     }
-    def apply(n:Int) = Tuple2(strings(n),bracketings(n))
+    def apply(n:Int) = BracketedToParse(strings(n),bracketings(n))
     def size = strings.size
     override def toString = strings mkString("","\n","")
   }
@@ -1828,7 +1865,7 @@ package ShakesEM {
   */
   class StringsOnlyCorpus extends ShakesTrainCorpus {
     var strings:Array[String] = Array()
-    def apply(n:Int) = strings( n )
+    def apply(n:Int) = StringToParse( strings( n ) )
     def size = strings.size
 
     def readCorpus( stringsPath:String ) {
