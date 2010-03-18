@@ -19,7 +19,7 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 *
-* @version 0.20_akkaActors
+* @version 0.20_akkaActors-REMOTE
 * @author John K Pate
 */
 package ShakesEM {
@@ -1084,12 +1084,12 @@ package ShakesEM {
   * This provides a real parser that can provide a parse chart with partial
   * estimates all filled in.
   *
-  * @param id Parser id so parser can identify itself to parser managers, etc.
+  * @param idNumber Parser id number so parser can identify itself to parser managers, etc.
   * @param grammar The grammar the parser should use
   * @param ws The factor by which to scale words while parsing (to avoid
   * underflow)
   */
-  class ShakesEstimatingParser(id:Int,grammar:ShakesPCNF,ws:Int)
+  class ShakesEstimatingParser(idNumber:Int,grammar:ShakesPCNF,ws:Int)
     extends ShakesDistributedParser {//with ShakesFullCYKParser with Actor { 
     import Math._
     import collection.mutable.HashMap
@@ -1304,10 +1304,10 @@ package ShakesEM {
 
 
         //sender ! (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
-        reply (id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+        reply (idNumber,scaledStringProb,f_i,g_i,h_i,scaledBy)
       }
       case Stop => {      // If we get the stop signal, then shut down.
-        println("Parser " + id + " stopping")
+        println("Parser " + idNumber + " stopping")
         exit
       }
     }
@@ -1363,7 +1363,7 @@ package ShakesEM {
 
       def receive = {
         case (
-          id:Int,
+          idNumber:Int,
           scaledStringProb:Double,
           f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
           g_i:HashMap[(Int,String,String),Double],
@@ -1412,12 +1412,12 @@ package ShakesEM {
           if( stringID < trainCorpus.size ) {
 
             if( stringID % 100 == 0 )
-              println("Sending " + stringID + " to parser " + id )
+              println("Sending " + stringID + " to parser " + idNumber )
 
-            parsers(id) !  trainCorpus( stringID )
+            parsers(idNumber) !  trainCorpus( stringID )
             stringID += 1
           } else {
-            parsers(id) ! Stop
+            parsers(idNumber) ! Stop
             numFinishedParsers += 1
 
             if( numFinishedParsers >= parsers.size ) {  // we have results from
@@ -1467,149 +1467,7 @@ package ShakesEM {
   }
 
 
-  /**
-  * This implements the extension of standard EM from Pereira and Schabes (1992)
-  * by simply overriding the relevant methods from the ShakesParser class.
-  * 
-  * @param id The id number of this parser (so it can identify itself easily to
-  * whatever starts it).
-  * @param g The grammar that this parser should use when parsing a sentence and
-  * producing partial counts.
-  * @param ws Amount to scale terminal probabilities by
-  */
-  class ShakesBracketedParser(id:Int,grammar:ShakesPCNF,ws:Int)
-    extends ShakesEstimatingParser(id,grammar,ws) {
-    import Math._
-    import collection.mutable.{HashSet,HashMap}
 
-    var bracketing:HashSet[(Int,Int)] = new HashSet
-
-    def isCompatible(start:Int, end:Int):Boolean =
-      ! bracketing.exists{ span =>
-        val left = span._1
-        val right = span._2
-        
-        (       // Crosses a given left span
-          start < left &
-          end > left &
-          end < right
-        ) | (   // Crosses a given right span
-          start > left &
-          start < right &
-          end > right
-        )
-      }
-
-    /**
-    * This is the CYK parsing algorithm, modified to fill in cells iff the
-    * relevant span is compatible with the given bracketing. Same time
-    * complexity as Earley for completely ambiguous grammars, so (since we're
-    * doing full grammar induction) just use CYK. There's also a paper (Li and
-    * Alagappan something) suggesting it has better average-case space
-    * complexity for completely ambiguous grammars.
-    * @param s The input sentence (an array of terminals)
-    * @return A parse chart with labels and inside and outside probabilities.
-    */
-    override def populateChart(s:Array[String]) = {
-      List.range(1,s.size+1).foreach{ j =>
-        lexFill( s(j-1), j-1)
-        
-        List.range(0,j-1).reverse.foreach{ i =>
-          if( isCompatible( i, j ) )
-            synFill(i, j)
-        }
-      }
-      chartDescent( computeOPWithEstimates )
-    }
-
-    override def receive = {
-      case Tuple2(s:String,b:HashSet[(Int,Int)]) => {
-                          // If we get a sentence, then parse it and send the
-                          // counts back
-        f_i.clear
-        g_i.clear
-        h_i.clear
-        bracketing = b
-
-
-        val words = s.split(' ')
-        resize(words.size + 1)
-
-
-        populateChart(words)
-
-        if( !root.contains("S") ) {
-          println("WARNING: SENTENCE DID NOT PARSE")
-          println( s )
-        }
-
-        val scaledBy = pow( wordScale , size - 1 )
-        //sender ! (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
-        reply (id,scaledStringProb,f_i,g_i,h_i, scaledBy)
-      }
-      case Stop => {      // If we get the stop signal, then shut down.
-        println("Parser " + id + " stopping")
-        exit
-      }
-    }
-  }
-
-  class ShakesViterbiParser(grammar:ShakesPCNF,ws:Int) extends ShakesParser {
-    var g = grammar
-    var wordScale = ws
-
-    /**
-    * This is the CYK parsing algorithm. Same time complexity as Earley for
-    * completely ambiguous grammars, so (since we're doing full grammar
-    * induction) just use CYK. There's also a paper (Li and Alagappan something)
-    * suggesting it has better average-case space complexity for completely
-    * ambiguous grammars.
-    * @param s The input sentence (an array of terminals)
-    * @return A parse chart with labels and inside and outside probabilities.
-    */
-    def populateChart(s:Array[String]) = {
-      1 to s.size foreach{ j =>
-        lexFill( s(j-1), j-1)
-        
-        (0 to (j-2) reverse) foreach{ i =>
-          synFill(i, j)
-        }
-      }
-    }
-    def lexFill( w:String, index:Int) {
-      val mlePOS = g.lexExps(w).foldLeft(g.lexExps(w)(0))( (l1, l2) =>
-        if( l1._2 > l2._2 )
-          l1 else l2
-      )
-      val l = new LexEntry( mlePOS._1 )
-      l.newExpansion(
-        w,w,
-        index, index, index+1,
-        wordScale * mlePOS._2
-      )
-      chart(index)(index+1) += Pair( mlePOS._1, l)
-    }
-    def synFill( start:Int, end:Int) {
-      start+1 to (end-1) foreach{ k =>
-        chart(start)(k).keys.foreach{ left =>
-          chart(k)(end).keys.foreach{ right =>
-            g.phrExps (left)(right) .foreach{ phrase =>
-              val thisprob = phrase._2 * 
-                              chart(start)(k)(left).ip *
-                              chart(k)(end)(right).ip
-                chart(start)(end)(phrase._1).newVitExpansion(
-                  left, right,
-                  start,k,end,
-                  thisprob
-                )
-            }
-          }
-        }
-      }
-    }
-
-    def parseString:String = chart(0)(chart.size - 1)("S").viterbiString
-  }
 
 
   abstract class EvaluationActor(initGram:ShakesPCNF,ws:Int)
