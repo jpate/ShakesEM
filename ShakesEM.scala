@@ -1170,8 +1170,8 @@ package ShakesEM {
 
       f_toAdd .keys.foreach( left =>
         f_toAdd (left) .keys.foreach{ right =>
-          f_i ((ent.start,ent.end,ent.l))(left)(right) =
-              f_i ((ent.start,ent.end,ent.l))(left)(right) +
+          f_i ( (ent.start,ent.end,ent.l,left,right) ) =
+              f_i (ent.start,ent.end,ent.l,left,right) +
               f_toAdd (left)(right)
         }
       )
@@ -1180,28 +1180,30 @@ package ShakesEM {
     /**
     * This stores intermediate counts of binary-branching nodes for this sentence.
     */
-    val f_i = new HashMap[
-      (Int,Int,String),
-      HashMap[
-        String,
-        HashMap[String,Double]
-      ]
-    ] {
-      override def default(lhs:(Int,Int,String)) = {
-        this += Pair( lhs,
-                      new HashMap[String, HashMap[String,Double]] {
-            override def default(left:String) = {
-              this += Pair( left,
-                            new HashMap[String,Double] {
-                   override def default(right:String) = 0
-                }
-              )
-              this(left)
-            }
-          }
-        )
-        this(lhs)
-      }
+    val f_i = new HashMap[(Int,Int,String,String,String),Double] {
+      override def default( summandKey:(Int,Int,String,String,String) ) = 0
+        ///    val f_i = new HashMap[
+        ///      (Int,Int,String),
+        ///      HashMap[
+        ///        String,
+        ///        HashMap[String,Double]
+        ///      ]
+        ///    ] {
+        ///      override def default(lhs:(Int,Int,String)) = {
+        ///        this += Pair( lhs,
+        ///                      new HashMap[String, HashMap[String,Double]] {
+        ///            override def default(left:String) = {
+        ///              this += Pair( left,
+        ///                            new HashMap[String,Double] {
+        ///                   override def default(right:String) = 0
+        ///                }
+        ///              )
+        ///              this(left)
+        ///            }
+        ///          }
+        ///        )
+        ///        this(lhs)
+        ///      }
 
     }
 
@@ -1319,7 +1321,7 @@ package ShakesEM {
 
             println( chart )
 
-            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+            sender ! ParsingResult(id,scaledStringProb,f_i.readOnly,g_i,h_i,scaledBy)
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1337,7 +1339,7 @@ package ShakesEM {
   @serializable case class ParsingResult(
     id:Int,
     scaledStringProb:Double,
-    f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+    f_i:scala.collection.Map[(Int,Int,String,String,String),Double],
     g_i:HashMap[(Int,String,String),Double],
     h_i:HashMap[(Int,Int,String),Double],
     scaledBy:Double
@@ -1453,7 +1455,7 @@ package ShakesEM {
             println( chart )
 
             val scaledBy = pow( wordScale , size - 1 )
-            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+            sender ! ParsingResult(id,scaledStringProb,f_i.readOnly,g_i,h_i,scaledBy)
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1591,7 +1593,7 @@ package ShakesEM {
             case ParsingResult(
               id:Int,
               scaledStringProb:Double,
-              f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+              f_i:scala.collection.Map[(Int,Int,String,String,String),Double],
               g_i:HashMap[(Int,String,String),Double],
               h_i:HashMap[(Int,Int,String),Double],
               scaledBy:Double ) => {
@@ -1605,17 +1607,34 @@ package ShakesEM {
               corpusLogProb = corpusLogProb + log( scaledStringProb ) -
                 log( scaledBy )
 
-              f_i.keys.foreach( lhs =>
-                f_i (lhs) .keys.foreach( left =>
-                  f_i (lhs)(left) .keys.foreach{ right =>
-                    g2.f (lhs._3)(left)(right) =
-                      g2.f (lhs._3)(left)(right) +
-                      (
-                        f_i (lhs)(left)(right) /
-                        scaledStringProb
-                      )
-                  }
+                //              f_i.keys.foreach( lhs =>
+                //                f_i (lhs) .keys.foreach( left =>
+                //                  f_i (lhs)(left) .keys.foreach{ right =>
+                //                    g2.f (lhs._3)(left)(right) =
+                //                      g2.f (lhs._3)(left)(right) +
+                //                      (
+                //                        f_i (lhs)(left)(right) /
+                //                        scaledStringProb
+                //                      )
+                //                  }
+                //                )
+                //              )
+
+              f_i.keys.foreach( summandKey => {
+                val ( _,_,lhs,left,right ) = summandKey
+                println( 
+                  "f_i : " + (summandKey,f_i(summandKey)) + "\n\n"
                 )
+                println(
+                  "g2.f : " + (lhs,left,right,g2.f(lhs)(left)(right)) + "\n\n"
+                )
+                g2.f (lhs)(left)(right) =
+                  g2.f (lhs)(left)(right) +
+                    (
+                      f_i (summandKey) /
+                        scaledStringProb
+                    )
+                }
               )
               g_i.keys.foreach{ k =>
                 val index = k._1
