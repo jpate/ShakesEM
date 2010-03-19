@@ -26,11 +26,12 @@ package ShakesEM {
   import scala.actors.Actor
   import scala.actors.Actor._
   import collection.mutable.{HashMap,HashSet}
+
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
   */
-  class ShakesPCNF {
+  @serializable class ShakesPCNF {
     import Math._
     import collection.mutable.{HashMap,HashSet}
 
@@ -1201,6 +1202,7 @@ package ShakesEM {
         )
         this(lhs)
       }
+
     }
 
     /**
@@ -1215,6 +1217,8 @@ package ShakesEM {
     */
     val h_i = new HashMap[(Int,Int,String), Double] {
       override def default(key:(Int,Int,String)) = 0
+      //def deepClone:scala.collection.Map[ (Int,Int,String) , Double] =
+      //  this.readOnly
     }
   }
 
@@ -1292,6 +1296,7 @@ package ShakesEM {
     def act() {
       import Math._
       firstStart
+      println("Parser started")
       while(true) {
         receive {
           case StringToParse(s:String) => {  // If we get a sentence, then parse it and send the
@@ -1314,24 +1319,28 @@ package ShakesEM {
 
             println( chart )
 
-            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i)
+            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
             exit()
           }
-          case trainedGram:ShakesPCNF => g = trainedGram
+          case trainedGram:ShakesPCNF => {
+            g = trainedGram
+            println("Received grammar:\n" + g )
+          }
         }
       }
     }
   }
 
-  case class ParsingResult(
+  @serializable case class ParsingResult(
     id:Int,
     scaledStringProb:Double,
     f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
     g_i:HashMap[(Int,String,String),Double],
-    h_i:HashMap[(Int,Int,String),Double]
+    h_i:HashMap[(Int,Int,String),Double],
+    scaledBy:Double
   )
 
   /**
@@ -1444,7 +1453,7 @@ package ShakesEM {
             println( chart )
 
             val scaledBy = pow( wordScale , size - 1 )
-            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i)
+            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1529,6 +1538,151 @@ package ShakesEM {
       alive( port )
       register( 'parser, self )
     }
+  }
+
+  trait ShakesParserManager {
+    import scala.collection.mutable.ArrayBuffer
+    import scala.actors.AbstractActor
+    import Math._
+
+    var g1:ShakesPCNF
+    var g2:ShakesPCNF
+
+    def stoppingCondition( numIters:Int, deltaLogProb:Double ):Boolean
+
+    /**
+    * This method provides access to the slave parsers at the beginning of each
+    * iteration.. Implementations for remote actors should send the grammar to
+    * the remote actor. Implementations for local actors should probably just
+    * create a new actor with the new grammar (and let garbage collection take
+    * care of the old actor)
+    *
+    * @param grammar  Grammar to be used for this iteration.
+    */
+    def parserConstructor( grammar:ShakesPCNF ):List[AbstractActor]
+
+    def useGrammar( trainedG:ShakesPCNF, curIterCount:Int ):Unit
+
+
+    val trainingCorpus:ShakesTrainCorpus
+
+    def act() {
+      var iterationNum = 0
+      var deltaLogProb = 1.0
+      var lastCorpusLogProb = 0.0
+      var corpusLogProb = 0.0
+
+      while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
+        val parsers = parserConstructor( g1 )
+
+
+        println("Beginning to parse iteration " + iterationNum + "...\n\n")
+        List.range(0, parsers.size).foreach{ id =>
+          println( "Sending sentence number " + id + " to parser " + id )
+          parsers(id) ! trainingCorpus(id)
+        }
+
+        var sentenceNumber = parsers.size - 1
+
+        var numFinishedParsers = 0
+
+        while( numFinishedParsers < parsers.size ) {
+          receive {
+            case ParsingResult(
+              id:Int,
+              scaledStringProb:Double,
+              f_i:HashMap[(Int,Int,String),HashMap[String,HashMap[String,Double]]],
+              g_i:HashMap[(Int,String,String),Double],
+              h_i:HashMap[(Int,Int,String),Double],
+              scaledBy:Double ) => {
+
+
+              println( "f_i: \n" + f_i + "\n\n\n" )
+              println( "g_i: \n" + g_i + "\n\n\n" )
+              println( "h_i: \n" + h_i + "\n\n\n" )
+
+
+              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
+                log( scaledBy )
+
+              f_i.keys.foreach( lhs =>
+                f_i (lhs) .keys.foreach( left =>
+                  f_i (lhs)(left) .keys.foreach{ right =>
+                    g2.f (lhs._3)(left)(right) =
+                      g2.f (lhs._3)(left)(right) +
+                      (
+                        f_i (lhs)(left)(right) /
+                        scaledStringProb
+                      )
+                  }
+                )
+              )
+              g_i.keys.foreach{ k =>
+                val index = k._1
+                val pos = k._2
+                val word = k._3
+                g2.g( (pos,word) ) = 
+                  g2.g( (pos,word) ) +
+                  (
+                    g_i( k ) /
+                    scaledStringProb
+                  )
+              }
+              h_i.keys.foreach{ k =>
+                val start = k._1
+                val end = k._2
+                val label = k._3
+                println("h_i: " + (start,end,label,h_i(k),scaledStringProb))
+                println("g2.h:" + (start,end,label,g2.h(label),scaledStringProb))
+                g2.h(label) =
+                  g2.h(label) + 
+                  (
+                    h_i(k) /
+                    scaledStringProb
+                  )
+              }
+
+              sentenceNumber = sentenceNumber + 1
+
+              if( sentenceNumber >= trainingCorpus.size ) {
+                numFinishedParsers += 1
+              } else {
+         //       if( sentenceNumber % 100 == 0 )
+                  println( 
+                    "Sending sentence number " + sentenceNumber +
+                      " to parser " + id )
+                parsers(id) ! trainingCorpus( sentenceNumber )
+              }
+            }
+
+          }
+        }
+        parsers.foreach( _ ! Stop )
+
+        g2.reestimateRules
+
+        g1 = g2
+        g2 = g1.countlessCopy
+
+        deltaLogProb = (lastCorpusLogProb - corpusLogProb ) /
+          abs(corpusLogProb)
+
+        println("corpusLogProb.Iter"+iterationNum + ": "+ corpusLogProb)
+        println("deltaLogProb.Iter"+iterationNum + ": "+ deltaLogProb)
+
+        useGrammar( g1 , iterationNum)
+
+        lastCorpusLogProb = corpusLogProb
+        corpusLogProb = 0.0
+
+        iterationNum = iterationNum + 1
+
+
+
+      }
+      exit()
+    }
+
   }
 
 
