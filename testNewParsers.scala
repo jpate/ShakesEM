@@ -42,6 +42,7 @@ package testNewParsers {
           }
 
           //someParsers foreach( _.start )
+          println("trying to start parser..")
           localVanilla.start
 
           localVanilla::Nil
@@ -103,9 +104,7 @@ package testNewParsers {
 
   object startRemoteVanillaParser {
     def main( args:Array[String] ) {
-      val thisRemoteParser = new Actor with
-        CYKDefinitions with
-        RemoteDefinitions with
+      val thisRemoteParser = new Actor with CYKDefinitions with RemoteDefinitions with
         Heuristics {
           val host = "127.0.0.1"
           val port = 9999
@@ -181,8 +180,7 @@ package testNewParsers {
       val text = new StringsOnlyCorpus
       text.readCorpus("development/testSentences.txt")
 
-      val remoteVanilla = new Actor with CYKDefinitions with RemoteDefinitions
-      with Heuristics {
+      val remoteVanilla = new Actor with CYKDefinitions with RemoteDefinitions with Heuristics {
         val id = 0
         val host = "127.0.0.1"
         val port = 9999

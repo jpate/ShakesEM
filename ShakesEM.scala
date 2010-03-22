@@ -25,15 +25,15 @@
 package ShakesEM {
   import scala.actors.Actor
   import scala.actors.Actor._
-  import collection.mutable.{HashMap,HashSet}
+  import collection.immutable.{HashMap => IHashMap,HashSet => IHashSet}
+  import collection.mutable.{HashMap => MHashMap, HashSet => MHashSet}
 
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
   */
   @serializable class ShakesPCNF {
-    import Math._
-    import collection.mutable.{HashMap,HashSet}
+    import math._
 
 
     /**
@@ -43,19 +43,19 @@ package ShakesEM {
     * See Manning &amp; Schutze p. 396.
     * The defaults just make the incrementation code cleaner.
     */
-    val f = new HashMap[
+    val f = new MHashMap[
       String,   
-      HashMap[
+      MHashMap[
         String,
-        HashMap[String,Double]
+        MHashMap[String,Double]
       ]
     ] {
       override def default(lhs:String) = {
         this += Pair( lhs,
-                      new HashMap[String, HashMap[String,Double]] {
+                      new MHashMap[String, MHashMap[String,Double]] {
             override def default(left:String) = {
               this += Pair( left,
-                            new HashMap[String,Double] {
+                            new MHashMap[String,Double] {
                    override def default(right:String) = 0
                 }
               )
@@ -66,10 +66,10 @@ package ShakesEM {
         this(lhs)
       }
     }
-    val g = new HashMap[(String,String),Double] {
+    val g = new MHashMap[(String,String),Double] {
       override def default(key:(String,String)) = 0
     }
-    val h = new HashMap[String,Double] {
+    val h = new MHashMap[String,Double] {
       override def default(key:String) = 0
     }
 
@@ -83,9 +83,9 @@ package ShakesEM {
     def reestimateRules {
       //reestimateCounter = reestimateCounter + 1
       //println("REESTIMATION NUMBER" + reestimateCounter)
-      f.keys.foreach{ lhs =>
-        f (lhs) .keys.foreach{ left =>
-          f (lhs)(left) .keys.foreach{ right =>
+      f.keysIterator.foreach{ lhs =>
+        f (lhs) .keysIterator.foreach{ left =>
+          f (lhs)(left) .keysIterator.foreach{ right =>
             phrases (lhs)(left)(right) =
               100000 * f (lhs)(left)(right) /
               h (lhs)
@@ -103,13 +103,13 @@ package ShakesEM {
 
 
 
-      g.keys.foreach{ k =>
+      g.keysIterator.foreach{ k =>
         lexicon (k._1) (k._2) =
            100000 * g(k) /
            h(k._1)
       }
-      lexicon.keys.foreach{ pos =>
-        lexicon(pos).keys.foreach{ word =>
+      lexicon.keysIterator.foreach{ pos =>
+        lexicon(pos).keysIterator.foreach{ word =>
           if( lexicon(pos)(word) == 0.0 ) {
             lexicon(pos) -= word
             println("Removed a rule" + (pos,word))
@@ -130,26 +130,26 @@ package ShakesEM {
 
 
     def normalize {
-      phrases.keys.foreach{ lhs =>
+      phrases.keysIterator.foreach{ lhs =>
         var lhsTotal = 0D
-        phrases(lhs).keys.foreach( left =>
-          phrases(lhs)(left).keys.foreach( right =>
+        phrases(lhs).keysIterator.foreach( left =>
+          phrases(lhs)(left).keysIterator.foreach( right =>
               lhsTotal = lhsTotal + phrases(lhs)(left)(right)
           )
         )
-        phrases(lhs).keys.foreach( left =>
-          phrases(lhs)(left).keys.foreach( right =>
+        phrases(lhs).keysIterator.foreach( left =>
+          phrases(lhs)(left).keysIterator.foreach( right =>
             phrases(lhs)(left)(right) = phrases(lhs)(left)(right) / lhsTotal
           )
         )
       }
 
-      lexicon.keys.foreach{ pos =>
+      lexicon.keysIterator.foreach{ pos =>
         var posTotal = 0D
-        lexicon( pos ).keys.foreach( word =>
+        lexicon( pos ).keysIterator.foreach( word =>
           posTotal = posTotal + lexicon(pos)(word)
         )
-        lexicon(pos).keys.foreach( word =>
+        lexicon(pos).keysIterator.foreach( word =>
           lexicon(pos)(word) = lexicon(pos)(word) / posTotal
         )
       }
@@ -191,9 +191,9 @@ package ShakesEM {
     * @param cutoff The minimum probability for a re-write to remain.
     */
     def pruneRules(cutoff:Double) {
-      phrases.keys.foreach{ lhs =>
-        phrases (lhs) .keys.foreach{ left =>
-          phrases (lhs) (left) .keys.foreach{ right =>
+      phrases.keysIterator.foreach{ lhs =>
+        phrases (lhs) .keysIterator.foreach{ left =>
+          phrases (lhs) (left) .keysIterator.foreach{ right =>
             if( phrases(lhs)(left)(right) < cutoff )
               phrases(lhs)(left) -= right
           }
@@ -203,8 +203,8 @@ package ShakesEM {
         if( phrases (lhs) .size == 0 )
           phrases -= lhs
       }
-      lexicon.keys.foreach{ pos =>
-        lexicon (pos) .keys.foreach{ word =>
+      lexicon.keysIterator.foreach{ pos =>
+        lexicon (pos) .keysIterator.foreach{ word =>
           if( lexicon(pos)(word) < cutoff )
             lexicon(pos) -= word
         }
@@ -223,16 +223,16 @@ package ShakesEM {
     * the same information as phrases in a different format to facilitate rule
     * look-up. The default values just help make incrementation easier.<p>
     */
-    var lexicon = new HashMap[
+    var lexicon = new MHashMap[
       String,       //  POS
-      HashMap[
+      MHashMap[
         String,     //  WORD
         Double      //  PROB
       ]
     ] {
       override def default(pos:String) = {
         this += Pair( pos,
-              new HashMap[String,Double] {
+              new MHashMap[String,Double] {
             override def default(word:String) = {
               this += Pair( word, 0.0 )
               this(word)
@@ -242,7 +242,7 @@ package ShakesEM {
         this(pos)
       }
     }
-    var lexExps = new HashMap[
+    var lexExps = new MHashMap[
       String,       //  WORD
       List[(
         String,     //  POS
@@ -255,11 +255,11 @@ package ShakesEM {
       }
     }
     
-    var phrases = new HashMap[
+    var phrases = new MHashMap[
       String,       //  LHS
-      HashMap[
+      MHashMap[
         String,     //  LEFT
-        HashMap[
+        MHashMap[
           String,   //  RIGHT
           Double    //  PROB
         ]
@@ -267,10 +267,10 @@ package ShakesEM {
     ] {
       override def default(lhs:String) = {
         this += Pair( lhs,
-                      new HashMap[String, HashMap[String,Double]] {
+                      new MHashMap[String, MHashMap[String,Double]] {
             override def default(left:String) = {
               this += Pair( left, 
-                            new HashMap[String,Double] {
+                            new MHashMap[String,Double] {
                   override def default(right:String) = {
                     this += Pair( right, 0.0 )
                     this(right)
@@ -284,9 +284,9 @@ package ShakesEM {
         this(lhs)
       }
     }
-    var phrExps = new HashMap[
+    var phrExps = new MHashMap[
       String,       //  LEFT
-      HashMap[
+      MHashMap[
         String,     //  RIGHT
         List[(
           String,   //  LHS
@@ -296,7 +296,7 @@ package ShakesEM {
     ] {
       override def default(left:String) = {
         this += Pair( left,
-                      new HashMap[String, List[(String,Double)]] {
+                      new MHashMap[String, List[(String,Double)]] {
             override def default(right:String) = {
               this += Pair( right, Nil )
               this(right)
@@ -316,7 +316,7 @@ package ShakesEM {
     */
     def readShakesGram(gramPath:String) {
       import scala.io.Source._
-      val lines = fromFile(gramPath).getLines.toList.drop(5)
+      val lines = fromPath(gramPath).getLines("\n").toList.drop(5)
       lines.foreach( line =>
         if( line.length > 1 ) {
           val fields = line.split(' ')
@@ -348,7 +348,7 @@ package ShakesEM {
     */
     def readGrammar(gramPath:String) {
       import scala.io.Source._
-      val lines = fromFile(gramPath).getLines
+      val lines = fromPath(gramPath).getLines("\n")
       lines.foreach( line =>
         if( line.length > 1 ) {
           val fields = line.split(' ')
@@ -372,7 +372,7 @@ package ShakesEM {
     */
     def readLexicon(lexPath:String) {
       import scala.io.Source._
-      val lines = fromFile(lexPath).getLines
+      val lines = fromPath(lexPath).getLines("\n")
       lines.foreach( line =>
         if( line.length > 1 ) {
           val fields = line.split(' ')
@@ -445,18 +445,18 @@ package ShakesEM {
       phrExps.clear
       lexExps.clear
 
-      phrExps.keys.foreach{ phrExps(_).clear }
-      phrases.keys.foreach( lhs =>
-        phrases (lhs) .keys.foreach( left =>
-          phrases (lhs) (left).keys.foreach ( right =>
+      phrExps.keysIterator.foreach{ phrExps(_).clear }
+      phrases.keysIterator.foreach( lhs =>
+        phrases (lhs) .keysIterator.foreach( left =>
+          phrases (lhs) (left).keysIterator.foreach ( right =>
             phrExps (left) (right) = (lhs, phrases(lhs)(left)(right)) ::
                                       phrExps (left) (right)
           )
         )
       )
 
-      lexicon.keys.foreach( pos =>
-        lexicon (pos) .keys.foreach ( word =>
+      lexicon.keysIterator.foreach( pos =>
+        lexicon (pos) .keysIterator.foreach ( word =>
           lexExps(word) = (pos, lexicon(pos)(word)) ::
                           lexExps(word)
         )
@@ -472,15 +472,15 @@ package ShakesEM {
     */
     def countlessCopy:ShakesPCNF = {
       val copy = new ShakesPCNF
-      phrases.keys.foreach( lhs =>
-        phrases (lhs) .keys.foreach( left =>
-          phrases (lhs) (left) .keys.foreach( right =>
+      phrases.keysIterator.foreach( lhs =>
+        phrases (lhs) .keysIterator.foreach( left =>
+          phrases (lhs) (left) .keysIterator.foreach( right =>
             copy.phrases(lhs)(left)(right) +=  0.0
           )
         )
       )
-      lexicon.keys.foreach( pos =>
-        lexicon (pos) .keys.foreach( word =>
+      lexicon.keysIterator.foreach( pos =>
+        lexicon (pos) .keysIterator.foreach( word =>
           copy.lexicon(pos)(word) += 0.0
         )
       )
@@ -503,16 +503,16 @@ package ShakesEM {
     def resetGrammar {
       phrExps.clear
       lexExps.clear
-      phrases.keys.foreach( lhs =>
-        phrases(lhs).keys.foreach( left =>
-          phrases(lhs)(left).keys.foreach{ right =>
+      phrases.keysIterator.foreach( lhs =>
+        phrases(lhs).keysIterator.foreach( left =>
+          phrases(lhs)(left).keysIterator.foreach{ right =>
             phrases(lhs)(left).clear
             phrases(lhs)(left)(right) += 0.0
           }
         )
       )
-      lexicon.keys.foreach( pos =>
-        lexicon(pos).keys.foreach{ word =>
+      lexicon.keysIterator.foreach( pos =>
+        lexicon(pos).keysIterator.foreach{ word =>
           lexicon(pos).clear
           lexicon(pos)(word) += 0.0
         }
@@ -526,16 +526,16 @@ package ShakesEM {
     * @return A string representation of lexicon and phrases.
     */
     override def toString =
-      phrases.keys.map{ lhs =>
-        phrases (lhs) .keys.map{ left =>
-          phrases (lhs)(left) .keys.map{ right =>
+      phrases.keysIterator.map{ lhs =>
+        phrases (lhs) .keysIterator.map{ left =>
+          phrases (lhs)(left) .keysIterator.map{ right =>
             lhs + " " + left + " " + right + " " + 
             ("%1.30f" format phrases(lhs)(left)(right) )
           }.mkString("\n","\n","")
         }.mkString("","","")
       }.mkString("","","\n") +
-      lexicon.keys.map{ pos =>
-        lexicon (pos) .keys.map{ word =>
+      lexicon.keysIterator.map{ pos =>
+        lexicon (pos) .keysIterator.map{ word =>
           pos + " " + word + " " +
           ("%1.30f" format lexicon(pos)(word) )
         }.mkString("\n","\n","")
@@ -548,15 +548,15 @@ package ShakesEM {
     * @return A string representation of lexicon and phrases.
     */
     def prettyPrint =
-      phrases.keys.map{ lhs =>
-        phrases (lhs) .keys.map{ left =>
-          phrases (lhs)(left) .keys.map{ right =>
+      phrases.keysIterator.map{ lhs =>
+        phrases (lhs) .keysIterator.map{ left =>
+          phrases (lhs)(left) .keysIterator.map{ right =>
             lhs + " " + left + " " + right + " " + phrases(lhs)(left)(right)
           }.mkString("\t","\n\t","\n")
         }.mkString("","","")
       }.mkString("Phrases:\n\n","","\n") +
-      lexicon.keys.map{ pos =>
-        lexicon (pos) .keys.map{ word =>
+      lexicon.keysIterator.map{ pos =>
+        lexicon (pos) .keysIterator.map{ word =>
           pos + " " + word + " " + lexicon(pos)(word)
         }.mkString("\t","\n\t","")
       }.mkString("Lexicon:\n\n","\n","")
@@ -567,7 +567,7 @@ package ShakesEM {
   case class RightHandSide(leftChild:String,rightChild:String)
   case class Bracketing(leftSpanPoint:Int,rightSpanPoint:Int)
   abstract class ToParse
-  case class BracketedToParse(s:String,b:HashSet[Bracketing]) extends ToParse
+  case class BracketedToParse(s:String,b:MHashSet[Bracketing]) extends ToParse
   case class StringToParse(s:String) extends ToParse
 
   /**
@@ -579,8 +579,9 @@ package ShakesEM {
   * probability estimates.
   */
   trait ShakesParser {
-    import Math._
-    import collection.mutable.{HashMap,HashSet}
+    import math._
+      //import collection.mutable.{HashMap => MHashMap}
+    //import collection.immutable.{HashMap,HashSet}
 
     val id:Int
     var g:ShakesPCNF
@@ -589,7 +590,7 @@ package ShakesEM {
 
     abstract class Entry(label:String) {
       import collection.mutable.ArrayBuffer
-      import Math._
+      import math._
 
       /**
       * Stored as a probability (not log-likelihoods) to reduce rounding error
@@ -612,6 +613,8 @@ package ShakesEM {
       */
       var backMatcher = new ArrayBuffer[ArrayBuffer[RightHandSide]]
       0 to (length-1) foreach( i => backMatcher += new ArrayBuffer[RightHandSide])
+
+      def size = backMatcher.size
 
       var start = 0 // Init to something ridiculous for simplicity
       var end = 0 // Init to something ridiculous for simplicity
@@ -779,13 +782,6 @@ package ShakesEM {
           new ArrayBuffer[RightHandSide])
       }
       
-      /**
-      * Make a readable stringification for Entry.
-      * @return A readable stringification for Entry.
-      */
-      override def toString = 
-        "ip: "+ip+"; op: "+op;
-
       def viterbiString:String
     }
 
@@ -834,19 +830,28 @@ package ShakesEM {
     * This is the chart itself.
     */
     object chart {
+      //var triangMatrix = Array(Array(MHashMap[String,Entry]))
+      
+///      Array.tabulate(4)( x:Int =>
+///        Array.tabulate(4)( y:Int =>
+///          new MHashMap[String,Entry] {
+///            override def default(s:String) = {
+///              this += Pair( s, new SynEntry(s) )
+///              this(s)
+///            }
+///          }
+///        ) // just initialization
+///      ) 
+
       /**
       * This is the data structure that stores the entries.
       */
-      var triangMatrix = Array.fromFunction( x =>
-        Array.fromFunction( y =>
-          new HashMap[String,Entry] {
-            override def default(s:String) = {
-              this += Pair( s, new SynEntry(s) )
-              this(s)
-            }
+      var matrix = Array.fill( 0,0) (new collection.mutable.HashMap[String,Entry]{
+          override def default(s:String) = {
+            this += Pair( s, new SynEntry(s) )
+            this(s)
           }
-        )(0) // just initialization
-      )(0) 
+     } )
 
 
       /**
@@ -857,20 +862,14 @@ package ShakesEM {
       * @param chartSize The size of the chart.
       */
       def resize(chartSize:Int) {
-        var rowCount = 0
-        triangMatrix = Array.fromFunction( x =>
-          {
-            rowCount = rowCount + 1
-            Array.fromFunction( y =>
-              new HashMap[String,Entry] {
-                override def default(s:String) = {
-                  this += Pair( s, new SynEntry(s) )
-                  this(s)
-                }
-              }
-            )(chartSize - (rowCount - 1))
+        matrix = Array.fill( chartSize, chartSize )(
+          new collection.mutable.HashMap[String,Entry] {
+            override def default(s:String) = {
+              this += Pair( s, new SynEntry(s) )
+              this(s)
+            }
           }
-        )(chartSize)
+        )
       }
 
       /**
@@ -881,38 +880,22 @@ package ShakesEM {
       * @return A hashmap of Entries over the span.
       */
       def apply(n1:Int)(n2:Int) =
-        triangMatrix(n1)(n2-n1)
+        matrix(n1)(n2)
 
-      /**
-      * Clear out all entries from the chart.
-      */
-      def clear {
-        triangMatrix.foreach( i =>
-          i.foreach( j =>
-            j.foreach( _._2.reset)
-          )
-        )
-      }
 
       /**
       * @treturn The size of the chart.
       */
-      def size = triangMatrix.size
+      def size = matrix.size
 
-      /**
-      * A map function for the chart.
-      * @param p The function to be applied.
-      * @return The function applied to the rows of the chart.
-      */
-      def map( p: Array[HashMap[String,Entry]] => Any ) = triangMatrix.map{ p(_) }
 
       /**
       * Stringify the chart.
       * @return A human-readable(ish) string representation of the chart.
       */
       override def toString =
-        triangMatrix.map( i =>
-          Array.make(triangMatrix.size - i.length, "<\t>\t").mkString("","","") +
+        matrix.map( i =>
+          Array.fill(matrix.size - i.length)( "<\t>\t").mkString("","","") +
           i.map( j =>
             "<" + {
               if(j.isEmpty)
@@ -945,10 +928,6 @@ package ShakesEM {
     */
     def resize(sentLen:Int) = chart.resize(sentLen)
 
-    /**
-    * Clear out the entries of the chart.
-    */
-    def clear = chart.clear
 
     /**
     * Used in the CYK parser. Fills in one (non-terminal) span's worth of the
@@ -1004,61 +983,89 @@ package ShakesEM {
     * a different estimation function.
     * @param p The function to be applied
     */
-    def chartDescent( p: ( Entry => {} ) ) = {
-      import collection.mutable.{HashMap,HashSet}
+    def chartDescent( p: ( Entry => Unit ) ) = {
+      //import collection.mutable.{HashMap,HashSet}
 
       if( chart(0)(chart.size - 1).contains("S") ) {
-        val toCompute = new HashMap[(Int,Int),HashSet[String]] {
+        val toCompute = new MHashMap[(Int,Int),MHashSet[String]] {
           override def default(key:(Int,Int)) = {
-            this += Pair(key, new HashSet[String])
+            this += Pair(key, new MHashSet[String])
             this(key)
           }
         }
+
+        println("Beginning to descend into a parsed sentence")
 
         toCompute(0, size - 1) += "S"
 
         while( !toCompute.isEmpty) {
           val(start,end) = 
-            toCompute.keys.foldLeft[(Int,Int)](0,0)( (a,b) =>
+            toCompute.keysIterator.foldLeft[(Int,Int)](0,0)( (a,b) =>
               if( (a._2 - a._1) > (b._2 - b._1) ) a else b
           )
           val labels = toCompute( (start,end) )
           toCompute -= Tuple2(start,end)
 
+          println("Looking at span "+(start,end))
+
           labels.foreach{ l =>
+              println("looking at label " + l )
               val rootCell = chart(start)(end)(l)
               p( chart(start)(end)(l) )
 
-              List.range(0, rootCell.backMatcher.length).foreach{ split =>
+              println("Computed outside probability")
+
+              (0 to (rootCell.backMatcher.length-1)).foreach{ split =>
+                println("When determining toCompute, looking at split " + split)
                 val splitPoint = rootCell.start + split
                 rootCell.backMatcher(split).foreach{ children =>
                   children match {
                     case RightHandSide( left, right ) => {
-                      if( splitPoint - rootCell.start > 1 )
+                      if( splitPoint - rootCell.start > 1 ) {
+                        println("adding "+(rootCell.start,splitPoint,left))
                         toCompute( (rootCell.start, splitPoint)) += left
+                        }
 
-                      if( rootCell.end - splitPoint > 1)
+                      if( rootCell.end - splitPoint > 1) {
+                        println("adding " + (splitPoint,rootCell.end,right))
                         toCompute ( (splitPoint, rootCell.end) ) += right
+                      }
 
                     }
+                    case _ =>
                   }
+                  println("New children added" )
                 }
+                println("Done looking at split " + split + " when determining toCompute")
               }
           }
+          println("toCompute is " + toCompute)
         }
       }
     }
   }//end ShakesParser
 
+  case class F_Key(
+    start:Int,
+    end:Int,
+    lhs:String,
+    left:String,
+    right:String
+  )
+  case class G_Key(
+    index:Int,
+    pos:String,
+    word:String
+  )
   trait CountingDefinitions extends ShakesParser {
-    import collection.mutable.HashMap
+    //import collection.immutable.HashMap
     /**
     * Compute the outside probability for one entry. Assumes that all referenced
     * values are already computed.
     * @param ent The entry to be scored.
     */
     def computeOP(ent:Entry) {
-      import Math._
+      import math._
 
       List.range(0,ent.backMatcher.size - 1).foreach{ split =>
         ent.backMatcher(split).foreach{ matches =>
@@ -1089,32 +1096,27 @@ package ShakesEM {
     * @param ent The entry to be scored and counted.
     */
     def computeOPWithEstimates(ent:Entry) {
-      import collection.mutable.HashMap
-      import Math._
+      //import collection.mutable.HashMap
+      import math._
 
       val h_Summand = ent.op * ent.ip
       val h_Key = Tuple3(ent.start,ent.end,ent.l)
-      h_i( h_Key ) = h_Summand
+      h_i = h_i.updated( h_Key, h_Summand )
+      //h_i( h_Key ) = h_Summand
 
-      val f_toAdd = new HashMap[
-          String,
-          HashMap[String,Double]
-        ]{
-          override def default(left:String) = {
-          this += Pair( left,
-                        new HashMap[String,Double] {
-              override def default(right:String) = 0
-            }
-          )
-          this(left)
-        }
+      val f_toAdd = new MHashMap[ (String,String), Double] {
+        override def default(key:(String,String)) = 0D
       }
 
+      println("Computing OP for " + ent.start +" "+ent.end +" "+ent.l)
 
-      0 to (ent.backMatcher.size-1) foreach{ split =>
+      (0 to (ent.backMatcher.size-1) ) foreach{ split =>
+        println("Looking at split " + split )
         ent.backMatcher(split).foreach{ matches =>
+          println( "Backmatches are: " + matches )
           matches match {
             case RightHandSide( left, right ) => {
+              println("Came across a RightHandSide: "+(left,right))
               val ruleProb = g.phrases (ent.l) (left) (right)
 
               val splitPoint = split + ent.start
@@ -1133,12 +1135,14 @@ package ShakesEM {
                   val g_Summand = leftEnt.ip * leftEnt.op
 
                   val RightHandSide( word, _ ) = leftEnt.backMatcher(0)(0)
-                  val g_Key = (leftEnt.start, leftEnt.l, word )
-                  g_i( g_Key ) = g_Summand
+                  val g_Key = G_Key(leftEnt.start, leftEnt.l, word )
+                  g_i = g_i.updated( g_Key, g_Summand )
+                  //g_i( g_Key ) = g_Summand
 
                   val h_Summand = leftEnt.ip * leftEnt.op
                   val h_Key = Tuple3( leftEnt.start, leftEnt.end, leftEnt.l)
-                  h_i( h_Key ) = h_Summand
+                  h_i = h_i.updated( h_Key, h_Summand )
+                  //h_i( h_Key ) = h_Summand
                 }
                 case _ =>
               }
@@ -1147,81 +1151,86 @@ package ShakesEM {
                   val g_Summand = rightEnt.ip * rightEnt.op
 
                   val RightHandSide( word, _ ) = rightEnt.backMatcher(0)(0)
-                  val g_Key = (rightEnt.start, rightEnt.l, word )
-                  g_i( g_Key ) = g_Summand
+                  val g_Key = G_Key(rightEnt.start, rightEnt.l, word )
+                  g_i = g_i.updated( g_Key, g_Summand )
+                  //g_i( g_Key ) = g_Summand
 
                   val h_Summand = leftEnt.ip * leftEnt.op
                   val h_Key = Tuple3( rightEnt.start, rightEnt.end, rightEnt.l)
-                  h_i( h_Key ) = h_Summand
+                  h_i = h_i.updated( h_Key, h_Summand )
+                  //h_i( h_Key ) = h_Summand
                 }
-                case _ =>
+                case _ => // what:Any => println("somehow got " + what)
               }
 
               val f_Summand =
                 ent.op * ruleProb * leftEnt.ip * rightEnt.ip
-              f_toAdd (left) (right) =
-                  f_toAdd (left) (right) + f_Summand
+              f_toAdd( (left,right) ) =
+                  f_toAdd( (left,right) )+ f_Summand
+              
+              println("Finished processing RightHandSide: " + (left,right))
             }
+            case _ =>
           }
         }
+        println("Finished backmatching split " + split)
       }
+      println("Finished backmatching all splits" )
 
 
 
-      f_toAdd .keys.foreach( left =>
-        f_toAdd (left) .keys.foreach{ right =>
-          f_i ( (ent.start,ent.end,ent.l,left,right) ) =
-              f_i (ent.start,ent.end,ent.l,left,right) +
-              f_toAdd (left)(right)
-        }
-      )
+      f_toAdd .keysIterator.foreach{ k =>
+        val(left,right) = k
+        println("We gon' add this left " + left )
+        println("We gon' add this right " + right )
+
+        println("Adding to f_i, which is " + f_i)
+        println("F_Key is " + F_Key(ent.start,ent.end,ent.l,left,right) )
+
+        val summand:Double = f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
+        (f_toAdd(k))
+
+
+        println("Updated f_i should be " + f_i.updated(
+          F_Key(ent.start,ent.end,ent.l,left,right),summand)
+        )
+
+
+        f_i = f_i.updated( F_Key(ent.start,ent.end,ent.l,left,right),summand)
+        
+        println("done been added YO")
+        //f_i ( F_Key(ent.start,ent.end,ent.l,left,right) ) =
+        //    f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
+        //    f_toAdd (left)(right)
+      }
     }
 
     /**
     * This stores intermediate counts of binary-branching nodes for this sentence.
     */
-    val f_i = new HashMap[(Int,Int,String,String,String),Double] {
-      override def default( summandKey:(Int,Int,String,String,String) ) = 0
-        ///    val f_i = new HashMap[
-        ///      (Int,Int,String),
-        ///      HashMap[
-        ///        String,
-        ///        HashMap[String,Double]
-        ///      ]
-        ///    ] {
-        ///      override def default(lhs:(Int,Int,String)) = {
-        ///        this += Pair( lhs,
-        ///                      new HashMap[String, HashMap[String,Double]] {
-        ///            override def default(left:String) = {
-        ///              this += Pair( left,
-        ///                            new HashMap[String,Double] {
-        ///                   override def default(right:String) = 0
-        ///                }
-        ///              )
-        ///              this(left)
-        ///            }
-        ///          }
-        ///        )
-        ///        this(lhs)
-        ///      }
-
-    }
+    var f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+   // {
+   //   override def default( summandKey:F_Key ) = 0
+   // }
 
     /**
     * This stores intermediate counts of unary-branching nodes for this sentence.
     */
-    val g_i = new HashMap[(Int,String,String), Double] {
-      override def default(key:(Int,String,String)) = 0
-    }
+    //var g_i = new IHashMap[(Int,String,String), Double] {
+    var g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
+    //{
+    //  override def default(key:(Int,String,String)) = 0
+    //}
 
     /**
     * This stores intermediate counts of non-terminal nodes for this sentence.
     */
-    val h_i = new HashMap[(Int,Int,String), Double] {
-      override def default(key:(Int,Int,String)) = 0
+    var h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue(0D)
+    //{
+      //override def default(key:(Int,Int,String)) = 0
       //def deepClone:scala.collection.Map[ (Int,Int,String) , Double] =
       //  this.readOnly
-    }
+    //}
   }
 
   /**
@@ -1244,6 +1253,7 @@ package ShakesEM {
           wordScale * pos._2
         )
         chart(index)(index+1) += Pair( pos._1, l)
+        println(( w, index, pos._2 , chart(index)(index+1).size))
       }
     }
 
@@ -1254,9 +1264,10 @@ package ShakesEM {
     */
     def synFill( start:Int, end:Int) {
       start+1 to (end-1) foreach{ k =>
-        chart(start)(k).keys.foreach{ left =>
-          chart(k)(end).keys.foreach{ right =>
+        chart(start)(k).keysIterator.foreach{ left =>
+          chart(k)(end).keysIterator.foreach{ right =>
             g.phrExps (left)(right) .foreach{ phrase =>
+              println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
               val thisprob = phrase._2 * 
                               chart(start)(k)(left).ip *
                               chart(k)(end)(right).ip
@@ -1265,6 +1276,7 @@ package ShakesEM {
                   start,k,end,
                   thisprob
                 )
+              println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
             }
           }
         }
@@ -1282,30 +1294,55 @@ package ShakesEM {
     */
     def populateChart(s:Array[String]) = {
       1 to s.size foreach{ j =>
+        println(">"+j)
         lexFill( s(j-1), j-1)
+        println("<"+j)
         
-        (0 to (j-2) reverse) foreach{ i =>
-          synFill(i, j)
-        }
+        println("beginning synfill")
+        if( j > 1 )
+          ((0 to (j-2)) reverse) foreach{ i =>
+            println("attempting synfill: " + (i,j) )
+            synFill(i, j)
+            println("synfill " + (i,j) + " successfull!" )
+          }
       }
 
+      println("Inside pass complete with scaled string score " + stringScore)
+
       chartDescent( computeOPWithEstimates )
+      println("Outside pass complete")
     }
 
     /**
     * Use this as an actor
     */
     def act() {
-      import Math._
+      import math._
       firstStart
       println("Parser started")
       while(true) {
         receive {
           case StringToParse(s:String) => {  // If we get a sentence, then parse it and send the
                               // counts back
-            f_i.clear
-            g_i.clear
-            h_i.clear
+
+            println("String " +s+" received")
+
+            f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
+            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+
+
+//            f_i = new IHashMap[F_Key,Double] {
+//              override def default( summandKey:F_Key ) = 0
+//            }
+//
+//            g_i = new IHashMap[(Int,String,String), Double] {
+//              override def default(key:(Int,String,String)) = 0
+//            }
+//
+//            h_i = new IHashMap[(Int,Int,String), Double] {
+//              override def default(key:(Int,Int,String)) = 0
+//            }
 
             val words = s.split(' ')
             resize( words.size+1 )
@@ -1321,7 +1358,9 @@ package ShakesEM {
 
             println( chart )
 
-            sender ! ParsingResult(id,scaledStringProb,f_i.readOnly,g_i,h_i,scaledBy)
+            println("Parsing and estimation completed")
+
+            reply(ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy))
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1331,6 +1370,9 @@ package ShakesEM {
             g = trainedGram
             println("Received grammar:\n" + g )
           }
+          case what:Any => {
+            println("got something else: "  + what)
+          }
         }
       }
     }
@@ -1339,9 +1381,9 @@ package ShakesEM {
   @serializable case class ParsingResult(
     id:Int,
     scaledStringProb:Double,
-    f_i:scala.collection.Map[(Int,Int,String,String,String),Double],
-    g_i:HashMap[(Int,String,String),Double],
-    h_i:HashMap[(Int,Int,String),Double],
+    f_i:scala.collection.immutable.Map[F_Key,Double],
+    g_i:scala.collection.immutable.Map[G_Key,Double],
+    h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
     scaledBy:Double
   )
 
@@ -1350,9 +1392,9 @@ package ShakesEM {
   * and Schabes (1992)
   */
   trait BracketedDefinitions extends CountingDefinitions {
-    import collection.mutable.{HashMap,HashSet}
-    import Math.pow
-    var bracketing:HashSet[Bracketing] = new HashSet // Initialize to empty set
+    //import collection.mutable.{HashMap,HashSet}
+    import math.pow
+    var bracketing:MHashSet[Bracketing] = new MHashSet // Initialize to empty set
 
     def lexFill(w:String,index:Int) {
       g.lexExps(w).foreach{ pos =>
@@ -1373,8 +1415,8 @@ package ShakesEM {
     */
     def synFill( start:Int, end:Int) {
       start+1 to (end-1) foreach{ k =>
-        chart(start)(k).keys.foreach{ left =>
-          chart(k)(end).keys.foreach{ right =>
+        chart(start)(k).keysIterator.foreach{ left =>
+          chart(k)(end).keysIterator.foreach{ right =>
             g.phrExps (left)(right) .foreach{ phrase =>
               val thisprob = phrase._2 * 
                               chart(start)(k)(left).ip *
@@ -1432,12 +1474,12 @@ package ShakesEM {
       firstStart
       while(true) {
         receive {
-          case BracketedToParse(s:String,b:HashSet[Bracketing]) => {  
+          case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
                               // If we get a sentence, then parse it and send the
                               // counts back
-            f_i.clear
-            g_i.clear
-            h_i.clear
+            f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
+            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
             bracketing = b
 
 
@@ -1455,7 +1497,7 @@ package ShakesEM {
             println( chart )
 
             val scaledBy = pow( wordScale , size - 1 )
-            sender ! ParsingResult(id,scaledStringProb,f_i.readOnly,g_i,h_i,scaledBy)
+            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1504,8 +1546,8 @@ package ShakesEM {
     }
     def synFill( start:Int, end:Int) {
       start+1 to (end-1) foreach{ k =>
-        chart(start)(k).keys.foreach{ left =>
-          chart(k)(end).keys.foreach{ right =>
+        chart(start)(k).keysIterator.foreach{ left =>
+          chart(k)(end).keysIterator.foreach{ right =>
             g.phrExps (left)(right) .foreach{ phrase =>
               val thisprob = phrase._2 * 
                               chart(start)(k)(left).ip *
@@ -1545,7 +1587,7 @@ package ShakesEM {
   trait ShakesParserManager {
     import scala.collection.mutable.ArrayBuffer
     import scala.actors.AbstractActor
-    import Math._
+    import math._
 
     var g1:ShakesPCNF
     var g2:ShakesPCNF
@@ -1583,19 +1625,23 @@ package ShakesEM {
           println( "Sending sentence number " + id + " to parser " + id )
           parsers(id) ! trainingCorpus(id)
         }
+        println("All sentences sent")
 
         var sentenceNumber = parsers.size - 1
 
         var numFinishedParsers = 0
 
+        println("numFinishedParsers, parses.size" + (numFinishedParsers,parsers.size))
+
         while( numFinishedParsers < parsers.size ) {
+          println("<<<....>>>")
           receive {
             case ParsingResult(
               id:Int,
               scaledStringProb:Double,
-              f_i:scala.collection.Map[(Int,Int,String,String,String),Double],
-              g_i:HashMap[(Int,String,String),Double],
-              h_i:HashMap[(Int,Int,String),Double],
+              f_i:scala.collection.immutable.Map[F_Key,Double],
+              g_i:scala.collection.immutable.Map[G_Key,Double],
+              h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
               scaledBy:Double ) => {
 
 
@@ -1607,9 +1653,9 @@ package ShakesEM {
               corpusLogProb = corpusLogProb + log( scaledStringProb ) -
                 log( scaledBy )
 
-                //              f_i.keys.foreach( lhs =>
-                //                f_i (lhs) .keys.foreach( left =>
-                //                  f_i (lhs)(left) .keys.foreach{ right =>
+                //              f_i.keysIterator.foreach( lhs =>
+                //                f_i (lhs) .keysIterator.foreach( left =>
+                //                  f_i (lhs)(left) .keysIterator.foreach{ right =>
                 //                    g2.f (lhs._3)(left)(right) =
                 //                      g2.f (lhs._3)(left)(right) +
                 //                      (
@@ -1620,34 +1666,41 @@ package ShakesEM {
                 //                )
                 //              )
 
-              f_i.keys.foreach( summandKey => {
-                val ( _,_,lhs,left,right ) = summandKey
-                println( 
-                  "f_i : " + (summandKey,f_i(summandKey)) + "\n\n"
-                )
-                println(
-                  "g2.f : " + (lhs,left,right,g2.f(lhs)(left)(right)) + "\n\n"
-                )
-                g2.f (lhs)(left)(right) =
-                  g2.f (lhs)(left)(right) +
-                    (
-                      f_i (summandKey) /
-                        scaledStringProb
-                    )
+              println("f_i.keySet: " + f_i.keySet + "\n\n")
+
+              f_i.keySet.foreach( summandKey => {
+                  val F_Key( _,_,lhs,left,right ) = summandKey
+                  println( 
+                    "f_i : " + (summandKey,f_i(summandKey)) + "\n\n"
+                  )
+                  println(
+                    "g2.f : " + (lhs,left,right,g2.f(lhs)(left)(right)) + "\n\n"
+                  )
                 }
               )
-              g_i.keys.foreach{ k =>
-                val index = k._1
-                val pos = k._2
-                val word = k._3
-                g2.g( (pos,word) ) = 
-                  g2.g( (pos,word) ) +
-                  (
-                    g_i( k ) /
-                    scaledStringProb
-                  )
+
+              f_i.keySet.foreach( summandKey => {
+                  val F_Key( _,_,lhs,left,right ) = summandKey
+                  g2.f (lhs)(left)(right) =
+                    g2.f (lhs)(left)(right) +
+                      (
+                        f_i (summandKey) /
+                          scaledStringProb
+                      )
+                }
+              )
+              g_i.keysIterator.foreach{ k =>
+                k match {
+                  case G_Key(index, pos, word ) => 
+                    g2.g( (pos,word) ) = 
+                      g2.g( (pos,word) ) +
+                      (
+                        g_i( k ) /
+                        scaledStringProb
+                      )
+                }
               }
-              h_i.keys.foreach{ k =>
+              h_i.keysIterator.foreach{ k =>
                 val start = k._1
                 val end = k._2
                 val label = k._3
@@ -1673,6 +1726,8 @@ package ShakesEM {
                 parsers(id) ! trainingCorpus( sentenceNumber )
               }
             }
+
+            case what:Any => println("ShakesParserManager got something else: " + what)
 
           }
         }
@@ -1798,9 +1853,9 @@ package ShakesEM {
       //            corpusLogProb = corpusLogProb + log( scaledStringProb ) -
       //              log( scaledBy )
 
-      //            f_i.keys.foreach( lhs =>
-      //              f_i (lhs) .keys.foreach( left =>
-      //                f_i (lhs)(left) .keys.foreach{ right =>
+      //            f_i.keysIterator.foreach( lhs =>
+      //              f_i (lhs) .keysIterator.foreach( left =>
+      //                f_i (lhs)(left) .keysIterator.foreach{ right =>
       //                  g2.f (lhs._3)(left)(right) =
       //                    g2.f (lhs._3)(left)(right) +
       //                    (
@@ -1810,7 +1865,7 @@ package ShakesEM {
       //                }
       //              )
       //            )
-      //            g_i.keys.foreach{ k =>
+      //            g_i.keysIterator.foreach{ k =>
       //              val index = k._1
       //              val pos = k._2
       //              val word = k._3
@@ -1821,7 +1876,7 @@ package ShakesEM {
       //                  scaledStringProb
       //                )
       //            }
-      //            h_i.keys.foreach{ k =>
+      //            h_i.keysIterator.foreach{ k =>
       //              val start = k._1
       //              val end = k._2
       //              val label = k._3
@@ -1977,9 +2032,9 @@ package ShakesEM {
   * Reads, stores, and makes useful a partially bracketed corpus.
   */
   class BracketedCorpus extends ShakesTrainCorpus {
-    import collection.mutable.HashSet
+    //import collection.mutable.HashSet
 
-    var bracketings:Array[HashSet[Bracketing]] = Array()
+    var bracketings:Array[MHashSet[Bracketing]] = Array()
     var strings:Array[String] = Array()
 
     /**
@@ -2007,16 +2062,16 @@ package ShakesEM {
       val bracketsPath = corporaPrefix+"-brackets.txt"
 
 
-      strings = fromFile(stringsPath).getLines.toList.filter(_.length > 0).map(_.replace("\n","")).toArray
+      strings = fromPath(stringsPath).getLines("\n").toList.filter(_.length > 0).map(_.replace("\n","")).toArray
 
 
       val corpusSize = strings.size
 
-      bracketings = Array.fromFunction( i =>
-        new HashSet[Bracketing]
-      )(corpusSize + 1 )
+      bracketings = Array.fill(corpusSize + 1 )(
+        new MHashSet[Bracketing]
+      )
 
-      val lines = fromFile(bracketsPath).getLines
+      val lines = fromPath(bracketsPath).getLines("\n")
       lines.foreach( line =>
         if( line.length > 1 ) {
           val fields = line.replace("\n","").split(' ')
@@ -2043,7 +2098,7 @@ package ShakesEM {
 
     def readCorpus( stringsPath:String ) {
       import scala.io.Source._
-      strings = fromFile(stringsPath).getLines.toList.filter(_.length > 0).map(_.replace("\n","")).toArray
+      strings = fromPath(stringsPath).getLines("\n").toList.filter(_.length > 0).map(_.replace("\n","")).toArray
     }
     override def toString = strings mkString("","\n","")
   }
@@ -2289,7 +2344,7 @@ package ShakesEM {
     //        /**
     //        * Let's make as many parsers as we are asked to.
     //        */
-    //        val parsers:Array[ShakesVanillaEMParser] = Array.fromFunction(
+    //        val parsers:Array[ShakesVanillaEMParser] = Array.tabulate(
     //          new ShakesVanillaEMParser(_,g1,ws)
     //        ) (numParsers)
     //
@@ -2317,9 +2372,9 @@ package ShakesEM {
     //              corpusLogProb = corpusLogProb + log( scaledStringProb ) - log( scaledBy
     //              )
     //
-    //              f_i.keys.foreach( lhs =>
-    //                f_i (lhs) .keys.foreach( left =>
-    //                  f_i (lhs)(left) .keys.foreach{ right =>
+    //              f_i.keysIterator.foreach( lhs =>
+    //                f_i (lhs) .keysIterator.foreach( left =>
+    //                  f_i (lhs)(left) .keysIterator.foreach{ right =>
     //                    g2.f (lhs._3)(left)(right) =
     //                      g2.f (lhs._3)(left)(right) +
     //                      (
@@ -2329,7 +2384,7 @@ package ShakesEM {
     //                  }
     //                )
     //              )
-    //              g_i.keys.foreach{ k =>
+    //              g_i.keysIterator.foreach{ k =>
     //                val index = k._1
     //                val pos = k._2
     //                val word = k._3
@@ -2340,7 +2395,7 @@ package ShakesEM {
     //                    scaledStringProb
     //                  )
     //              }
-    //              h_i.keys.foreach{ k =>
+    //              h_i.keysIterator.foreach{ k =>
     //                val start = k._1
     //                val end = k._2
     //                val label = k._3
@@ -2438,7 +2493,7 @@ package ShakesEM {
     //      while( !stoppingCondition( iterationNum, deltaLogProb) ) {
     //        import java.io._
     //
-    //        val parsers:Array[ShakesBracketedParser] = Array.fromFunction(
+    //        val parsers:Array[ShakesBracketedParser] = Array.tabulate(
     //          new ShakesBracketedParser(_,g1,wordScale)
     //        ) ( if( numParsers <= corpus.size ) numParsers else corpus.size )
     //
@@ -2466,9 +2521,9 @@ package ShakesEM {
     //              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
     //                log( scaledBy )
     //
-    //              f_i.keys.foreach( lhs =>
-    //                f_i (lhs) .keys.foreach( left =>
-    //                  f_i (lhs)(left) .keys.foreach{ right =>
+    //              f_i.keysIterator.foreach( lhs =>
+    //                f_i (lhs) .keysIterator.foreach( left =>
+    //                  f_i (lhs)(left) .keysIterator.foreach{ right =>
     //                    g2.f (lhs._3)(left)(right) =
     //                      g2.f (lhs._3)(left)(right) +
     //                      (
@@ -2478,7 +2533,7 @@ package ShakesEM {
     //                  }
     //                )
     //              )
-    //              g_i.keys.foreach{ k =>
+    //              g_i.keysIterator.foreach{ k =>
     //                val index = k._1
     //                val pos = k._2
     //                val word = k._3
@@ -2489,7 +2544,7 @@ package ShakesEM {
     //                    scaledStringProb
     //                  )
     //              }
-    //              h_i.keys.foreach{ k =>
+    //              h_i.keysIterator.foreach{ k =>
     //                val start = k._1
     //                val end = k._2
     //                val label = k._3
