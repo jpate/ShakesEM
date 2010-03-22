@@ -1045,7 +1045,7 @@ package ShakesEM {
     }
   }//end ShakesParser
 
-  case class F_Key(
+  @serializable case class F_Key(
     start:Int,
     end:Int,
     lhs:String,
@@ -1208,7 +1208,7 @@ package ShakesEM {
     /**
     * This stores intermediate counts of binary-branching nodes for this sentence.
     */
-    var f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+    @serializable var f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
    // {
    //   override def default( summandKey:F_Key ) = 0
    // }
@@ -1327,7 +1327,9 @@ package ShakesEM {
 
             println("String " +s+" received")
 
-            f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+
+
+            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
             h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
 
@@ -1360,7 +1362,13 @@ package ShakesEM {
 
             println("Parsing and estimation completed")
 
-            reply(ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy))
+            reply( Map[F_Key,Double](Pair(F_Key(9,4,"NP","DET","NBAR"),0.44923)) )
+            reply( f_i.toMap )
+            reply( "Get ready for a ParsingResult")
+
+            println("Sending back, among other things, f_i: " + f_i)
+
+            reply(ParsingResult(id,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println("Parser " + id + " stopping")
@@ -1477,7 +1485,7 @@ package ShakesEM {
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
                               // If we get a sentence, then parse it and send the
                               // counts back
-            f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
             h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
             bracketing = b
@@ -1634,14 +1642,14 @@ package ShakesEM {
         println("numFinishedParsers, parses.size" + (numFinishedParsers,parsers.size))
 
         while( numFinishedParsers < parsers.size ) {
-          println("<<<....>>>")
           receive {
+            case s:String => println( s )
             case ParsingResult(
               id:Int,
               scaledStringProb:Double,
-              f_i:scala.collection.immutable.Map[F_Key,Double],
-              g_i:scala.collection.immutable.Map[G_Key,Double],
-              h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
+              f_i:Map[F_Key,Double],
+              g_i:Map[G_Key,Double],
+              h_i:Map[(Int,Int,String),Double],
               scaledBy:Double ) => {
 
 
@@ -1726,8 +1734,8 @@ package ShakesEM {
                 parsers(id) ! trainingCorpus( sentenceNumber )
               }
             }
-
-            case what:Any => println("ShakesParserManager got something else: " + what)
+            case what:Any =>
+              println("ShakesParserManager got something else: " + what)
 
           }
         }
