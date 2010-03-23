@@ -1318,9 +1318,11 @@ package ShakesEM {
 //              override def default(key:(Int,Int,String)) = 0
 //            }
 
+            println("Resizing chart...")
             val words = s.split(' ')
             resize( words.size+1 )
 
+            println("Parsing sentence...")
             populateChart(words)
 
             if( !root.contains("S") ) {
@@ -1330,15 +1332,7 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale, size - 1 )
 
-            //println( chart )
-
-            //println("Parsing and estimation completed")
-
-            //reply( Map[F_Key,Double](Pair(F_Key(9,4,"NP","DET","NBAR"),0.44923)) )
-            //reply( f_i.toMap )
-            //reply( "Get ready for a ParsingResult")
-
-            ////println("Sending back, among other things, f_i: " + f_i)
+            println("Replying with estimates")
 
             reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
           }
@@ -1747,7 +1741,7 @@ package ShakesEM {
               if( sentenceNumber >= trainingCorpus.size ) {
                 numFinishedParsers += 1
               } else {
-                if( sentenceNumber % 100 == 0 )
+                //if( sentenceNumber % 100 == 0 )
                   println( 
                     "Sending sentence number " + sentenceNumber +
                       " to parser " + parserID )

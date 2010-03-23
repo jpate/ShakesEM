@@ -13,6 +13,7 @@ package testNewParsers {
       val lexFile = args(1)
       val yieldFile = args(2)
 
+
       val initGram = new ShakesPCNF
 
       initGram.readGrammar( gramFile )
@@ -29,15 +30,18 @@ package testNewParsers {
         val trainingCorpus = new StringsOnlyCorpus
         trainingCorpus.readCorpus( yieldFile )
 
+        def finalCleanup(trainedGram:ShakesPCNF) = ()
+
         def stoppingCondition( numIter:Int, deltaLogProb:Double ) = numIter >=1
 
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
         def parserConstructor( grammar:ShakesPCNF ) = {
 
           //val someParsers = new List[Actor]
 
           val localVanilla = new Actor with CYKDefinitions with LocalDefinitions
           with Heuristics {
-            val id = 0
+            val parserID = "0"
             var g = initGram
           }
 
@@ -56,19 +60,47 @@ package testNewParsers {
 
     }
   }
+
   object testRemoteManagedVanilla {
     def main( args:Array[String] ) {
-      val gramFile = args(0)
-      val lexFile = args(1)
-      val yieldFile = args(2)
+      import scala.io.Source._
+      import math._
+
+      val nonTermCount = args(0).toInt
+      val termFile = args(1)
+      val trainYieldSpec = args(2)
+      val testStringsPath = args(3)
+      val hostsPath = args(4)
+      val minIter = args(5).toInt
+      val tolerance = args(6).toDouble
+      val randSeed = args(7).toInt
+      val randomBase = args(8).toDouble
+
+      println("nonTermCount: " + nonTermCount )
+      println("termFile: " + termFile )
+      println("trainYieldSpec: " + trainYieldSpec )
+      println("testStringsPath: " + testStringsPath )
+      println("hostsPath: "+ hostsPath )
+      println("minIter: " + minIter )
+      println("tolerance: " + tolerance )
+      println("randSeed: " + randSeed )
+      println("randomBase: " + randomBase )
+
+      println("\n\n\n====\n\n\n")
 
       val initGram = new ShakesPCNF
 
-      initGram.readGrammar( gramFile )
-      initGram.readLexicon( lexFile )
+      val poslist = fromPath(termFile).getLines("\n").toList
+      val hosts = fromPath(hostsPath).getLines("\n").map{_.split(' ')}.toList
+
+      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+
+      //initGram.readGrammar( gramFile )
+      //initGram.readLexicon( lexFile )
 
       
-      object manager extends Actor with ShakesParserManager {
+      object manager extends Actor with ShakesParserManager with
+      EvaluatingManager {
         import collection.mutable.ArrayBuffer
         import scala.actors.remote.Node
         import scala.actors.remote.RemoteActor._
@@ -78,24 +110,26 @@ package testNewParsers {
         var g2 = g1.countlessCopy
 
         val trainingCorpus = new StringsOnlyCorpus
-        trainingCorpus.readCorpus( yieldFile )
+        trainingCorpus.readCorpus( trainYieldSpec )
 
-        def stoppingCondition( numIter:Int, deltaLogProb:Double ) = numIter >=1
+        val testSentences = fromPath(testStringsPath).getLines("\n").toList
+
+
+        def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
+          numIter > minIter && abs(deltaLogProb) < tolerance
 
         def parserConstructor( grammar:ShakesPCNF ) = {
-
-          //val someParsers = new ArrayBuffer[AbstractActor]
-
-          val someParsers = select( Node("127.0.0.1", 9999), 'parser ) :: Nil
+          var someParsers = hosts map( parserSpec =>
+            select( Node(parserSpec(0), parserSpec(1).toInt), 'parser )
+          )
 
           someParsers foreach( _ ! grammar )
 
           someParsers
         }
 
-        def useGrammar( trainedGram:ShakesPCNF, iterNum:Int ) {
-          println( "Iteration " + iterNum + ":\n" + trainedGram )
-        }
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
+
       }
       manager.start
 
@@ -104,11 +138,12 @@ package testNewParsers {
 
   object startRemoteVanillaParser {
     def main( args:Array[String] ) {
+      val portToUse = args(0).toInt
       val thisRemoteParser = new Actor with CYKDefinitions with RemoteDefinitions with
         Heuristics {
           val host = "127.0.0.1"
-          val port = 9999
-          val id = 0
+          val port = portToUse
+          val parserID = host+":"+portToUse
         }
       thisRemoteParser.start
     }
@@ -127,7 +162,7 @@ package testNewParsers {
 
       val localBracketed = new Actor with BracketedDefinitions with LocalDefinitions
       with Heuristics {
-        val id = 0
+        val parserID = "0"
         var g = initGram
       }
 
@@ -153,7 +188,7 @@ package testNewParsers {
 
       val localVanilla = new Actor with CYKDefinitions with LocalDefinitions
       with Heuristics {
-        val id = 0
+        val parserID = "0"
         var g = initGram
       }
 
@@ -181,7 +216,7 @@ package testNewParsers {
       text.readCorpus("development/testSentences.txt")
 
       val remoteVanilla = new Actor with CYKDefinitions with RemoteDefinitions with Heuristics {
-        val id = 0
+        val parserID = "0"
         val host = "127.0.0.1"
         val port = 9999
       }
@@ -216,7 +251,7 @@ package testNewParsers {
 
       val remoteBracketed = new Actor with BracketedDefinitions with RemoteDefinitions
       with Heuristics {
-        val id = 0
+        val parserID = "0"
         val host = "127.0.0.1"
         val port = 9999
       }
