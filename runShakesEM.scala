@@ -112,7 +112,7 @@ package RunShakesEM {
       val initGram = new ShakesPCNF
   
       val poslist = fromPath(termFile).getLines("\n").toList
-      val hosts = fromPath(hostsPath).getLines("\n").map{_.split(' ')}.toList
+      val hosts = fromPath(hostsPath).getLines("\n").toList
   
       initGram.randomizeGrammar(nonTermCount,poslist,16,0)
   
@@ -140,9 +140,12 @@ package RunShakesEM {
           numIter > minIter && abs(deltaLogProb) < tolerance
   
         def parserConstructor( grammar:ShakesPCNF ) = {
-          var someParsers = hosts map( parserSpec =>
-            select( Node(parserSpec(0), parserSpec(1).toInt), 'parser )
-          )
+          var someParsers = (hosts map{ parserSpec:String =>
+              val Array(ip,port) = parserSpec.split(' ')
+              println( "Establishing connection with " + ip +":"+
+              port +"... ")
+              select( Node(ip, port.toInt), 'parser )
+          }).toList
   
           someParsers foreach( _ ! grammar )
   

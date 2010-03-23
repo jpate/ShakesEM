@@ -1516,7 +1516,7 @@ package ShakesEM {
     VitActor.start
 
     def useGrammar( trainedGram:ShakesPCNF, iterNum:Int ) {
-      if( iterNum % 2 == ) {
+      if( iterNum % 2 == 0 ) {
         VitActor ! Evaluation("Iter"+iterNum,trainedGram)
         testSentences.foreach( sent => VitActor ! sent )
       }
