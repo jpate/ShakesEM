@@ -307,34 +307,6 @@ package ShakesEM {
       }
     }
 
-    /**
-    * Reads output from a Shakes*Manager from a file. Grammar should contain
-    * both unary and binary rules.
-    * 
-    * @param gramPath File path to the grammar (relative to current working
-    * directory)
-    */
-    def readShakesGram(gramPath:String) {
-      import scala.io.Source._
-      val lines = fromPath(gramPath).getLines("\n").toList.drop(5)
-      lines.foreach( line =>
-        if( line.length > 1 ) {
-          val fields = line.split(' ')
-
-          if( fields.length == 4) {
-            phrases (fields(0)) (fields(1)) (fields(2)) += fields(3).toDouble
-            phrExps (fields(1)) (fields(2)) = (fields(0), fields(3).toDouble) ::
-                                              phrExps (fields(1)) (fields(2))
-          } else if( fields.length == 3) {
-            lexicon (fields(0)) (fields(1)) += fields(2).toDouble
-            lexExps (fields(1)) = (fields(0), fields(2).toDouble) ::
-                                  lexExps(fields(1))
-          }
-        }
-      )
-    }
-
-
 
     /**
     * Reads a grammar from a file. Grammar should be in the format:
@@ -583,7 +555,7 @@ package ShakesEM {
       //import collection.mutable.{HashMap => MHashMap}
     //import collection.immutable.{HashMap,HashSet}
 
-    val id:Int
+    val parserID:String
     var g:ShakesPCNF
     def firstStart:Unit //  What happens when we first start?
                           //  Remote actors register with the node
@@ -994,7 +966,7 @@ package ShakesEM {
           }
         }
 
-        println("Beginning to descend into a parsed sentence")
+        //println("Beginning to descend into a parsed sentence")
 
         toCompute(0, size - 1) += "S"
 
@@ -1006,40 +978,40 @@ package ShakesEM {
           val labels = toCompute( (start,end) )
           toCompute -= Tuple2(start,end)
 
-          println("Looking at span "+(start,end))
+          //println("Looking at span "+(start,end))
 
           labels.foreach{ l =>
-              println("looking at label " + l )
+              //println("looking at label " + l )
               val rootCell = chart(start)(end)(l)
               p( chart(start)(end)(l) )
 
-              println("Computed outside probability")
+              //println("Computed outside probability")
 
               (0 to (rootCell.backMatcher.length-1)).foreach{ split =>
-                println("When determining toCompute, looking at split " + split)
+                //println("When determining toCompute, looking at split " + split)
                 val splitPoint = rootCell.start + split
                 rootCell.backMatcher(split).foreach{ children =>
                   children match {
                     case RightHandSide( left, right ) => {
                       if( splitPoint - rootCell.start > 1 ) {
-                        println("adding "+(rootCell.start,splitPoint,left))
+                        //println("adding "+(rootCell.start,splitPoint,left))
                         toCompute( (rootCell.start, splitPoint)) += left
                         }
 
                       if( rootCell.end - splitPoint > 1) {
-                        println("adding " + (splitPoint,rootCell.end,right))
+                        //println("adding " + (splitPoint,rootCell.end,right))
                         toCompute ( (splitPoint, rootCell.end) ) += right
                       }
 
                     }
                     case _ =>
                   }
-                  println("New children added" )
+                  //println("New children added" )
                 }
-                println("Done looking at split " + split + " when determining toCompute")
+                //println("Done looking at split " + split + " when determining toCompute")
               }
           }
-          println("toCompute is " + toCompute)
+          //println("toCompute is " + toCompute)
         }
       }
     }
@@ -1108,15 +1080,15 @@ package ShakesEM {
         override def default(key:(String,String)) = 0D
       }
 
-      println("Computing OP for " + ent.start +" "+ent.end +" "+ent.l)
+      //println("Computing OP for " + ent.start +" "+ent.end +" "+ent.l)
 
       (0 to (ent.backMatcher.size-1) ) foreach{ split =>
-        println("Looking at split " + split )
+        //println("Looking at split " + split )
         ent.backMatcher(split).foreach{ matches =>
-          println( "Backmatches are: " + matches )
+          //println( "Backmatches are: " + matches )
           matches match {
             case RightHandSide( left, right ) => {
-              println("Came across a RightHandSide: "+(left,right))
+              //println("Came across a RightHandSide: "+(left,right))
               val ruleProb = g.phrases (ent.l) (left) (right)
 
               val splitPoint = split + ent.start
@@ -1168,37 +1140,37 @@ package ShakesEM {
               f_toAdd( (left,right) ) =
                   f_toAdd( (left,right) )+ f_Summand
               
-              println("Finished processing RightHandSide: " + (left,right))
+              //println("Finished processing RightHandSide: " + (left,right))
             }
             case _ =>
           }
         }
-        println("Finished backmatching split " + split)
+        //println("Finished backmatching split " + split)
       }
-      println("Finished backmatching all splits" )
+      //println("Finished backmatching all splits" )
 
 
 
       f_toAdd .keysIterator.foreach{ k =>
         val(left,right) = k
-        println("We gon' add this left " + left )
-        println("We gon' add this right " + right )
+        //println("We gon' add this left " + left )
+        //println("We gon' add this right " + right )
 
-        println("Adding to f_i, which is " + f_i)
-        println("F_Key is " + F_Key(ent.start,ent.end,ent.l,left,right) )
+        //println("Adding to f_i, which is " + f_i)
+        //println("F_Key is " + F_Key(ent.start,ent.end,ent.l,left,right) )
 
         val summand:Double = f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
         (f_toAdd(k))
 
 
-        println("Updated f_i should be " + f_i.updated(
-          F_Key(ent.start,ent.end,ent.l,left,right),summand)
-        )
+        //println("Updated f_i should be " + f_i.updated(
+        //  F_Key(ent.start,ent.end,ent.l,left,right),summand)
+        //)
 
 
         f_i = f_i.updated( F_Key(ent.start,ent.end,ent.l,left,right),summand)
         
-        println("done been added YO")
+        //println("done been added YO")
         //f_i ( F_Key(ent.start,ent.end,ent.l,left,right) ) =
         //    f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
         //    f_toAdd (left)(right)
@@ -1253,7 +1225,7 @@ package ShakesEM {
           wordScale * pos._2
         )
         chart(index)(index+1) += Pair( pos._1, l)
-        println(( w, index, pos._2 , chart(index)(index+1).size))
+        //println(( w, index, pos._2 , chart(index)(index+1).size))
       }
     }
 
@@ -1267,7 +1239,7 @@ package ShakesEM {
         chart(start)(k).keysIterator.foreach{ left =>
           chart(k)(end).keysIterator.foreach{ right =>
             g.phrExps (left)(right) .foreach{ phrase =>
-              println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
+              //println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
               val thisprob = phrase._2 * 
                               chart(start)(k)(left).ip *
                               chart(k)(end)(right).ip
@@ -1276,7 +1248,7 @@ package ShakesEM {
                   start,k,end,
                   thisprob
                 )
-              println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
+              //println((start,k,end,left,right,chart(start)(end)(phrase._1).size))
             }
           }
         }
@@ -1294,23 +1266,23 @@ package ShakesEM {
     */
     def populateChart(s:Array[String]) = {
       1 to s.size foreach{ j =>
-        println(">"+j)
+        //println(">"+j)
         lexFill( s(j-1), j-1)
-        println("<"+j)
+        //println("<"+j)
         
-        println("beginning synfill")
+        //println("beginning synfill")
         if( j > 1 )
           ((0 to (j-2)) reverse) foreach{ i =>
-            println("attempting synfill: " + (i,j) )
+            //println("attempting synfill: " + (i,j) )
             synFill(i, j)
-            println("synfill " + (i,j) + " successfull!" )
+            //println("synfill " + (i,j) + " successfull!" )
           }
       }
 
-      println("Inside pass complete with scaled string score " + stringScore)
+      //println("Inside pass complete with scaled string score " + stringScore)
 
       chartDescent( computeOPWithEstimates )
-      println("Outside pass complete")
+      //println("Outside pass complete")
     }
 
     /**
@@ -1319,7 +1291,7 @@ package ShakesEM {
     def act() {
       import math._
       firstStart
-      println("Parser started")
+      println("Parser " + parserID + " started")
       while(true) {
         receive {
           case StringToParse(s:String) => {  // If we get a sentence, then parse it and send the
@@ -1358,25 +1330,25 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale, size - 1 )
 
-            println( chart )
+            //println( chart )
 
-            println("Parsing and estimation completed")
+            //println("Parsing and estimation completed")
 
-            reply( Map[F_Key,Double](Pair(F_Key(9,4,"NP","DET","NBAR"),0.44923)) )
-            reply( f_i.toMap )
-            reply( "Get ready for a ParsingResult")
+            //reply( Map[F_Key,Double](Pair(F_Key(9,4,"NP","DET","NBAR"),0.44923)) )
+            //reply( f_i.toMap )
+            //reply( "Get ready for a ParsingResult")
 
-            println("Sending back, among other things, f_i: " + f_i)
+            ////println("Sending back, among other things, f_i: " + f_i)
 
-            reply(ParsingResult(id,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
+            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
           }
           case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + id + " stopping")
+            println("Parser " + parserID + " stopping")
             exit()
           }
           case trainedGram:ShakesPCNF => {
             g = trainedGram
-            println("Received grammar:\n" + g )
+            println( "Received a new grammar" )
           }
           case what:Any => {
             println("got something else: "  + what)
@@ -1387,7 +1359,7 @@ package ShakesEM {
   }
 
   @serializable case class ParsingResult(
-    id:Int,
+    parserID:String,
     scaledStringProb:Double,
     f_i:scala.collection.immutable.Map[F_Key,Double],
     g_i:scala.collection.immutable.Map[G_Key,Double],
@@ -1465,21 +1437,25 @@ package ShakesEM {
     * @param s The input sentence (an array of terminals)
     * @return A parse chart with labels and inside and outside probabilities.
     */
-    override def populateChart(s:Array[String]) = {
-      List.range(1,s.size+1).foreach{ j =>
+    def populateChart(s:Array[String]) = {
+      println("Inside pass beginning")
+      1 to s.size foreach{ j =>
         lexFill( s(j-1), j-1)
         
-        List.range(0,j-1).reverse.foreach{ i =>
-          if( isCompatible( i, j ) )
-            synFill(i, j)
-        }
+        if( j > 1 )
+          ((0 to (j-2)) reverse) foreach{ i =>
+            if( isCompatible( i, j ) )
+              synFill(i, j)
+          }
       }
+      println("Inside pass complete")
       chartDescent( computeOPWithEstimates )
     }
 
 
     def act() {
       firstStart
+      println("Parser " + parserID + " started")
       while(true) {
         receive {
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
@@ -1495,6 +1471,9 @@ package ShakesEM {
             resize(words.size + 1)
 
 
+            println("Received sentence " + s)
+            println("Received bracketing " + b)
+
             populateChart(words)
 
             if( !root.contains("S") ) {
@@ -1502,17 +1481,44 @@ package ShakesEM {
               println( s )
             }
 
-            println( chart )
+            //println( chart )
 
             val scaledBy = pow( wordScale , size - 1 )
-            sender ! ParsingResult(id,scaledStringProb,f_i,g_i,h_i,scaledBy)
+            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
           }
           case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + id + " stopping")
+            println("Parser " + parserID + " stopping")
             exit()
           }
-          case trainedGram:ShakesPCNF => g = trainedGram
+          case trainedGram:ShakesPCNF => {
+            g = trainedGram
+            println( "Received a new grammar" )
+          }
         }
+      }
+    }
+  }
+
+  trait EvaluatingManager {
+    val testSentences:List[String]
+    def finalCleanup(trainedGram:ShakesPCNF) = {
+      VitActor ! Evaluation("Convergence",trainedGram)
+      testSentences.foreach( sent => VitActor ! sent )
+      VitActor ! Stop
+    }
+
+    object VitActor extends ViterbiDefinitions {
+      val parserID = "VitActor"
+      var g = new ShakesPCNF
+      var wordScale = 10000
+    }
+
+    VitActor.start
+
+    def useGrammar( trainedGram:ShakesPCNF, iterNum:Int ) {
+      if( iterNum % 2 == ) {
+        VitActor ! Evaluation("Iter"+iterNum,trainedGram)
+        testSentences.foreach( sent => VitActor ! sent )
       }
     }
   }
@@ -1520,7 +1526,7 @@ package ShakesEM {
   /**
   * This provides chart filling definitions for viterbi parsing
   */
-  trait ViterbiDefinitions extends CountingDefinitions {
+  trait ViterbiDefinitions extends Actor with LocalDefinitions with ShakesParser {
     /**
     * This is the CYK parsing algorithm. Same time complexity as Earley for
     * completely ambiguous grammars, so (since we're doing full grammar
@@ -1571,8 +1577,44 @@ package ShakesEM {
       }
     }
 
+    var prefix = ""
+
+    def act() {
+      while(true) {
+        receive {
+          case Evaluation(pre:String, trainedGram:ShakesPCNF) => {
+            prefix = pre
+            g = trainedGram
+            println( "Received grammar for " + prefix + " evaluation")
+          }
+
+          case Stop => {      // If we get the stop signal, then shut down.
+            println("Parser " +parserID + " stopping")
+            exit()
+          }
+
+          case s:String => {
+            val words = s.split(' ')
+            resize(words.size + 1)
+
+            populateChart(words)
+
+            if( root.contains("S") ) {
+              println( prefix + ": " + root("S").viterbiString )
+            } else {
+              println("WARNING: SENTENCE DID NOT PARSE")
+              println( s )
+            }
+
+          }
+        }
+      }
+    }
+
     def parseString:String = chart(0)(chart.size - 1)("S").viterbiString
+
   }
+  case class Evaluation( prefix:String, trainedGram:ShakesPCNF )
 
   trait ActorParser extends Actor
 
@@ -1612,8 +1654,10 @@ package ShakesEM {
     * @param grammar  Grammar to be used for this iteration.
     */
     def parserConstructor( grammar:ShakesPCNF ):List[AbstractActor]
+    def iterationCleanup( parsers:List[AbstractActor] ):Unit
 
     def useGrammar( trainedG:ShakesPCNF, curIterCount:Int ):Unit
+    def finalCleanup( trainedGram:ShakesPCNF ):Unit
 
 
     val trainingCorpus:ShakesTrainCorpus
@@ -1629,23 +1673,23 @@ package ShakesEM {
 
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
-        List.range(0, parsers.size).foreach{ id =>
-          println( "Sending sentence number " + id + " to parser " + id )
-          parsers(id) ! trainingCorpus(id)
+        List.range(0, parsers.size).foreach{ parserNum =>
+          println( "Sending out sentence number " + parserNum )
+          parsers(parserNum) ! trainingCorpus(parserNum)
         }
-        println("All sentences sent")
+        //println("All sentences sent")
 
         var sentenceNumber = parsers.size - 1
 
         var numFinishedParsers = 0
 
-        println("numFinishedParsers, parses.size" + (numFinishedParsers,parsers.size))
+        //println("numFinishedParsers, parses.size" + (numFinishedParsers,parsers.size))
 
         while( numFinishedParsers < parsers.size ) {
           receive {
             case s:String => println( s )
             case ParsingResult(
-              id:Int,
+              parserID:String,
               scaledStringProb:Double,
               f_i:Map[F_Key,Double],
               g_i:Map[G_Key,Double],
@@ -1653,39 +1697,14 @@ package ShakesEM {
               scaledBy:Double ) => {
 
 
-              println( "f_i: \n" + f_i + "\n\n\n" )
-              println( "g_i: \n" + g_i + "\n\n\n" )
-              println( "h_i: \n" + h_i + "\n\n\n" )
+              //println( "f_i: \n" + f_i + "\n\n\n" )
+              //println( "g_i: \n" + g_i + "\n\n\n" )
+              //println( "h_i: \n" + h_i + "\n\n\n" )
 
 
               corpusLogProb = corpusLogProb + log( scaledStringProb ) -
                 log( scaledBy )
 
-                //              f_i.keysIterator.foreach( lhs =>
-                //                f_i (lhs) .keysIterator.foreach( left =>
-                //                  f_i (lhs)(left) .keysIterator.foreach{ right =>
-                //                    g2.f (lhs._3)(left)(right) =
-                //                      g2.f (lhs._3)(left)(right) +
-                //                      (
-                //                        f_i (lhs)(left)(right) /
-                //                        scaledStringProb
-                //                      )
-                //                  }
-                //                )
-                //              )
-
-              println("f_i.keySet: " + f_i.keySet + "\n\n")
-
-              f_i.keySet.foreach( summandKey => {
-                  val F_Key( _,_,lhs,left,right ) = summandKey
-                  println( 
-                    "f_i : " + (summandKey,f_i(summandKey)) + "\n\n"
-                  )
-                  println(
-                    "g2.f : " + (lhs,left,right,g2.f(lhs)(left)(right)) + "\n\n"
-                  )
-                }
-              )
 
               f_i.keySet.foreach( summandKey => {
                   val F_Key( _,_,lhs,left,right ) = summandKey
@@ -1712,8 +1731,8 @@ package ShakesEM {
                 val start = k._1
                 val end = k._2
                 val label = k._3
-                println("h_i: " + (start,end,label,h_i(k),scaledStringProb))
-                println("g2.h:" + (start,end,label,g2.h(label),scaledStringProb))
+                //println("h_i: " + (start,end,label,h_i(k),scaledStringProb))
+                //println("g2.h:" + (start,end,label,g2.h(label),scaledStringProb))
                 g2.h(label) =
                   g2.h(label) + 
                   (
@@ -1724,14 +1743,15 @@ package ShakesEM {
 
               sentenceNumber = sentenceNumber + 1
 
+
               if( sentenceNumber >= trainingCorpus.size ) {
                 numFinishedParsers += 1
               } else {
-         //       if( sentenceNumber % 100 == 0 )
+                if( sentenceNumber % 100 == 0 )
                   println( 
                     "Sending sentence number " + sentenceNumber +
-                      " to parser " + id )
-                parsers(id) ! trainingCorpus( sentenceNumber )
+                      " to parser " + parserID )
+                reply( trainingCorpus( sentenceNumber ) )
               }
             }
             case what:Any =>
@@ -1739,7 +1759,8 @@ package ShakesEM {
 
           }
         }
-        parsers.foreach( _ ! Stop )
+
+        //parsers.foreach( _ ! Stop )
 
         g2.reestimateRules
 
@@ -1759,9 +1780,12 @@ package ShakesEM {
 
         iterationNum = iterationNum + 1
 
+        iterationCleanup(parsers)
+
 
 
       }
+      finalCleanup(g1)
       exit()
     }
 

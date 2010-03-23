@@ -1,13 +1,167 @@
 package RunShakesEM {
   import ShakesEM._
+  import scala.actors.Actor
+  import scala.actors.Actor._
 
-  object trainAndEvaluateEstimatingMinIterAndConvergence {
-    def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
-      import collection.mutable.ArrayBuffer
-      import Math._
+  trait Heuristics {
+    var wordScale = 10000
+  }
+
+  object trainAndEvaluateRemoteBracketedMinIterAndConvergence {
+    def main( args:Array[String] ) {
       import scala.io.Source._
+      import math._
+  
+      val nonTermCount = args(0).toInt
+      val termFile = args(1)
+      val trainYieldSpec = args(2)
+      val testStringsPath = args(3)
+      val hostsPath = args(4)
+      val minIter = args(5).toInt
+      val tolerance = args(6).toDouble
+      val randSeed = args(7).toInt
+      val randomBase = args(8).toDouble
+  
+      println("nonTermCount: " + nonTermCount )
+      println("termFile: " + termFile )
+      println("trainYieldSpec: " + trainYieldSpec )
+      println("testStringsPath: " + testStringsPath )
+      println("hostsPath: "+ hostsPath )
+      println("minIter: " + minIter )
+      println("tolerance: " + tolerance )
+      println("randSeed: " + randSeed )
+      println("randomBase: " + randomBase )
+  
+      println("\n\n\n====\n\n\n")
+  
+      val initGram = new ShakesPCNF
+  
+      val poslist = fromPath(termFile).getLines("\n").toList
+      val hosts = fromPath(hostsPath).getLines("\n").map{_.split(' ')}.toList
+  
+      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+  
+      //initGram.readGrammar( gramFile )
+      //initGram.readLexicon( lexFile )
+  
+      
+      object manager extends Actor with ShakesParserManager with
+      EvaluatingManager {
+        import collection.mutable.ArrayBuffer
+        import scala.actors.remote.Node
+        import scala.actors.remote.RemoteActor._
+        import scala.actors.AbstractActor
+  
+        var g1 = initGram
+        var g2 = g1.countlessCopy
+  
+        val trainingCorpus = new BracketedCorpus
+        trainingCorpus.readCorpus( trainYieldSpec )
+  
+        val testSentences = fromPath(testStringsPath).getLines("\n").toList
+  
+  
+        def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
+          numIter > minIter && abs(deltaLogProb) < tolerance
+  
+        def parserConstructor( grammar:ShakesPCNF ) = {
+          var someParsers = hosts map( parserSpec =>
+            select( Node(parserSpec(0), parserSpec(1).toInt), 'parser )
+          )
+  
+          someParsers foreach( _ ! grammar )
+  
+          someParsers
+        }
+  
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
+  
+      }
+      manager.start
+  
+    }
+  }
+
+  object trainAndEvaluateRemoteVanillaMinIterAndConvergence {
+    def main( args:Array[String] ) {
+      import scala.io.Source._
+      import math._
+  
+      val nonTermCount = args(0).toInt
+      val termFile = args(1)
+      val trainYieldSpec = args(2)
+      val testStringsPath = args(3)
+      val hostsPath = args(4)
+      val minIter = args(5).toInt
+      val tolerance = args(6).toDouble
+      val randSeed = args(7).toDouble
+      val randomBase = args(8).toDouble
+  
+      println("nonTermCount: " + nonTermCount )
+      println("termFile: " + termFile )
+      println("trainYieldSpec: " + trainYieldSpec )
+      println("testStringsPath: " + testStringsPath )
+      println("hostsPath: "+ hostsPath )
+      println("minIter: " + minIter )
+      println("tolerance: " + tolerance )
+      println("randSeed: " + randSeed )
+      println("randomBase: " + randomBase )
+  
+      println("\n\n\n====\n\n\n")
+  
+      val initGram = new ShakesPCNF
+  
+      val poslist = fromPath(termFile).getLines("\n").toList
+      val hosts = fromPath(hostsPath).getLines("\n").map{_.split(' ')}.toList
+  
+      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+  
+      //initGram.readGrammar( gramFile )
+      //initGram.readLexicon( lexFile )
+  
+      
+      object manager extends Actor with ShakesParserManager with
+      EvaluatingManager {
+        import collection.mutable.ArrayBuffer
+        import scala.actors.remote.Node
+        import scala.actors.remote.RemoteActor._
+        import scala.actors.AbstractActor
+  
+        var g1 = initGram
+        var g2 = g1.countlessCopy
+  
+        val trainingCorpus = new StringsOnlyCorpus
+        trainingCorpus.readCorpus( trainYieldSpec )
+  
+        val testSentences = fromPath(testStringsPath).getLines("\n").toList
+  
+  
+        def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
+          numIter > minIter && abs(deltaLogProb) < tolerance
+  
+        def parserConstructor( grammar:ShakesPCNF ) = {
+          var someParsers = hosts map( parserSpec =>
+            select( Node(parserSpec(0), parserSpec(1).toInt), 'parser )
+          )
+  
+          someParsers foreach( _ ! grammar )
+  
+          someParsers
+        }
+  
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
+  
+      }
+      manager.start
+  
+    }
+  }
+
+
+  object trainAndEvaluateLocalVanillaMinIterAndConvergence {
+    def main( args:Array[String] ) {
+      import scala.io.Source._
+      import math._
   
       val nonTermCount = args(0).toInt
       val termFile = args(1)
@@ -16,10 +170,8 @@ package RunShakesEM {
       val numParsers = args(4).toInt
       val minIter = args(5).toInt
       val tolerance = args(6).toDouble
-      val randSeed = args(7).toInt
-      val randomBase = args(8).toInt
-  
-      val wordScale = 10000
+      val randSeed = args(7).toDouble
+      val randomBase = args(8).toDouble
   
       println("nonTermCount: " + nonTermCount )
       println("termFile: " + termFile )
@@ -30,141 +182,61 @@ package RunShakesEM {
       println("tolerance: " + tolerance )
       println("randSeed: " + randSeed )
       println("randomBase: " + randomBase )
-      println("wordScale: " + wordScale )
   
       println("\n\n\n====\n\n\n")
   
       val initGram = new ShakesPCNF
   
-      val termList =
-        fromFile( termFile ).getLines.toList.filter( _.length > 0 ).
-        map (_.replace("\n",""))
+      val poslist = fromPath(termFile).getLines("\n").toList
   
-      //initGram.readGrammar(gramFile)
-      //initGram.readLexicon(lexFile)
+      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
   
-      initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
+      //initGram.readGrammar( gramFile )
+      //initGram.readLexicon( lexFile )
   
-      val trainingCorpus = new StringsOnlyCorpus
-      trainingCorpus.readCorpus( trainYieldSpec )
+      
+      object manager extends Actor with ShakesParserManager with
+      EvaluatingManager {
+        import collection.mutable.ArrayBuffer
+        import scala.actors.AbstractActor
   
-      val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
-        0).map(_.replace("\n",""))
+        var g1 = initGram
+        var g2 = g1.countlessCopy
+  
+        val trainingCorpus = new StringsOnlyCorpus
+        trainingCorpus.readCorpus( trainYieldSpec )
+  
+        val testSentences = fromPath(testStringsPath).getLines("\n").toList
   
   
-      object manager extends ShakesParserManager( initGram, trainingCorpus ) {
-        import java.io._
+        def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
+          numIter > minIter && abs(deltaLogProb) < tolerance
   
+        def parserConstructor( grammar:ShakesPCNF ) = {
+          val someParsers = ((0 to numParsers) map{ parserSpec:Int =>
+            new Actor with CYKDefinitions with LocalDefinitions with
+              Heuristics {
+                val parserID = "Parser"+parserSpec
+                var g = grammar
+              }
+          }).toList
   
+          someParsers foreach( _.start )
   
-        object VitActor extends EvaluationActor(initGram,10000) {
-          var testCorpus = testStrings
-        }
-        VitActor.start
-  
-        def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-          VitActor ! (g1,iterNum)
-        }
-  
-        def parserConstructor = {
-          val someParsers = new ArrayBuffer[ShakesDistributedParser]
-  
-          (0 to (numParsers-1) ) foreach(
-            someParsers += new ShakesEstimatingParser( _, g1, wordScale
-            )
-          )
           someParsers
         }
   
-        def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
-          iterNum > minIter && abs(deltaLogProb) < tolerance
-        def cleanup = {
-          VitActor ! (g1,Stop)
-        }
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
+  
       }
-  
-      manager.start
-    }
-  }
-  object trainAndEvaluateEstimatingByIterAndReadGrammar {
-    def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
-      import collection.mutable.ArrayBuffer
-      import Math._
-      import scala.io.Source._
-  
-      val gramFile = args(0)
-      val lexFile = args(1)
-      val trainYieldSpec = args(2)
-      val testStringsPath = args(3)
-      val numParsers = args(4).toInt
-      val maxIter = args(5).toInt
-      //val randSeed = args(6).toInt
-  
-      val wordScale = 10000
-  
-      val initGram = new ShakesPCNF
-  
-  
-      initGram.readGrammar(gramFile)
-      initGram.readLexicon(lexFile)
-  
-  
-      val trainingCorpus = new StringsOnlyCorpus
-      trainingCorpus.readCorpus( trainYieldSpec )
-  
-      println(trainingCorpus)
-  
-      val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
-        0).map(_.replace("\n","")).toList
-  
-  
-      object manager extends ShakesParserManager( initGram, trainingCorpus ) {
-        import java.io._
-  
-        def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-          
-          val vit = new ShakesViterbiParser(trainedGram, wordScale)
-          
-          for( s <- testStrings ) {
-            val testWords = s.split(' ')
-            vit.resize( testWords.size + 1 )
-            vit.populateChart( testWords )
-            println( "Iter" + iterNum + ":" + vit.parseString )
-          }
-
-          println(g1)
-  
-        }
-        def parserConstructor = {
-          val someParsers = new ArrayBuffer[ShakesDistributedParser]
-  
-          (0 to (numParsers-1) ) foreach(
-            someParsers += new ShakesEstimatingParser( _, g1, wordScale )
-          )
-          someParsers
-        }
-  
-        def stoppingCondition( numIters:Int, x:Double ) = 
-          numIters >= maxIter
-  
-        def cleanup = {}
-      }
-  
       manager.start
     }
   }
 
-
-
-  object trainAndEvaluateBracketedMinIterAndConvergence {
-    def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
-      import collection.mutable.ArrayBuffer
-      import Math._
+  object trainAndEvaluateLocalBracketedMinIterAndConvergence {
+    def main( args:Array[String] ) {
       import scala.io.Source._
+      import math._
   
       val nonTermCount = args(0).toInt
       val termFile = args(1)
@@ -174,9 +246,7 @@ package RunShakesEM {
       val minIter = args(5).toInt
       val tolerance = args(6).toDouble
       val randSeed = args(7).toInt
-      val randomBase = args(8).toInt
-  
-      val wordScale = 10000
+      val randomBase = args(8).toDouble
   
       println("nonTermCount: " + nonTermCount )
       println("termFile: " + termFile )
@@ -187,140 +257,85 @@ package RunShakesEM {
       println("tolerance: " + tolerance )
       println("randSeed: " + randSeed )
       println("randomBase: " + randomBase )
-      println("wordScale: " + wordScale )
   
       println("\n\n\n====\n\n\n")
   
       val initGram = new ShakesPCNF
   
-      val termList =
-        fromFile( termFile ).getLines.toList.filter( _.length > 0 ).
-        map (_.replace("\n",""))
+      val poslist = fromPath(termFile).getLines("\n").toList
   
-      //initGram.readGrammar(gramFile)
-      //initGram.readLexicon(lexFile)
+      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
   
-      initGram.randomizeGrammar( nonTermCount, termList, randSeed, randomBase )
+      //initGram.readGrammar( gramFile )
+      //initGram.readLexicon( lexFile )
   
-      val trainingCorpus = new BracketedCorpus
-      trainingCorpus.readCorpus( trainYieldSpec )
+      
+      object manager extends Actor with ShakesParserManager with
+      EvaluatingManager {
+        import collection.mutable.ArrayBuffer
+        import scala.actors.AbstractActor
   
-      val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
-        0).map(_.replace("\n",""))
+        var g1 = initGram
+        var g2 = g1.countlessCopy
   
+        val trainingCorpus = new BracketedCorpus
+        trainingCorpus.readCorpus( trainYieldSpec )
   
-      object manager extends ShakesParserManager( initGram, trainingCorpus ) {
-        import java.io._
-  
-  
-  
-        object VitActor extends EvaluationActor(initGram,10000) {
-          var testCorpus = testStrings
-        }
-        VitActor.start
-  
-        def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-          VitActor ! (g1,iterNum)
-  
-          //val vit = new ShakesViterbiParser(trainedGram, wordScale)
-          //
-          //for( s <- testStrings ) {
-          //  val testWords = s.split(' ')
-          //  vit.resize( testWords.size + 1 )
-          //  vit.populateChart( testWords )
-          //  if( iterNum % 2 == 0 )
-          //    println( "Iter" + iterNum + ":" + vit.parseString )
-          //}
-        }
-  
-        def parserConstructor = {
-          val someParsers = new ArrayBuffer[ShakesDistributedParser]
-  
-          (0 to (numParsers-1) ) foreach(
-            someParsers += new ShakesBracketedParser( _, g1, wordScale
-            )
-          )
-          someParsers
-        }
-  
-        def stoppingCondition( iterNum:Int, deltaLogProb:Double ) = 
-          iterNum > minIter && abs(deltaLogProb) < tolerance
-        def cleanup = {
-          VitActor ! (g1,Stop)
-        }
-      }
-  
-      manager.start
-    }
-  }
-  object trainAndEvaluateBracketedByIterAndReadGrammar {
-    def main( args: Array[String] ) {
-      import scala.actors.Actor
-      import scala.actors.Actor._
-      import collection.mutable.ArrayBuffer
-      import Math._
-      import scala.io.Source._
-  
-      val gramFile = args(0)
-      val lexFile = args(1)
-      val trainYieldSpec = args(2)
-      val testStringsPath = args(3)
-      val numParsers = args(4).toInt
-      val maxIter = args(5).toInt
-      //val randSeed = args(6).toInt
-  
-      val wordScale = 10000
-  
-      val initGram = new ShakesPCNF
+        val testSentences = fromPath(testStringsPath).getLines("\n").toList
   
   
-      initGram.readGrammar(gramFile)
-      initGram.readLexicon(lexFile)
+        def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
+          numIter > minIter && abs(deltaLogProb) < tolerance
   
-  
-      val trainingCorpus = new BracketedCorpus
-      trainingCorpus.readCorpus( trainYieldSpec )
-  
-      println(trainingCorpus)
-  
-      val testStrings = fromFile(testStringsPath).getLines.toList.filter(_.length >
-        0).map(_.replace("\n","")).toList
-  
-  
-      object manager extends ShakesParserManager( initGram, trainingCorpus ) {
-        import java.io._
-  
-        def useGrammar( trainedGram: ShakesPCNF, iterNum:Int) {
-          
-          val vit = new ShakesViterbiParser(trainedGram, wordScale)
-          
-          for( s <- testStrings ) {
-            val testWords = s.split(' ')
-            vit.resize( testWords.size + 1 )
-            vit.populateChart( testWords )
-            println( "Iter" + iterNum + ":" + vit.parseString )
+        def parserConstructor( grammar:ShakesPCNF ) = {
+          val someParsers = (0 to numParsers) map{ parserSpec:Int =>
+            new Actor with BracketedDefinitions with LocalDefinitions with
+              Heuristics {
+                val parserID = "Parser"+parserSpec
+                var g = grammar
+              }
           }
-
-          println(g1)
   
-        }
-        def parserConstructor = {
-          val someParsers = new ArrayBuffer[ShakesDistributedParser]
+          someParsers foreach( _.start )
   
-          (0 to (numParsers-1) ) foreach(
-            someParsers += new ShakesBracketedParser( _, g1, wordScale )
-          )
           someParsers
-        }
+        }.toList
   
-        def stoppingCondition( numIters:Int, x:Double ) = 
-          numIters >= maxIter
+        def iterationCleanup( parsers:List[AbstractActor] ) = ()
   
-        def cleanup = {}
       }
-  
       manager.start
     }
   }
+
+
+  object startRemoteBracketedParser {
+    def main( args:Array[String] ) {
+      val ip = args(0)
+      val portToUse = args(1).toInt
+      val thisRemoteParser = new Actor with BracketedDefinitions with RemoteDefinitions with
+        Heuristics {
+          val host = ip
+          val port = portToUse
+          val parserID = host+":"+portToUse
+        }
+      thisRemoteParser.start
+    }
+  }
+
+  object startRemoteVanillaParser {
+    def main( args:Array[String] ) {
+      val ip = args(0)
+      val portToUse = args(1).toInt
+      val thisRemoteParser = new Actor with CYKDefinitions with RemoteDefinitions with
+        Heuristics {
+          val host = ip
+          val port = portToUse
+          val parserID = host+":"+portToUse
+        }
+      thisRemoteParser.start
+    }
+  }
+
 }
 
