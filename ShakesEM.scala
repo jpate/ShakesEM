@@ -1661,8 +1661,11 @@ package ShakesEM {
               sentenceNumber = sentenceNumber + 1
 
               parserID match {
-                case RemoteParserID(index:Int) =>
+                case RemoteParserID(index:Int) => {
                   freeRemoteParsers enqueue( index )
+                  println( "There are now " + freeRemoteParsers.size + 
+                    " free remote parsers")
+                }
                 case _ => 
               }
 
