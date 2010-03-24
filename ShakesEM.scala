@@ -1662,7 +1662,8 @@ package ShakesEM {
 
               parserID match {
                 case RemoteParserID(index:Int) => {
-                  freeRemoteParsers enqueue( index )
+                  if( ! freeRemoteParsers.contains( index ) )
+                    freeRemoteParsers enqueue( index )
                   if( sentenceNumber % quietude == 0 )
                     println( "At this snapshot in time, there are " +
                     freeRemoteParsers.size + " free remote parsers" )
@@ -1679,7 +1680,7 @@ package ShakesEM {
                     "Sending sentence number " + sentenceNumber + " to ")
                 val next = trainingCorpus( sentenceNumber )
 
-                if( (next.size > 10) && (freeRemoteParsers.size > 0) ) {
+                if( (next.size > 8) && (freeRemoteParsers.size > 0) ) {
                     val target:Int = freeRemoteParsers.dequeue
                     if( sentenceNumber % quietude == 0 )
                       println(parserID)
