@@ -1688,7 +1688,7 @@ package ShakesEM {
                 parserID match {
                   case RemoteParserID(_) => {
                     val nextLongOne = thisIterTrain.head
-                      if( nextLongOne.size > 8 ) {
+                      if( nextLongOne.size > 10 ) {
                         sentenceNumber = sentenceNumber + 1
                         thisIterTrain = thisIterTrain.tail
 
