@@ -1026,8 +1026,14 @@ package ShakesEM {
     pos:String,
     word:String
   )
+  trait EveryOneHundred {
+    var quietude = 100
+  }
   trait CountingDefinitions extends ShakesParser {
     //import collection.immutable.HashMap
+
+    var quietude:Int
+
     /**
     * Compute the outside probability for one entry. Assumes that all referenced
     * values are already computed.
@@ -1161,9 +1167,10 @@ package ShakesEM {
   }
 
   /**
-  * This provides chart filling definitions for CYK parsing
+  * This provides all parsing functions. If we receive a bracketed sentence, use
+  * the brackets, otherwise do vanilla EM
   */
-  trait CYKDefinitions extends CountingDefinitions {
+  trait EstimationParser extends CountingDefinitions {
     var g:ShakesPCNF
 
     /**
@@ -1232,117 +1239,7 @@ package ShakesEM {
       //println("Outside pass complete")
     }
 
-    /**
-    * Use this as an actor
-    */
-    def act() {
-      import math._
-      firstStart
-      println("Parser " + parserID + " started")
-      while(true) {
-        receive {
-          case StringToParse(s:String) => { // If we get a sentence, then parse it and send the
-                                            // counts back
-
-            println("String " +s+" received")
-
-
-
-            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
-            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
-
-            println("Resizing chart...")
-            val words = s.split(' ')
-            resize( words.size+1 )
-
-            println("Parsing sentence...")
-            populateChart(words)
-
-            if( !root.contains("S") ) {
-              println("WARNING: SENTENCE DID NOT PARSE")
-              println( s )
-            }
-
-            val scaledBy = pow( wordScale, size - 1 )
-
-            println("Replying with estimates")
-
-            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
-          }
-          case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + parserID + " stopping")
-            exit()
-          }
-          case trainedGram:ShakesPCNF => {
-            g = trainedGram
-            println( "Received a new grammar" )
-          }
-          case RemoteParserID(id:Int) => {
-            parserID = RemoteParserID(id)
-          }
-          case what:Any => {
-            println("got something else: "  + what)
-          }
-        }
-      }
-    }
-  }
-
-  @serializable case class ParsingResult(
-    parserID:ParserID,
-    scaledStringProb:Double,
-    f_i:scala.collection.immutable.Map[F_Key,Double],
-    g_i:scala.collection.immutable.Map[G_Key,Double],
-    h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
-    scaledBy:Double
-  )
-
-  /**
-  * This provides chart filling definitions for bracketed parsing, a la Pereira
-  * and Schabes (1992)
-  */
-  trait BracketedDefinitions extends CountingDefinitions {
-    //import collection.mutable.{HashMap,HashSet}
-    import math.pow
     var bracketing:MHashSet[Bracketing] = new MHashSet // Initialize to empty set
-
-    def lexFill(w:String,index:Int) {
-      g.lexExps(w).foreach{ pos =>
-        val l = new LexEntry(pos._1)
-        l.newExpansion(
-          w,w,
-          index,index,index+1,
-          wordScale * pos._2
-        )
-        chart(index)(index+1) += Pair( pos._1, l)
-      }
-    }
-
-    /**
-    * Fills in one (non-terminal) span's worth of the chart.
-    * @param start The start index of the span.
-    * @param end The end index of the span.
-    */
-    def synFill( start:Int, end:Int) {
-      start+1 to (end-1) foreach{ k =>
-        chart(start)(k).keysIterator.foreach{ left =>
-          chart(k)(end).keysIterator.foreach{ right =>
-            g.phrExps (left)(right) .foreach{ phrase =>
-              val thisprob = phrase._2 * 
-                              chart(start)(k)(left).ip *
-                              chart(k)(end)(right).ip
-                chart(start)(end)(phrase._1).newExpansion(
-                  left, right,
-                  start,k,end,
-                  thisprob
-                )
-            }
-          }
-        }
-      }
-    }
-
     def isCompatible(start:Int, end:Int):Boolean =
       ! bracketing.exists{ span =>
         val Bracketing( left, right ) = span
@@ -1368,7 +1265,7 @@ package ShakesEM {
     * @param s The input sentence (an array of terminals)
     * @return A parse chart with labels and inside and outside probabilities.
     */
-    def populateChart(s:Array[String]) = {
+    def bracketedChartPopulation(s:Array[String]) = {
       println("Inside pass beginning")
       1 to s.size foreach{ j =>
         lexFill( s(j-1), j-1)
@@ -1383,12 +1280,58 @@ package ShakesEM {
       chartDescent( computeOPWithEstimates )
     }
 
+    /**
+    * inverse of verbosity
+    */
+    var stringCount = 0
 
+    /**
+    * Use this as an actor
+    */
     def act() {
+      import math._
       firstStart
       println("Parser " + parserID + " started")
-      while(true) {
-        receive {
+      loop {
+        react {
+          case StringToParse(s:String) => { // If we get a sentence, then parse it and send the
+                                            // counts back
+
+            if( stringCount % quietude == 0 )
+              println( parserID + " received string " + s )
+
+
+
+            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
+            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
+            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+
+            if( stringCount % quietude == 0 )
+              println( parserID + " resizing chart...")
+            val words = s.split(' ')
+            resize( words.size+1 )
+
+            if( stringCount % quietude == 0 )
+              println( parserID + " parsing sentence...")
+            populateChart(words)
+
+            if( !root.contains("S") ) {
+              println("WARNING: SENTENCE DID NOT PARSE")
+              println( s )
+            }
+
+            val scaledBy = pow( wordScale, size - 1 )
+
+            if( stringCount % quietude == 0 )
+              println( parserID + " replying with estimates...")
+
+            if(stringCount >= quietude )
+              stringCount = 0
+            else
+              stringCount += 1
+
+            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
+          }
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
                               // If we get a sentence, then parse it and send the
                               // counts back
@@ -1402,39 +1345,58 @@ package ShakesEM {
             resize(words.size + 1)
 
 
-            println("Received sentence " + s)
-            println("Received bracketing " + b)
+            if( stringCount % quietude == 0 ){
+              println( parserID + " received sentence " + s)
+              println("Received bracketing " + b)
+            }
 
-            populateChart(words)
+            if( stringCount % quietude == 0 )
+              println( parserID + " parsing sentence...")
+            bracketedChartPopulation(words)
 
             if( !root.contains("S") ) {
               println("WARNING: SENTENCE DID NOT PARSE")
               println( s )
             }
 
-            //println( chart )
+            if( stringCount % quietude == 0 )
+              println( parserID + " replying with estimates...")
 
             val scaledBy = pow( wordScale , size - 1 )
             reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
           }
           case Stop => {      // If we get the stop signal, then shut down.
-            println("Parser " + parserID + " stopping")
+            println( parserID + " stopping")
             exit()
           }
           case trainedGram:ShakesPCNF => {
             g = trainedGram
             println( "Received a new grammar" )
           }
+          case RemoteParserID(id:Int) => {
+            parserID = RemoteParserID(id)
+            println( "Parser now known as " + parserID )
+          }
+          case what:Any => {
+            println("got something else: "  + what)
+          }
         }
       }
     }
   }
 
-  abstract class ParserID(id:Int) {
-    override def toString = id.toString
-  }
-  case class RemoteParserID(id:Int) extends ParserID(id)
-  case class LocalParserID(id:Int) extends ParserID(id)
+  @serializable case class ParsingResult(
+    parserID:ParserID,
+    scaledStringProb:Double,
+    f_i:scala.collection.immutable.Map[F_Key,Double],
+    g_i:scala.collection.immutable.Map[G_Key,Double],
+    h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
+    scaledBy:Double
+  )
+
+  @serializable abstract class ParserID(id:Int)
+  @serializable case class RemoteParserID(id:Int) extends ParserID(id)
+  @serializable case class LocalParserID(id:Int) extends ParserID(id)
 
   case class Evaluation( prefix:String, trainedGram:ShakesPCNF )
 
@@ -1519,8 +1481,8 @@ package ShakesEM {
     var prefix = ""
 
     def act() {
-      while(true) {
-        receive {
+      loop {
+        react {
           case Evaluation(pre:String, trainedGram:ShakesPCNF) => {
             prefix = pre
             g = trainedGram
@@ -1551,7 +1513,6 @@ package ShakesEM {
     }
 
     def parseString:String = chart(0)(chart.size - 1)("S").viterbiString
-
   }
 
   trait LocalDefinitions {
@@ -1598,6 +1559,7 @@ package ShakesEM {
 
 
     val trainingCorpus:ShakesTrainCorpus
+    var quietude:Int
 
     def act() {
       var iterationNum = 0
@@ -1612,15 +1574,17 @@ package ShakesEM {
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
         0 to (remoteParsers.size-1) foreach{ parserNum =>
-          println( "Sending out sentence number " + parserNum )
+          println( "Sending out sentence number " + parserNum + 
+            " to a remote parser" )
           remoteParsers(parserNum) ! trainingCorpus(parserNum)
         }
         //println("All sentences sent")
 
-        var sentenceNumber = remoteParsers.size - 1
+        var sentenceNumber = remoteParsers.size
         
         0 to (localParsers.size-1) foreach{ parserNum =>
-          println( "Sending out sentence number " + parserNum )
+          println( "Sending out sentence number " + (parserNum + sentenceNumber) +
+            " to a local parser")
           localParsers(parserNum) ! trainingCorpus( parserNum + sentenceNumber )
         }
         sentenceNumber += localParsers.size - 1
@@ -1695,23 +1659,26 @@ package ShakesEM {
               parserID match {
                 case RemoteParserID(index:Int) =>
                   freeRemoteParsers enqueue( index )
+                case _ => 
               }
 
 
               if( sentenceNumber >= trainingCorpus.size ) {
                 numFinishedParsers += 1
               } else {
-                //if( sentenceNumber % 100 == 0 )
+                if( sentenceNumber % quietude == 0 )
                   print( 
-                    "Sending sentence number to ")
+                    "Sending sentence number " + sentenceNumber + " to ")
                 val next = trainingCorpus( sentenceNumber )
 
-                if( (next.size > 6) && (freeRemoteParsers.size > 0) ) {
+                if( (next.size > 10) && (freeRemoteParsers.size > 0) ) {
                     val target:Int = freeRemoteParsers.dequeue
-                    println("Remote parser " + target )
+                    if( sentenceNumber % quietude == 0 )
+                      println("Remote parser " + target )
                     remoteParsers( target ) ! next
                 } else {
-                  println("local parser " + parserID)
+                  if( sentenceNumber % quietude == 0 )
+                    println("local parser " + parserID)
                   reply( next )
                 }
 
