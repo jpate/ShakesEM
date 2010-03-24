@@ -1609,7 +1609,8 @@ package ShakesEM {
               scaledBy:Double ) => {
 
 
-              println( "Estimates received from " + parserID )
+              if( sentenceNumber % quietude == 0 )
+                println( "Estimates received from " + parserID )
               //println( "f_i: \n" + f_i + "\n\n\n" )
               //println( "g_i: \n" + g_i + "\n\n\n" )
               //println( "h_i: \n" + h_i + "\n\n\n" )
