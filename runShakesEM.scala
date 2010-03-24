@@ -212,7 +212,7 @@ package RunShakesEM {
       val ip = args(0)
       val portToUse = args(1).toInt
       val thisRemoteParser = new Actor with EstimationParser with RemoteDefinitions with
-        Heuristics with EveryOneHundred {
+        Heuristics with EveryFive {
           val host = ip
           val port = portToUse
           var parserID:ParserID = RemoteParserID(0)

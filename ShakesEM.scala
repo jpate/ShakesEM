@@ -1029,6 +1029,9 @@ package ShakesEM {
   trait EveryOneHundred {
     var quietude = 100
   }
+  trait EveryFive {
+    var quietude = 5
+  }
   trait CountingDefinitions extends ShakesParser {
     //import collection.immutable.HashMap
 
@@ -1675,11 +1678,11 @@ package ShakesEM {
                 if( (next.size > 10) && (freeRemoteParsers.size > 0) ) {
                     val target:Int = freeRemoteParsers.dequeue
                     if( sentenceNumber % quietude == 0 )
-                      println("Remote parser " + target )
+                      println(parserID)
                     remoteParsers( target ) ! next
                 } else {
                   if( sentenceNumber % quietude == 0 )
-                    println("local parser " + parserID)
+                    println(parserID)
                   reply( next )
                 }
 
