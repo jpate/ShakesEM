@@ -1535,7 +1535,6 @@ package ShakesEM {
   }
 
   trait ShakesParserManager {
-    import scala.collection.mutable.Queue
     import scala.actors.AbstractActor
     import math._
 
@@ -1574,31 +1573,43 @@ package ShakesEM {
         val localParsers = localParserConstructor( g1 )
         val remoteParsers = remoteParserConstructor( g1 )
 
+        var thisIterTrain = trainingCorpus.toList.sortWith(
+          (a,b) => a.size > b.size 
+        )
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
-        0 to (remoteParsers.size-1) foreach{ parserNum =>
-          println( "Sending out sentence number " + parserNum + 
-            " to a remote parser" )
-          remoteParsers(parserNum) ! trainingCorpus(parserNum)
+
+
+        println( "Distributing to remote parsers" )
+        remoteParsers foreach{ remoteParser =>
+          val nextLongOne = thisIterTrain.head
+          thisIterTrain = thisIterTrain.tail
+
+          //println("Sending " + nextLongOne + " to a remote parser")
+
+          remoteParser ! nextLongOne
         }
-        //println("All sentences sent")
 
         var sentenceNumber = remoteParsers.size
-        
-        0 to (localParsers.size-1) foreach{ parserNum =>
-          println( "Sending out sentence number " + (parserNum + sentenceNumber) +
-            " to a local parser")
-          localParsers(parserNum) ! trainingCorpus( parserNum + sentenceNumber )
+
+        println( "Distributing to local parsers" )
+        localParsers foreach{ localParser =>
+          val nextShortOne = thisIterTrain.last
+          thisIterTrain = thisIterTrain.init
+
+          //println("Sending " + nextShortOne + " to a local parser")
+
+          localParser ! nextShortOne
         }
+
+        println("All sentences sent")
+
         sentenceNumber += localParsers.size - 1
 
         var numFinishedParsers = 0
 
-        var freeRemoteParsers = new Queue[Int]
-
-        //println("numFinishedParsers, parses.size" + (numFinishedParsers,parsers.size))
-
         val totalParserCount = remoteParsers.size + localParsers.size
+
 
         while( numFinishedParsers < totalParserCount ) {
           receive {
@@ -1658,23 +1669,53 @@ package ShakesEM {
                   )
               }
 
-              sentenceNumber = sentenceNumber + 1
 
-              parserID match {
-                case RemoteParserID(index:Int) => {
-                  if( ! freeRemoteParsers.contains( index ) )
-                    freeRemoteParsers enqueue( index )
-                  if( sentenceNumber % quietude == 0 )
-                    println( "At this snapshot in time, there are " +
-                    freeRemoteParsers.size + " free remote parsers" )
-                }
-                case _ => 
-              }
+              //parserID match {
+              //  case RemoteParserID(index:Int) => {
+              //    if( ! freeRemoteParsers.contains( index ) )
+              //      freeRemoteParsers enqueue( index )
+              //    if( sentenceNumber % quietude == 0 )
+              //      println( "At this snapshot in time, there are " +
+              //      freeRemoteParsers.size + " free remote parsers" )
+              //  }
+              //  case LocalParserID(_) => senderIsLocal = true
+              //}
 
 
-              if( sentenceNumber >= trainingCorpus.size ) {
+              if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
                 numFinishedParsers += 1
               } else {
+                parserID match {
+                  case RemoteParserID(_) => {
+                    val nextLongOne = thisIterTrain.head
+                      if( nextLongOne.size > 8 ) {
+                        sentenceNumber = sentenceNumber + 1
+                        thisIterTrain = thisIterTrain.tail
+
+                        if( sentenceNumber % quietude == 0 )
+                          println( "Sending sentence number " + sentenceNumber +
+                            " to parser " + parserID )
+
+                        reply( nextLongOne )
+                      } else {
+                        println( parserID + " finished")
+                        numFinishedParsers += 1
+                      }
+                  }
+                  case LocalParserID(_) => {
+                    sentenceNumber = sentenceNumber + 1
+
+                    if( sentenceNumber % quietude == 0 )
+                      println( "Sending sentence number " + sentenceNumber +
+                        " to parser " + parserID )
+
+                    val nextShortOne = thisIterTrain.last
+                    thisIterTrain = thisIterTrain.init
+
+                    reply( nextShortOne )
+                  }
+                }
+                /*
                 if( sentenceNumber % quietude == 0 )
                   print( 
                     "Sending sentence number " + sentenceNumber + " to ")
@@ -1686,10 +1727,18 @@ package ShakesEM {
                       println(parserID)
                     remoteParsers( target ) ! next
                 } else {
-                  if( sentenceNumber % quietude == 0 )
-                    println(parserID)
-                  reply( next )
+                  if( senderIsLocal ) {
+                    if( sentenceNumber % quietude == 0 )
+                      println(parserID)
+                    reply( next )
+                  } else {
+                    val nextLocalParser = parserPicker.nextInt
+                    if( sentenceNumber % quietude == 0 )
+                      println("randomly chosen local parser " + nextLocalParser)
+                    localParsers( nextLocalParser ) ! next
+                  }
                 }
+                */
 
               }
             }
@@ -1742,6 +1791,7 @@ package ShakesEM {
     def apply(n:Int):ToParse
     def size:Int
     def readCorpus(pathSpecifier:String)
+    def toList:List[ToParse]
   }
 
   /**
@@ -1780,7 +1830,6 @@ package ShakesEM {
 
       strings = fromPath(stringsPath).getLines("\n").toList.filter(_.length > 0).map(_.replace("\n","")).toArray
 
-
       val corpusSize = strings.size
 
       bracketings = Array.fill(corpusSize + 1 )(
@@ -1802,6 +1851,9 @@ package ShakesEM {
     def apply(n:Int) = BracketedToParse(strings(n),bracketings(n))
     def size = strings.size
     override def toString = strings mkString("","\n","")
+    def toList = ((0 to (strings.size-1)) map{ index =>
+      BracketedToParse( strings( index ), bracketings( index ) )
+    }).toList
   }
 
   /**
@@ -1817,6 +1869,10 @@ package ShakesEM {
       strings = fromPath(stringsPath).getLines("\n").toList.filter(_.length > 0).map(_.replace("\n","")).toArray
     }
     override def toString = strings mkString("","\n","")
+
+    def toList = ((0 to (strings.size-1)) map{ index =>
+      StringToParse( strings( index ) )
+    }).toList
   }
 } // END PACKAGE
 

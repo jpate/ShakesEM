@@ -69,9 +69,10 @@ package RunShakesEM {
         def localParserConstructor( grammar:ShakesPCNF ) = {
           val someParsers = ((0 to (numLocalParsers-1)) map{ parserSpec:Int =>
             new Actor with EstimationParser with LocalDefinitions with
-              Heuristics with EveryOneHundred {
+              Heuristics /*with EveryOneHundred*/ {
                 var parserID:ParserID = LocalParserID(parserSpec)
                 var g = grammar
+                var quietude = 100
               }
           }).toList
   
@@ -169,9 +170,10 @@ package RunShakesEM {
         def localParserConstructor( grammar:ShakesPCNF ) = {
           val someParsers = ((0 to (numLocalParsers-1)) map{ parserSpec:Int =>
             new Actor with EstimationParser with LocalDefinitions with
-              Heuristics with EveryOneHundred {
+              Heuristics /*with EveryOneHundred*/ {
                 var parserID:ParserID = LocalParserID(parserSpec)
                 var g = grammar
+                var quietude = 100
               }
           }).toList
   
