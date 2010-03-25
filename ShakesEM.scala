@@ -19,7 +19,7 @@
 * with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 *
-* @version 0.19a_remote
+* @version 0.20_remote
 * @author John K Pate
 */
 package ShakesEM {
