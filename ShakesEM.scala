@@ -1748,8 +1748,6 @@ package ShakesEM {
                     scaledBy:Double ) => {
 
                       parserType = parserID
-                      if( sentenceNumber % quietude == 50 )
-                        println( "Estimates received from " + parserID )
 
 
                       corpusLogProb = corpusLogProb + log( scaledStringProb ) -
@@ -1792,6 +1790,8 @@ package ShakesEM {
                   case what:Any => println("whoa. got something else: " + what)
                 }
               }
+              if( sentenceNumber % quietude == 50 )
+                println( "Estimates received from " + parserType )
 
               if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
                 println( parserType + " finished")
@@ -1816,13 +1816,16 @@ package ShakesEM {
                     val numberToSend = prefix.size
                     val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
                     
-                    if( sentenceNumber % quietude < 50 )
-                      println( "Sending " + numberToSend + " sentences with " +
-                      numTerminals + " total terminals to a remoteParser" )
 
                     thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
                     sentenceNumber += numberToSend
+
+                    if( sentenceNumber % quietude < 50 )
+                      println( "Sending " + numberToSend + " sentences with " +
+                      numTerminals +
+                      " total terminals to a remoteParser. Up to sentence number " +
+                      sentenceNumber )
 
                     if( sentenceNumber % quietude == 50 )
                       println( "Sending sentence number " + sentenceNumber +
