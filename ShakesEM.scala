@@ -1676,7 +1676,7 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackage = 100
+        val maxTerminalsPerPackage = 200
 
         println( "Distributing to remote parsers" )
         remoteParsers foreach{ remoteParser =>
@@ -1734,7 +1734,8 @@ package ShakesEM {
           receive {
             case s:String => println( s )
             case manyEstimates:List[ParsingResult] => {
-              println("Received many estimates")
+              if( sentenceNumber % quietude == 50 )
+                println("Received many estimates")
               var parserType:ParserID = RemoteParserID(-10)
               manyEstimates foreach{ estimate =>
                 estimate match {
@@ -1747,7 +1748,7 @@ package ShakesEM {
                     scaledBy:Double ) => {
 
                       parserType = parserID
-                      if( sentenceNumber % quietude == 0 )
+                      if( sentenceNumber % quietude == 50 )
                         println( "Estimates received from " + parserID )
 
 
@@ -1814,14 +1815,16 @@ package ShakesEM {
 
                     val numberToSend = prefix.size
                     val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-                    println( "Sending " + numberToSend + " sentences with " +
-                    numTerminals + " total terminals to a remoteParser" )
+                    
+                    if( sentenceNumber % quietude < 50 )
+                      println( "Sending " + numberToSend + " sentences with " +
+                      numTerminals + " total terminals to a remoteParser" )
 
                     thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
                     sentenceNumber += numberToSend
 
-                    if( sentenceNumber % quietude == 0 )
+                    if( sentenceNumber % quietude == 50 )
                       println( "Sending sentence number " + sentenceNumber +
                         " to parser " + parserType )
 
