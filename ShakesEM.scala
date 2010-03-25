@@ -1706,17 +1706,41 @@ package ShakesEM {
 
         println( "Distributing to local parsers" )
         localParsers foreach{ localParser =>
-          if( thisIterTrain.size > 0 ) {
-            val nextShortOne = thisIterTrain.last
-            thisIterTrain = thisIterTrain.init
+          //if( thisIterTrain.size > 0 ) {
+          //  val nextShortOne = thisIterTrain.last
+          //  thisIterTrain = thisIterTrain.init
 
-            //println("Sending " + nextShortOne + " to a local parser")
+          //  //println("Sending " + nextShortOne + " to a local parser")
 
-            localParser ! nextShortOne
-            sentenceNumber += 1
+          //  localParser ! nextShortOne
+          //  sentenceNumber += 1
+          //} else {
+          //  numFinishedParsers += 1
+          //}
+
+
+          var prefixLength = 0
+          val prefix = thisIterTrain.takeWhile( nextSent =>
+            {
+              prefixLength += nextSent.size
+              prefixLength <= maxTerminalsPerPackage
+            }
+          )
+
+          val numberToSend = prefix.size
+          val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+          //println( "Sending " + numberToSend + " sentences with " +
+          //numTerminals + " total terminals to a remoteParser" )
+
+          thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+
+          if( numberToSend > 0 ) {
+            sentenceNumber += numberToSend
+            localParser ! prefix
           } else {
             numFinishedParsers += 1
           }
+
         }
 
         println("All sentences sent")
@@ -1823,13 +1847,39 @@ package ShakesEM {
 
 
                     if( sentenceNumber % quietude < 10 )
-                      println( "Sending sentence number " + sentenceNumber +
-                        " to parser " + parserType + 
-                        ". Up to sentence number ")
+                      println( "Sending " + numberToSend + 
+                      "senteces to parser " + parserType +
+                      ". Up to sentence number " +
+                      sentenceNumber + ".")
 
                     reply( prefix )
                   }
-                  case LocalParserID(_) =>
+                  case LocalParserID(_) => {
+                    var prefixLength = 0
+                    val prefix = thisIterTrain.takeWhile( nextSent =>
+                      {
+                        prefixLength += nextSent.size
+                        prefixLength <= maxTerminalsPerPackage
+                      }
+                    )
+
+                    val numberToSend = prefix.size
+                    val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+                    
+
+                    thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+
+                    sentenceNumber += numberToSend
+
+
+                    if( sentenceNumber % quietude < 10 )
+                      println( "Sending " + numberToSend + 
+                      "senteces to parser " + parserType +
+                      ". Up to sentence number " +
+                      sentenceNumber + ".")
+
+                    reply( prefix )
+                  }
                 }
               }
               
