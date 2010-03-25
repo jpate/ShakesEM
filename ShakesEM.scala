@@ -542,10 +542,12 @@ package ShakesEM {
     def size:Int
   }
   case class BracketedToParse(s:String,b:MHashSet[Bracketing]) extends ToParse {
-    def size = s.size
+    def words = s.split(' ')
+    def size = words.size
   }
   case class StringToParse(s:String) extends ToParse {
-    def size = s.size
+    def words = s.split(' ')
+    def size = words.size
   }
 
 
@@ -1674,17 +1676,30 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val preferredNumSentences = 20
+        val maxTerminalsPerPackage = 50
 
         println( "Distributing to remote parsers" )
         remoteParsers foreach{ remoteParser =>
-          val numberToSend = min( preferredNumSentences, thisIterTrain.size )
-          val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
+          var prefixLength = 0
+          val prefix = thisIterTrain.takeWhile( nextSent =>
+            {
+              println( nextSent )
+              println((prefixLength,nextSent.size,maxTerminalsPerPackage))
+              prefixLength += nextSent.size
+              prefixLength <= maxTerminalsPerPackage
+            }
+          )
+
+          val numberToSend = prefix.size
+          val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+          println( "Sending " + numberToSend + " sentences with " +
+          numTerminals + " total terminals to a remoteParser" )
+
           thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
-          if( manyLongOnes.size > 0 ) {
+          if( numberToSend > 0 ) {
             sentenceNumber += numberToSend
-            remoteParser ! manyLongOnes
+            remoteParser ! prefix
           } else {
             numFinishedParsers += 1
           }
@@ -1785,10 +1800,26 @@ package ShakesEM {
               } else {
                 parserType match {
                   case RemoteParserID(_) => {
-                    val numberToSend = min( preferredNumSentences, thisIterTrain.size )
-                    val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
-                    thisIterTrain = thisIterTrain.slice( numberToSend,
-                      thisIterTrain.size )
+                    //val numberToSend = min( preferredNumSentences, thisIterTrain.size )
+                    //val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
+                    //thisIterTrain = thisIterTrain.slice( numberToSend,
+                    //  thisIterTrain.size )
+
+
+                    var prefixLength = 0
+                    val prefix = thisIterTrain.takeWhile( nextSent =>
+                      {
+                        prefixLength += nextSent.size
+                        prefixLength <= maxTerminalsPerPackage
+                      }
+                    )
+
+                    val numberToSend = prefix.size
+                    val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+                    println( "Sending " + numberToSend + " sentences with " +
+                    numTerminals + " total terminals to a remoteParser" )
+
+                    thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
                     sentenceNumber += numberToSend
 
@@ -1796,24 +1827,9 @@ package ShakesEM {
                       println( "Sending sentence number " + sentenceNumber +
                         " to parser " + parserType )
 
-                    reply( manyLongOnes )
+                    reply( prefix )
                   }
-                  case LocalParserID(_) => {
-                    val numberToSend = min( preferredNumSentences, thisIterTrain.size )
-
-                    val manyShortOnes = thisIterTrain.slice( numberToSend,
-                      thisIterTrain.size )
-
-                    thisIterTrain = thisIterTrain.slice( 0, numberToSend )
-
-                    sentenceNumber += numberToSend
-
-                    if( sentenceNumber % quietude == 0 )
-                      println( "Sending sentence number " + sentenceNumber +
-                        " to parser " + parserType )
-
-                    reply( manyShortOnes )
-                  }
+                  case LocalParserID(_) =>
                 }
               }
               
