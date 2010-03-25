@@ -1676,7 +1676,7 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackage = 200
+        val maxTerminalsPerPackage = 100
 
         println( "Distributing to remote parsers" )
         remoteParsers foreach{ remoteParser =>
