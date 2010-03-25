@@ -1790,7 +1790,7 @@ package ShakesEM {
                   case what:Any => println("whoa. got something else: " + what)
                 }
               }
-              if( sentenceNumber % quietude == 50 )
+              if( sentenceNumber % quietude < 10 )
                 println( "Estimates received from " + parserType )
 
               if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
@@ -1821,15 +1821,11 @@ package ShakesEM {
 
                     sentenceNumber += numberToSend
 
-                    if( sentenceNumber % quietude < 50 )
-                      println( "Sending " + numberToSend + " sentences with " +
-                      numTerminals +
-                      " total terminals to a remoteParser. Up to sentence number " +
-                      sentenceNumber )
 
-                    if( sentenceNumber % quietude == 50 )
+                    if( sentenceNumber % quietude < 10 )
                       println( "Sending sentence number " + sentenceNumber +
-                        " to parser " + parserType )
+                        " to parser " + parserType + 
+                        ". Up to sentence number ")
 
                     reply( prefix )
                   }
