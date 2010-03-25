@@ -223,6 +223,5 @@ package RunShakesEM {
       thisRemoteParser.start
     }
   }
-
 }
 
