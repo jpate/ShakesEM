@@ -1300,13 +1300,13 @@ package ShakesEM {
       loop {
         react {
           case itemList:List[ToParse] => {
-            var estimatesReply:List[ParsingResult] = Nil
+            var numberSentencesParsed = 0
             itemList foreach ( item => 
               item match {
                 case StringToParse( s:String ) => {
-
+                  numberSentencesParsed += 1
                   if( stringCount % quietude == 0 )
-                    println( parserID + " received string " + s )
+                    println( parserID + " about to process string " + s )
 
 
 
@@ -1331,17 +1331,24 @@ package ShakesEM {
                   val scaledBy = pow( wordScale, size - 1 )
 
 
-                  if(stringCount >= quietude )
-                    stringCount = 0
-                  else
-                    stringCount += 1
+                  //if(stringCount >= quietude )
+                  //  stringCount = 0
+                  //else
+                  stringCount += 1
 
-                  estimatesReply = ParsingResult(parserID,
+                  reply( ParsingResult(parserID,
                                 scaledStringProb,
                                 f_i.toMap,
                                 g_i.toMap,
                                 h_i.toMap,
-                                scaledBy)::estimatesReply
+                                scaledBy) )
+
+                  //estimatesReply = ParsingResult(parserID,
+                  //              scaledStringProb,
+                  //              f_i.toMap,
+                  //              g_i.toMap,
+                  //              h_i.toMap,
+                  //              scaledBy)::estimatesReply
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
@@ -1374,20 +1381,29 @@ package ShakesEM {
 
                   val scaledBy = pow( wordScale , size - 1 )
 
-                  if(stringCount >= quietude )
-                    stringCount = 0
-                  else
-                    stringCount += 1
+                  //if(stringCount >= quietude )
+                  //  stringCount = 0
+                  //else
+                  stringCount += 1
+
+                  reply( ParsingResult(parserID,
+                                scaledStringProb,
+                                f_i.toMap,
+                                g_i.toMap,
+                                h_i.toMap,
+                                scaledBy) )
 
                 }
               }
             )
+              //if( stringCount % quietude == 0 )
+              //  println( parserID + " replying with estimates...")
+              //reply(estimatesReply)
             if( stringCount % quietude == 0 )
-              println( parserID + " replying with estimates...")
-            reply(estimatesReply)
+              println( parserID + " asking for more...")
+            reply( parserID )
           }
           case StringToParse(s:String) => {
-
             if( stringCount % quietude == 0 )
               println( parserID + " received string " + s )
 
@@ -1420,12 +1436,13 @@ package ShakesEM {
               stringCount = 0
             else
               stringCount += 1
-
-            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
+      
+            sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
+            if( stringCount % quietude == 0 )
+              println( parserID + " asking for more...")
+            sender ! parserID
           }
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
-                              // If we get a sentence, then parse it and send the
-                              // counts back
             f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
             h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
@@ -1455,12 +1472,14 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale , size - 1 )
 
-            if(stringCount >= quietude )
-              stringCount = 0
-            else
-              stringCount += 1
+            stringCount += 1
 
-            reply(ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy))
+            sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
+
+            if( stringCount % quietude == 0 )
+              println( parserID + " asking for more...")
+            sender ! parserID
+
           }
           case Stop => {      // If we get the stop signal, then shut down.
             println( parserID + " stopping")
@@ -1690,12 +1709,12 @@ package ShakesEM {
 
           val numberToSend = prefix.size
           val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-          //println( "Sending " + numberToSend + " sentences with " +
-          //numTerminals + " total terminals to a remoteParser" )
+          println( "Sending " + numberToSend + " sentences with " +
+            numTerminals + " total terminals to a remote parser" )
 
-          thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
           if( numberToSend > 0 ) {
+            thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
             sentenceNumber += numberToSend
             remoteParser ! prefix
           } else {
@@ -1729,12 +1748,12 @@ package ShakesEM {
 
           val numberToSend = prefix.size
           val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-          //println( "Sending " + numberToSend + " sentences with " +
-          //numTerminals + " total terminals to a remoteParser" )
+          println( "Sending " + numberToSend + " sentences with " +
+            numTerminals + " total terminals to a local parser" )
 
-          thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
 
           if( numberToSend > 0 ) {
+            thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
             sentenceNumber += numberToSend
             localParser ! prefix
           } else {
@@ -1754,135 +1773,148 @@ package ShakesEM {
         println( numFinishedParsers +
           " finished parsers at the beginning of the iteration" )
 
+        var parsedSentences = 0
+
         while( numFinishedParsers < totalParserCount ) {
           receive {
             case s:String => println( s )
-            case manyEstimates:List[ParsingResult] => {
-              if( sentenceNumber % quietude == 50 )
-                println("Received many estimates")
-              var parserType:ParserID = RemoteParserID(-10)
-              manyEstimates foreach{ estimate =>
-                estimate match {
-                  case ParsingResult(
-                    parserID:ParserID,
-                    scaledStringProb:Double,
-                    f_i:Map[F_Key,Double],
-                    g_i:Map[G_Key,Double],
-                    h_i:Map[(Int,Int,String),Double],
-                    scaledBy:Double ) => {
 
-                      parserType = parserID
-
-
-                      corpusLogProb = corpusLogProb + log( scaledStringProb ) -
-                        log( scaledBy )
-
-
-                      f_i.keySet.foreach( summandKey => {
-                          val F_Key( _,_,lhs,left,right ) = summandKey
-                          g2.f (lhs)(left)(right) =
-                            g2.f (lhs)(left)(right) +
-                              (
-                                f_i (summandKey) /
-                                  scaledStringProb
-                              )
-                        }
-                      )
-                      g_i.keysIterator.foreach{ k =>
-                        k match {
-                          case G_Key(index, pos, word ) => 
-                            g2.g( (pos,word) ) = 
-                              g2.g( (pos,word) ) +
-                              (
-                                g_i( k ) /
-                                scaledStringProb
-                              )
-                        }
-                      }
-                      h_i.keysIterator.foreach{ k =>
-                        val start = k._1
-                        val end = k._2
-                        val label = k._3
-                        g2.h(label) =
-                          g2.h(label) + 
-                          (
-                            h_i(k) /
-                            scaledStringProb
-                          )
-                      }
-                  }
-                  case what:Any => println("whoa. got something else: " + what)
-                }
-              }
-              if( sentenceNumber % quietude < 10 )
-                println( "Estimates received from " + parserType )
-
-              if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
-                println( parserType + " finished")
-                numFinishedParsers += 1
-              } else {
-                parserType match {
-                  case RemoteParserID(_) => {
-                    //val numberToSend = min( preferredNumSentences, thisIterTrain.size )
-                    //val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
-                    //thisIterTrain = thisIterTrain.slice( numberToSend,
-                    //  thisIterTrain.size )
-
-
-                    var prefixLength = 0
-                    val prefix = thisIterTrain.takeWhile( nextSent =>
-                      {
-                        prefixLength += nextSent.size
-                        prefixLength <= maxTerminalsPerPackage
-                      }
-                    )
-
-                    val numberToSend = prefix.size
-                    val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-                    
-
-                    thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
-
-                    sentenceNumber += numberToSend
-
-
-                    if( sentenceNumber % quietude < 10 )
-                      println( "Sending " + numberToSend + 
-                      "senteces to parser " + parserType +
-                      ". Up to sentence number " +
-                      sentenceNumber + ".")
-
-                    reply( prefix )
-                  }
-                  case LocalParserID(_) => {
-                    var prefixLength = 0
-                    val prefix = thisIterTrain.takeWhile( nextSent =>
-                      {
-                        prefixLength += nextSent.size
-                        prefixLength <= maxTerminalsPerPackage
-                      }
-                    )
-
-                    val numberToSend = prefix.size
-                    val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-                    
-
-                    thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
-
-                    sentenceNumber += numberToSend
-
-
-                    if( sentenceNumber % quietude < 10 )
-                      println( "Sending " + numberToSend + 
-                      "senteces to parser " + parserType +
-                      ". Up to sentence number " +
-                      sentenceNumber + ".")
-
-                    reply( prefix )
-                  }
-                }
-              }
+                          //case manyEstimates:List[ParsingResult] => {
+                          //  if( sentenceNumber % quietude == 50 )
+                          //    println("Received many estimates")
+                          //  var parserType:ParserID = RemoteParserID(-10)
+                          //  manyEstimates foreach{ estimate =>
+                          //    estimate match {
+                          //      case ParsingResult(
+                          //        parserID:ParserID,
+                          //        scaledStringProb:Double,
+                          //        f_i:Map[F_Key,Double],
+                          //        g_i:Map[G_Key,Double],
+                          //        h_i:Map[(Int,Int,String),Double],
+                          //        scaledBy:Double ) => {
               
+                          //          parserType = parserID
+              
+              
+                          //          corpusLogProb = corpusLogProb + log( scaledStringProb ) -
+                          //            log( scaledBy )
+              
+              
+                          //          f_i.keySet.foreach( summandKey => {
+                          //              val F_Key( _,_,lhs,left,right ) = summandKey
+                          //              g2.f (lhs)(left)(right) =
+                          //                g2.f (lhs)(left)(right) +
+                          //                  (
+                          //                    f_i (summandKey) /
+                          //                      scaledStringProb
+                          //                  )
+                          //            }
+                          //          )
+                          //          g_i.keysIterator.foreach{ k =>
+                          //            k match {
+                          //              case G_Key(index, pos, word ) => 
+                          //                g2.g( (pos,word) ) = 
+                          //                  g2.g( (pos,word) ) +
+                          //                  (
+                          //                    g_i( k ) /
+                          //                    scaledStringProb
+                          //                  )
+                          //            }
+                          //          }
+                          //          h_i.keysIterator.foreach{ k =>
+                          //            val start = k._1
+                          //            val end = k._2
+                          //            val label = k._3
+                          //            g2.h(label) =
+                          //              g2.h(label) + 
+                          //              (
+                          //                h_i(k) /
+                          //                scaledStringProb
+                          //              )
+                          //          }
+                          //      }
+                          //      case what:Any => println("whoa. got something else: " + what)
+                          //    }
+                          //  }
+                          //  if( sentenceNumber % quietude < 10 )
+                          //    println( "Estimates received from " + parserType )
+              
+                          //  if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
+                          //    println( parserType + " finished")
+                          //    numFinishedParsers += 1
+                          //  } else {
+                          //    parserType match {
+
+            case RemoteParserID(id:Int) => {
+              //val numberToSend = min( preferredNumSentences, thisIterTrain.size )
+              //val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
+              //thisIterTrain = thisIterTrain.slice( numberToSend,
+              //  thisIterTrain.size )
+
+
+              if( thisIterTrain.size > 0 ) {
+                var prefixLength = 0
+                val prefix = thisIterTrain.takeWhile( nextSent =>
+                  {
+                    prefixLength += nextSent.size
+                    prefixLength <= maxTerminalsPerPackage
+                  }
+                )
+
+                val numberToSend = prefix.size
+                val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+                
+
+                thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+
+                sentenceNumber += numberToSend
+
+
+                if( sentenceNumber % quietude < 10 )
+                  println( "Sending " + numberToSend + 
+                  " sentences to parser " + RemoteParserID(id) +
+                  ". Up to sentence number " +
+                  sentenceNumber + ".")
+
+                reply( prefix )
+              } else {
+                numFinishedParsers += 1
+                println( "Request DENIED " )
+                //+ (parsedSentences,trainingCorpus.size) )
+              }
+            }
+            case LocalParserID(id:Int) => {
+
+              if( thisIterTrain.size > 0 ) {
+                var prefixLength = 0
+                val prefix = thisIterTrain.takeWhile( nextSent =>
+                  {
+                    prefixLength += nextSent.size
+                    prefixLength <= maxTerminalsPerPackage
+                  }
+                )
+
+                val numberToSend = prefix.size
+                val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+                
+
+                thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+
+                sentenceNumber += numberToSend
+
+
+                if( sentenceNumber % quietude < 10 )
+                  println( "Sending " + numberToSend + 
+                  " sentences to parser " + LocalParserID(id) +
+                  ". Up to sentence number " +
+                  sentenceNumber + ".")
+
+                reply( prefix )
+              } else {
+                numFinishedParsers += 1
+                println( "Request DENIED " )
+                //+ (parsedSentences,trainingCorpus.size) )
+              }
             }
             case ParsingResult(
               parserID:ParserID,
@@ -1891,6 +1923,8 @@ package ShakesEM {
               g_i:Map[G_Key,Double],
               h_i:Map[(Int,Int,String),Double],
               scaledBy:Double ) => {
+
+              parsedSentences += 1
 
 
               if( sentenceNumber % quietude == 0 )
@@ -1938,41 +1972,41 @@ package ShakesEM {
               }
 
 
-              if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
-                println( parserID + " finished")
-                numFinishedParsers += 1
-              } else {
-                parserID match {
-                  case RemoteParserID(_) => {
-                    val nextLongOne = thisIterTrain.head
-                      if( nextLongOne.size > 10 ) {
-                        sentenceNumber = sentenceNumber + 1
-                        thisIterTrain = thisIterTrain.tail
+                //if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
+                //  println( parserID + " finished")
+                //  numFinishedParsers += 1
+                //} else {
+                //  parserID match {
+                //    case RemoteParserID(_) => {
+                //      val nextLongOne = thisIterTrain.head
+                //        if( nextLongOne.size > 10 ) {
+                //          sentenceNumber = sentenceNumber + 1
+                //          thisIterTrain = thisIterTrain.tail
 
-                        if( sentenceNumber % quietude == 0 )
-                          println( "Sending sentence number " + sentenceNumber +
-                            " to parser " + parserID )
+                //          if( sentenceNumber % quietude == 0 )
+                //            println( "Sending sentence number " + sentenceNumber +
+                //              " to parser " + parserID )
 
-                        reply( nextLongOne )
-                      } else {
-                        println( parserID + " finished")
-                        numFinishedParsers += 1
-                      }
-                  }
-                  case LocalParserID(_) => {
-                    sentenceNumber = sentenceNumber + 1
+                //          reply( nextLongOne )
+                //        } else {
+                //          println( parserID + " finished")
+                //          numFinishedParsers += 1
+                //        }
+                //    }
+                //    case LocalParserID(_) => {
+                //      sentenceNumber = sentenceNumber + 1
 
-                    if( sentenceNumber % quietude == 0 )
-                      println( "Sending sentence number " + sentenceNumber +
-                        " to parser " + parserID )
+                //      if( sentenceNumber % quietude == 0 )
+                //        println( "Sending sentence number " + sentenceNumber +
+                //          " to parser " + parserID )
 
-                    val nextShortOne = thisIterTrain.last
-                    thisIterTrain = thisIterTrain.init
+                //      val nextShortOne = thisIterTrain.last
+                //      thisIterTrain = thisIterTrain.init
 
-                    reply( nextShortOne )
-                  }
-                }
-              }
+                //      reply( nextShortOne )
+                //    }
+                //  }
+                //}
             }
             case what:Any =>
               println("ShakesParserManager got something else: " + what)
