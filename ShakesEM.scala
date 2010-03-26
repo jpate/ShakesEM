@@ -1695,7 +1695,8 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackage = 50//100
+        val maxTerminalsPerPackageLocal = 200//100
+        val maxTerminalsPerPackageRemote = 50//100
 
         println( "Distributing to remote parsers" )
         remoteParsers foreach{ remoteParser =>
@@ -1703,7 +1704,7 @@ package ShakesEM {
           val prefix = thisIterTrain.takeWhile( nextSent =>
             {
               prefixLength += nextSent.size
-              prefixLength <= maxTerminalsPerPackage
+              prefixLength <= maxTerminalsPerPackageRemote
             }
           )
 
@@ -1742,7 +1743,7 @@ package ShakesEM {
           val prefix = thisIterTrain.takeWhile( nextSent =>
             {
               prefixLength += nextSent.size
-              prefixLength <= maxTerminalsPerPackage
+              prefixLength <= maxTerminalsPerPackageLocal
             }
           )
 
@@ -1857,7 +1858,7 @@ package ShakesEM {
                 val prefix = thisIterTrain.takeWhile( nextSent =>
                   {
                     prefixLength += nextSent.size
-                    prefixLength <= maxTerminalsPerPackage
+                    prefixLength <= maxTerminalsPerPackageRemote
                   }
                 )
 
@@ -1890,7 +1891,7 @@ package ShakesEM {
                 val prefix = thisIterTrain.takeWhile( nextSent =>
                   {
                     prefixLength += nextSent.size
-                    prefixLength <= maxTerminalsPerPackage
+                    prefixLength <= maxTerminalsPerPackageLocal
                   }
                 )
 
