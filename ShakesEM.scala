@@ -1023,10 +1023,15 @@ package ShakesEM {
     left:String,
     right:String
   )
-  case class G_Key(
+  @serializable case class G_Key(
     index:Int,
     pos:String,
     word:String
+  )
+  @serializable case class H_Key(
+    start:Int,
+    end:Int,
+    label:String
   )
   trait EveryOneHundred {
     var quietude = 100
@@ -1080,7 +1085,7 @@ package ShakesEM {
       import math._
 
       val h_Summand = ent.op * ent.ip
-      val h_Key = Tuple3(ent.start,ent.end,ent.l)
+      val h_Key = H_Key(ent.start,ent.end,ent.l)
       h_i = h_i.updated( h_Key, h_Summand )
 
       val f_toAdd = new MHashMap[ (String,String), Double] {
@@ -1114,7 +1119,7 @@ package ShakesEM {
                   g_i = g_i.updated( g_Key, g_Summand )
 
                   val h_Summand = leftEnt.ip * leftEnt.op
-                  val h_Key = Tuple3( leftEnt.start, leftEnt.end, leftEnt.l)
+                  val h_Key = H_Key( leftEnt.start, leftEnt.end, leftEnt.l)
                   h_i = h_i.updated( h_Key, h_Summand )
                 }
                 case _ =>
@@ -1128,7 +1133,7 @@ package ShakesEM {
                   g_i = g_i.updated( g_Key, g_Summand )
 
                   val h_Summand = leftEnt.ip * leftEnt.op
-                  val h_Key = Tuple3( rightEnt.start, rightEnt.end, rightEnt.l)
+                  val h_Key = H_Key( rightEnt.start, rightEnt.end, rightEnt.l)
                   h_i = h_i.updated( h_Key, h_Summand )
                 }
                 case _ => 
@@ -1168,7 +1173,7 @@ package ShakesEM {
     /**
     * This stores intermediate counts of non-terminal nodes for this sentence.
     */
-    @serializable var h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue(0D)
+    @serializable var h_i = new IHashMap[H_Key, Double] withDefaultValue(0D)
   }
 
   /**
@@ -1312,7 +1317,7 @@ package ShakesEM {
 
                   f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
                   g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-                  h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+                  h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
                   if( stringCount % quietude == 0 )
                     println( parserID + " resizing chart...")
@@ -1354,7 +1359,7 @@ package ShakesEM {
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
                   f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
                   g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-                  h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+                  h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
                   bracketing = b
 
 
@@ -1386,12 +1391,15 @@ package ShakesEM {
                   //else
                   stringCount += 1
 
-                  reply( ParsingResult(parserID,
-                                scaledStringProb,
-                                f_i.toMap,
-                                g_i.toMap,
-                                h_i.toMap,
-                                scaledBy) )
+                  //reply( ParsingResult(parserID,
+                  //              scaledStringProb,
+                  //              f_i.toMap,
+                  //              g_i.toMap,
+                  //              h_i.toMap,
+                  //              scaledBy) )
+                  sender ! FResult( f_i, scaledStringProb )
+                  sender ! GResult( g_i, scaledStringProb )
+                  sender ! HResult( h_i, scaledStringProb )
 
                 }
               }
@@ -1411,7 +1419,7 @@ package ShakesEM {
 
             f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+            h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
             if( stringCount % quietude == 0 )
               println( parserID + " resizing chart...")
@@ -1443,9 +1451,9 @@ package ShakesEM {
             sender ! parserID
           }
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
-            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
+            f_i = new IHashMap[F_Key, Double] withDefaultValue(0D)
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-            h_i = new IHashMap[(Int,Int,String), Double] withDefaultValue (0D)
+            h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
             bracketing = b
 
 
@@ -1479,8 +1487,8 @@ package ShakesEM {
             if( stringCount % quietude == 0 )
               println( parserID + " asking for more...")
             sender ! parserID
-
           }
+          case StillAlive => reply( StillAlive )
           case Stop => {      // If we get the stop signal, then shut down.
             println( parserID + " stopping")
             exit()
@@ -1501,12 +1509,27 @@ package ShakesEM {
     }
   }
 
+  @serializable case object StillAlive
+
+  @serializable case class FResult(
+    f_i:scala.collection.immutable.Map[F_Key,Double],
+    scaledBy:Double
+  )
+  @serializable case class GResult(
+    g_i:scala.collection.immutable.Map[G_Key,Double],
+    scaledBy:Double
+  )
+  @serializable case class HResult(
+    h_i:scala.collection.immutable.Map[H_Key,Double],
+    scaledBy:Double
+  )
+
   @serializable case class ParsingResult(
     parserID:ParserID,
     scaledStringProb:Double,
     f_i:scala.collection.immutable.Map[F_Key,Double],
     g_i:scala.collection.immutable.Map[G_Key,Double],
-    h_i:scala.collection.immutable.Map[(Int,Int,String),Double],
+    h_i:scala.collection.immutable.Map[H_Key,Double],
     scaledBy:Double
   )
 
@@ -1780,79 +1803,41 @@ package ShakesEM {
           receive {
             case s:String => println( s )
 
-                          //case manyEstimates:List[ParsingResult] => {
-                          //  if( sentenceNumber % quietude == 50 )
-                          //    println("Received many estimates")
-                          //  var parserType:ParserID = RemoteParserID(-10)
-                          //  manyEstimates foreach{ estimate =>
-                          //    estimate match {
-                          //      case ParsingResult(
-                          //        parserID:ParserID,
-                          //        scaledStringProb:Double,
-                          //        f_i:Map[F_Key,Double],
-                          //        g_i:Map[G_Key,Double],
-                          //        h_i:Map[(Int,Int,String),Double],
-                          //        scaledBy:Double ) => {
-              
-                          //          parserType = parserID
-              
-              
-                          //          corpusLogProb = corpusLogProb + log( scaledStringProb ) -
-                          //            log( scaledBy )
-              
-              
-                          //          f_i.keySet.foreach( summandKey => {
-                          //              val F_Key( _,_,lhs,left,right ) = summandKey
-                          //              g2.f (lhs)(left)(right) =
-                          //                g2.f (lhs)(left)(right) +
-                          //                  (
-                          //                    f_i (summandKey) /
-                          //                      scaledStringProb
-                          //                  )
-                          //            }
-                          //          )
-                          //          g_i.keysIterator.foreach{ k =>
-                          //            k match {
-                          //              case G_Key(index, pos, word ) => 
-                          //                g2.g( (pos,word) ) = 
-                          //                  g2.g( (pos,word) ) +
-                          //                  (
-                          //                    g_i( k ) /
-                          //                    scaledStringProb
-                          //                  )
-                          //            }
-                          //          }
-                          //          h_i.keysIterator.foreach{ k =>
-                          //            val start = k._1
-                          //            val end = k._2
-                          //            val label = k._3
-                          //            g2.h(label) =
-                          //              g2.h(label) + 
-                          //              (
-                          //                h_i(k) /
-                          //                scaledStringProb
-                          //              )
-                          //          }
-                          //      }
-                          //      case what:Any => println("whoa. got something else: " + what)
-                          //    }
-                          //  }
-                          //  if( sentenceNumber % quietude < 10 )
-                          //    println( "Estimates received from " + parserType )
-              
-                          //  if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
-                          //    println( parserType + " finished")
-                          //    numFinishedParsers += 1
-                          //  } else {
-                          //    parserType match {
+            case FResult(f_i,scaledStringProb) =>
+              f_i.keysIterator.foreach{ summandKey =>
+                val F_Key( _,_,lhs,left,right ) = summandKey
+                g2.f (lhs)(left)(right) =
+                  g2.f (lhs)(left)(right) +
+                    (
+                      f_i (summandKey) /
+                        scaledStringProb
+                    )
+              }
+
+            case GResult(g_i,scaledStringProb) =>
+              g_i.keysIterator.foreach{ summandKey =>
+                val G_Key( _, pos, word ) = summandKey
+                g2.g( (pos,word) ) = 
+                g2.g( (pos,word) ) +
+                  (
+                    g_i( summandKey ) /
+                    scaledStringProb
+                  )
+              }
+
+
+            case HResult(h_i,scaledStringProb) =>
+              h_i.keysIterator.foreach{ summandKey =>
+                val H_Key(start,end,label) = summandKey
+                g2.h(label) =
+                  g2.h(label) + 
+                  (
+                    h_i(summandKey) /
+                    scaledStringProb
+                  )
+              }
 
             case RemoteParserID(id:Int) => {
-              //val numberToSend = min( preferredNumSentences, thisIterTrain.size )
-              //val manyLongOnes = thisIterTrain.slice( 0, numberToSend )
-              //thisIterTrain = thisIterTrain.slice( numberToSend,
-              //  thisIterTrain.size )
-
-
               if( thisIterTrain.size > 0 ) {
                 var prefixLength = 0
                 val prefix = thisIterTrain.takeWhile( nextSent =>
@@ -1884,8 +1869,8 @@ package ShakesEM {
                 //+ (parsedSentences,trainingCorpus.size) )
               }
             }
-            case LocalParserID(id:Int) => {
 
+            case LocalParserID(id:Int) => {
               if( thisIterTrain.size > 0 ) {
                 var prefixLength = 0
                 val prefix = thisIterTrain.takeWhile( nextSent =>
@@ -1917,12 +1902,13 @@ package ShakesEM {
                 //+ (parsedSentences,trainingCorpus.size) )
               }
             }
+
             case ParsingResult(
               parserID:ParserID,
               scaledStringProb:Double,
               f_i:Map[F_Key,Double],
               g_i:Map[G_Key,Double],
-              h_i:Map[(Int,Int,String),Double],
+              h_i:Map[H_Key,Double],
               scaledBy:Double ) => {
 
               parsedSentences += 1
@@ -1939,35 +1925,32 @@ package ShakesEM {
                 log( scaledBy )
 
 
-              f_i.keySet.foreach( summandKey => {
-                  val F_Key( _,_,lhs,left,right ) = summandKey
-                  g2.f (lhs)(left)(right) =
-                    g2.f (lhs)(left)(right) +
-                      (
-                        f_i (summandKey) /
-                          scaledStringProb
-                      )
-                }
-              )
-              g_i.keysIterator.foreach{ k =>
-                k match {
-                  case G_Key(index, pos, word ) => 
-                    g2.g( (pos,word) ) = 
-                      g2.g( (pos,word) ) +
-                      (
-                        g_i( k ) /
+              f_i.keysIterator.foreach{ summandKey =>
+                val F_Key( _,_,lhs,left,right ) = summandKey
+                g2.f (lhs)(left)(right) =
+                  g2.f (lhs)(left)(right) +
+                    (
+                      f_i (summandKey) /
                         scaledStringProb
-                      )
-                }
+                    )
               }
-              h_i.keysIterator.foreach{ k =>
-                val start = k._1
-                val end = k._2
-                val label = k._3
+
+              g_i.keysIterator.foreach{ summandKey =>
+                val G_Key( _, pos, word ) = summandKey
+                g2.g( (pos,word) ) = 
+                g2.g( (pos,word) ) +
+                  (
+                    g_i( summandKey ) /
+                    scaledStringProb
+                  )
+              }
+
+              h_i.keysIterator.foreach{ summandKey =>
+                val H_Key(start,end,label) = summandKey
                 g2.h(label) =
                   g2.h(label) + 
                   (
-                    h_i(k) /
+                    h_i(summandKey) /
                     scaledStringProb
                   )
               }
@@ -2009,6 +1992,7 @@ package ShakesEM {
                 //  }
                 //}
             }
+
             case what:Any =>
               println("ShakesParserManager got something else: " + what)
 
