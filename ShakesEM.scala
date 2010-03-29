@@ -1743,7 +1743,7 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackageLocal = 200//100
+        val maxTerminalsPerPackageLocal = 1000//100
         val maxTerminalsPerPackageRemote = 1000//100
 
         println( "Distributing to remote parsers" )
@@ -1944,7 +1944,7 @@ package ShakesEM {
                 if( ceil((sentenceNumber-numberToSend)/ quietude ) !=
                   ceil( (sentenceNumber/ quietude ) ) ) {
                   println( "Sending " + numberToSend +
-                    " sentences to parser " + RemoteParserID(id) +
+                    " sentences to parser " + LocalParserID(id) +
                     ". Up to sentence number " +
                     sentenceNumber )
                 }
