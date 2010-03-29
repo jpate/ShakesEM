@@ -222,6 +222,7 @@ package RunShakesEM {
               case Some(_) => {
                 println( "Connected to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
+                someParsers(index) ! grammar
               }
               case None => {
                 println( RemoteParserID(index) + " timed out")
@@ -231,10 +232,9 @@ package RunShakesEM {
           }
   
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
-          (0 to (someParsers.size - 1)) foreach ( index =>
-            if( ! deadHosts.contains( RemoteParserID(index)) )
-              someParsers(index) ! grammar
-          )
+          //(0 to (someParsers.size - 1)) foreach ( index =>
+          //  if( ! deadHosts.contains( RemoteParserID(index)) )
+          //)
   
           someParsers
         }
