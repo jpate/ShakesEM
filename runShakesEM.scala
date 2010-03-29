@@ -297,7 +297,7 @@ package RunShakesEM {
   
         var g1 = initGram
         var g2 = g1.countlessCopy
-        val timeout = 2000
+        val timeout = 10000
   
         val trainingCorpus = new StringsOnlyCorpus
         trainingCorpus.readCorpus( trainYieldSpec )

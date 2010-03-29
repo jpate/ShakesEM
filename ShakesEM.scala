@@ -1309,8 +1309,7 @@ package ShakesEM {
             val numSentences = itemList.size
             val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
 
-            if( ceil( stringCount / quietude ) != ceil( (stringCount +
-            numSentences) / quietude ) )
+            if( stringCount % quietude < 10 )
               println( "Received " + numSentences + " sentences with " +
                 numTerminals + " total terminals")
           
@@ -1745,7 +1744,7 @@ package ShakesEM {
         var numFinishedParsers = 0
 
         val maxTerminalsPerPackageLocal = 200//100
-        val maxTerminalsPerPackageRemote = 200//100
+        val maxTerminalsPerPackageRemote = 1000//100
 
         println( "Distributing to remote parsers" )
         (0 to (remoteParsers.size-1)) filter ( index =>  
@@ -1875,8 +1874,7 @@ package ShakesEM {
 
               remoteParsers(id) !?(timeout, StillAlive) match {
                 case None => {
-                  println( RemoteParserID(id) + " timed out " +
-                  (numFinishedParsers,totalParserCount))
+                  println( RemoteParserID(id) + " timed out ")
                   deadHosts += RemoteParserID(id)
                 }
                 case Some(_) => {
