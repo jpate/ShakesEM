@@ -1744,7 +1744,7 @@ package ShakesEM {
         var numFinishedParsers = 0
 
         val maxTerminalsPerPackageLocal = 200//100
-        val maxTerminalsPerPackageRemote = 200//100
+        val maxTerminalsPerPackageRemote = 1000//100
 
         println( "Distributing to remote parsers" )
         (0 to (remoteParsers.size-1)) filter ( index =>  
