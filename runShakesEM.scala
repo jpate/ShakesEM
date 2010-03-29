@@ -111,10 +111,10 @@ package RunShakesEM {
           }
   
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
-          (0 to (someParsers.size - 1)) foreach ( index =>
-            if( ! deadHosts.contains( RemoteParserID(index)) )
-              someParsers foreach( _ ! grammar )
-          )
+          //(0 to (someParsers.size - 1)) foreach ( index =>
+          //  if( ! deadHosts.contains( RemoteParserID(index)) )
+          //    someParsers foreach( _ ! grammar )
+          //)
   
           someParsers
         }
@@ -220,9 +220,9 @@ package RunShakesEM {
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
               case Some(_) => {
-                println( "Connected to " + RemoteParserID( index ) )
+                println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
-                someParsers(index) ! grammar
+                someParsers( index ) ! grammar
               }
               case None => {
                 println( RemoteParserID(index) + " timed out")
@@ -335,13 +335,13 @@ package RunShakesEM {
               select( Node(ip, port.toInt), 'parser )
           }).toList
 
-
           (0 to (someParsers.size-1)) filter ( id =>
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
               case Some(_) => {
-                println( "Connected to " + RemoteParserID( index ) )
+                println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
+                someParsers( index ) ! grammar
               }
               case None => {
                 println( RemoteParserID(index) + " timed out")
@@ -349,12 +349,13 @@ package RunShakesEM {
               }
             }
           }
+
   
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
-          (0 to (someParsers.size - 1)) foreach ( index =>
-            if( ! deadHosts.contains( RemoteParserID(index)) )
-              someParsers foreach( _ ! grammar )
-          )
+          //(0 to (someParsers.size - 1)) foreach ( index =>
+          //  if( ! deadHosts.contains( RemoteParserID(index)) )
+          //    someParsers foreach( _ ! grammar )
+          //)
   
           someParsers
         }

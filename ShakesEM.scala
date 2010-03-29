@@ -1510,6 +1510,7 @@ package ShakesEM {
           case trainedGram:ShakesPCNF => {
             g = trainedGram
             println( "Received a new grammar" )
+            reply( StillAlive )
           }
           case RemoteParserID(id:Int) => {
             parserID = RemoteParserID(id)
@@ -2056,7 +2057,7 @@ package ShakesEM {
 
           }
         }
-          println( (numFinishedParsers,totalParserCount))
+          //println( (numFinishedParsers,totalParserCount))
 
         //parsers.foreach( _ ! Stop )
 
