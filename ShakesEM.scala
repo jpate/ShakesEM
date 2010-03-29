@@ -1309,8 +1309,10 @@ package ShakesEM {
             val numSentences = itemList.size
             val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
 
-            println( "Received " + numSentences + " with " + numTerminals +
-              " total terminals")
+            if( ceil( stringCount / quietude ) != ceil( (stringCount +
+            numSentences) / quietude ) )
+              println( "Received " + numSentences + " sentences with " +
+                numTerminals + " total terminals")
           
 
             itemList foreach ( item => 
@@ -1732,9 +1734,9 @@ package ShakesEM {
         val localParsers = localParserConstructor( g1 )
         val remoteParsers = remoteParserConstructor( g1 )
 
-        var thisIterTrain = trainingCorpus.toList/*.sortWith(
+        var thisIterTrain = trainingCorpus.toList.sortWith(
           (a,b) => a.size > b.size 
-        )*/
+        )
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
 
@@ -1761,8 +1763,11 @@ package ShakesEM {
 
               val numberToSend = prefix.size
               val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-              println( "Sending " + numberToSend + " sentences with " +
-                numTerminals + " total terminals to a remote parser" )
+
+              if( ceil( sentenceNumber / quietude ) != ceil( (sentenceNumber +
+                  numberToSend) / quietude ) )
+                  println( "Sending " + numberToSend + " sentences with " +
+                    numTerminals + " total terminals to a remote parser" )
 
 
               if( numberToSend > 0 ) {
