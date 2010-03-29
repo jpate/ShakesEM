@@ -1748,7 +1748,7 @@ package ShakesEM {
         (0 to (remoteParsers.size-1)) filter ( index =>  
           ! (deadHosts.contains(RemoteParserID( index )))
           ) foreach{ id =>
-
+          println( "Checking parser " + RemoteParserID(id))
           remoteParsers(id) !?(timeout, StillAlive) match {
             case Some(_) => {// println("this remote parser still alive" )
               var prefixLength = 0

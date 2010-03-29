@@ -53,7 +53,7 @@ package RunShakesEM {
         import scala.actors.remote.RemoteActor._
         import scala.actors.AbstractActor
         
-        val timeout = 10000
+        val timeout = 20000
 
         var g1 = initGram
         var g2 = g1.countlessCopy
