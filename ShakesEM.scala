@@ -1745,8 +1745,8 @@ package ShakesEM {
         val maxTerminalsPerPackageRemote = 200//100
 
         println( "Distributing to remote parsers" )
-        (0 to (remoteParsers.size-1)) filter ( id =>  
-          ! (deadHosts.contains(RemoteParserID( id )))
+        (0 to (remoteParsers.size-1)) filter ( index =>  
+          ! (deadHosts.contains(RemoteParserID( index )))
           ) foreach{ id =>
 
           remoteParsers(id) !?(timeout, StillAlive) match {
