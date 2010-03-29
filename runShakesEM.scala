@@ -233,7 +233,7 @@ package RunShakesEM {
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
           (0 to (someParsers.size - 1)) foreach ( index =>
             if( ! deadHosts.contains( RemoteParserID(index)) )
-              someParsers foreach( _ ! grammar )
+              someParsers(index) ! grammar
           )
   
           someParsers
