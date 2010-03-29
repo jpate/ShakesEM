@@ -1305,13 +1305,19 @@ package ShakesEM {
       loop {
         react {
           case itemList:List[ToParse] => {
-            var numberSentencesParsed = 0
+
+            val numSentences = itemList.size
+            val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
+
+            println( "Received " + numSentences + " with " + numTerminals +
+              " total terminals")
+          
+
             itemList foreach ( item => 
               item match {
                 case StringToParse( s:String ) => {
-                  numberSentencesParsed += 1
-                  if( stringCount % quietude == 0 )
-                    println( parserID + " about to process string " + s )
+                  //if( stringCount % quietude == 0 )
+                  //  println( parserID + " about to process string " + s )
 
 
 
@@ -1319,13 +1325,13 @@ package ShakesEM {
                   g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
                   h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
-                  if( stringCount % quietude == 0 )
-                    println( parserID + " resizing chart...")
+                  //if( stringCount % quietude == 0 )
+                  //  println( parserID + " resizing chart...")
                   val words = s.split(' ')
                   resize( words.size+1 )
 
-                  if( stringCount % quietude == 0 )
-                    println( parserID + " parsing sentence...")
+                  //if( stringCount % quietude == 0 )
+                  //  println( parserID + " parsing sentence...")
                   populateChart(words)
 
                   if( !root.contains("S") ) {
@@ -1336,24 +1342,29 @@ package ShakesEM {
                   val scaledBy = pow( wordScale, size - 1 )
 
 
-                  //if(stringCount >= quietude )
-                  //  stringCount = 0
-                  //else
+                    //if(stringCount >= quietude )
+                    //  stringCount = 0
+                    //else
                   stringCount += 1
 
-                  reply( ParsingResult(parserID,
-                                scaledStringProb,
-                                f_i.toMap,
-                                g_i.toMap,
-                                h_i.toMap,
-                                scaledBy) )
+                    //reply( ParsingResult(parserID,
+                    //              scaledStringProb,
+                    //              f_i.toMap,
+                    //              g_i.toMap,
+                    //              h_i.toMap,
+                    //              scaledBy) )
 
-                  //estimatesReply = ParsingResult(parserID,
-                  //              scaledStringProb,
-                  //              f_i.toMap,
-                  //              g_i.toMap,
-                  //              h_i.toMap,
-                  //              scaledBy)::estimatesReply
+                  sender ! FResult( f_i.toMap, scaledStringProb )
+                  sender ! GResult( g_i.toMap, scaledStringProb )
+                  sender ! HResult( h_i.toMap, scaledStringProb )
+                  sender ! StringProbResult( scaledStringProb, scaledBy )
+
+                    //estimatesReply = ParsingResult(parserID,
+                    //              scaledStringProb,
+                    //              f_i.toMap,
+                    //              g_i.toMap,
+                    //              h_i.toMap,
+                    //              scaledBy)::estimatesReply
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
@@ -1367,13 +1378,13 @@ package ShakesEM {
                   resize(words.size + 1)
 
 
-                  if( stringCount % quietude == 0 ){
-                    println( parserID + " received sentence " + s)
-                    println( parserID + " received bracketing " + b)
-                  }
+                  //if( stringCount % quietude == 0 ){
+                  //  println( parserID + " received sentence " + s)
+                  //  println( parserID + " received bracketing " + b)
+                  //}
 
-                  if( stringCount % quietude == 0 )
-                    println( parserID + " parsing sentence...")
+                  //if( stringCount % quietude == 0 )
+                  //  println( parserID + " parsing sentence...")
                   bracketedChartPopulation(words)
 
                   if( !root.contains("S") ) {
@@ -1381,8 +1392,8 @@ package ShakesEM {
                     println( s )
                   }
 
-                  if( stringCount % quietude == 0 )
-                    println( parserID + " replying with estimates...")
+                  //if( stringCount % quietude == 0 )
+                  //  println( parserID + " replying with estimates...")
 
                   val scaledBy = pow( wordScale , size - 1 )
 
@@ -1397,9 +1408,10 @@ package ShakesEM {
                   //              g_i.toMap,
                   //              h_i.toMap,
                   //              scaledBy) )
-                  sender ! FResult( f_i, scaledStringProb )
-                  sender ! GResult( g_i, scaledStringProb )
-                  sender ! HResult( h_i, scaledStringProb )
+                  reply( FResult( f_i.toMap, scaledStringProb ) )
+                  reply( GResult( g_i.toMap, scaledStringProb ) )
+                  reply( HResult( h_i.toMap, scaledStringProb ) )
+                  reply( StringProbResult( scaledStringProb, scaledBy ) )
 
                 }
               }
@@ -1407,13 +1419,13 @@ package ShakesEM {
               //if( stringCount % quietude == 0 )
               //  println( parserID + " replying with estimates...")
               //reply(estimatesReply)
-            if( stringCount % quietude == 0 )
-              println( parserID + " asking for more...")
-            reply( parserID )
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " asking for more...")
+            sender ! parserID
           }
           case StringToParse(s:String) => {
-            if( stringCount % quietude == 0 )
-              println( parserID + " received string " + s )
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " received string " + s )
 
 
 
@@ -1421,13 +1433,13 @@ package ShakesEM {
             g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
             h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " resizing chart...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " resizing chart...")
             val words = s.split(' ')
             resize( words.size+1 )
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " parsing sentence...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " parsing sentence...")
             populateChart(words)
 
             if( !root.contains("S") ) {
@@ -1437,8 +1449,8 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale, size - 1 )
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " replying with estimates...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " replying with estimates...")
 
             if(stringCount >= quietude )
               stringCount = 0
@@ -1446,8 +1458,8 @@ package ShakesEM {
               stringCount += 1
       
             sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
-            if( stringCount % quietude == 0 )
-              println( parserID + " asking for more...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " asking for more...")
             sender ! parserID
           }
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
@@ -1461,13 +1473,13 @@ package ShakesEM {
             resize(words.size + 1)
 
 
-            if( stringCount % quietude == 0 ){
-              println( parserID + " received sentence " + s)
-              println( parserID + " received bracketing " + b)
-            }
+            //if( stringCount % quietude == 0 ){
+            //  println( parserID + " received sentence " + s)
+            //  println( parserID + " received bracketing " + b)
+            //}
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " parsing sentence...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " parsing sentence...")
             bracketedChartPopulation(words)
 
             if( !root.contains("S") ) {
@@ -1475,8 +1487,8 @@ package ShakesEM {
               println( s )
             }
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " replying with estimates...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " replying with estimates...")
 
             val scaledBy = pow( wordScale , size - 1 )
 
@@ -1484,8 +1496,8 @@ package ShakesEM {
 
             sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
 
-            if( stringCount % quietude == 0 )
-              println( parserID + " asking for more...")
+            //if( stringCount % quietude == 0 )
+            //  println( parserID + " asking for more...")
             sender ! parserID
           }
           case StillAlive => reply( StillAlive )
@@ -1521,6 +1533,10 @@ package ShakesEM {
   )
   @serializable case class HResult(
     h_i:scala.collection.immutable.Map[H_Key,Double],
+    scaledBy:Double
+  )
+  @serializable case class StringProbResult(
+    scaledStringProb:Double,
     scaledBy:Double
   )
 
@@ -1617,7 +1633,7 @@ package ShakesEM {
       }
     }
 
-    var prefix = ""
+    var prefix= ""
 
     def act() {
       loop {
@@ -1670,6 +1686,8 @@ package ShakesEM {
     }
   }
 
+  //case class RemoteSpec(ip:String,port:Int)
+
   trait ShakesParserManager {
     import scala.actors.AbstractActor
     import math._
@@ -1696,8 +1714,13 @@ package ShakesEM {
     def finalCleanup( trainedGram:ShakesPCNF ):Unit
 
 
+    //val hostsList:List[Array[String]]
+    val deadHosts = new MHashSet[RemoteParserID]
+
     val trainingCorpus:ShakesTrainCorpus
     var quietude:Int
+
+    val timeout:Int
 
     def act() {
       var iterationNum = 0
@@ -1719,48 +1742,47 @@ package ShakesEM {
         var numFinishedParsers = 0
 
         val maxTerminalsPerPackageLocal = 200//100
-        val maxTerminalsPerPackageRemote = 50//100
+        val maxTerminalsPerPackageRemote = 200//100
 
         println( "Distributing to remote parsers" )
-        remoteParsers foreach{ remoteParser =>
-          var prefixLength = 0
-          val prefix = thisIterTrain.takeWhile( nextSent =>
-            {
-              prefixLength += nextSent.size
-              prefixLength <= maxTerminalsPerPackageRemote
+        (0 to (remoteParsers.size-1)) filter ( id =>  
+          ! (deadHosts.contains(RemoteParserID( id )))
+          ) foreach{ id =>
+
+          remoteParsers(id) !?(timeout, StillAlive) match {
+            case Some(_) => {// println("this remote parser still alive" )
+              var prefixLength = 0
+              val prefix = thisIterTrain.takeWhile( nextSent =>
+                {
+                  prefixLength += nextSent.size
+                  prefixLength <= maxTerminalsPerPackageRemote
+                }
+              )
+
+              val numberToSend = prefix.size
+              val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+              println( "Sending " + numberToSend + " sentences with " +
+                numTerminals + " total terminals to a remote parser" )
+
+
+              if( numberToSend > 0 ) {
+                thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+                sentenceNumber += numberToSend
+                remoteParsers(id) ! prefix
+              } else {
+                numFinishedParsers += 1
+              }
             }
-          )
-
-          val numberToSend = prefix.size
-          val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-          println( "Sending " + numberToSend + " sentences with " +
-            numTerminals + " total terminals to a remote parser" )
-
-
-          if( numberToSend > 0 ) {
-            thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
-            sentenceNumber += numberToSend
-            remoteParser ! prefix
-          } else {
-            numFinishedParsers += 1
+            case None => { 
+              deadHosts += RemoteParserID(id)
+              println( RemoteParserID(id) + " timed out" )
+            }
           }
         }
 
 
         println( "Distributing to local parsers" )
         localParsers foreach{ localParser =>
-          //if( thisIterTrain.size > 0 ) {
-          //  val nextShortOne = thisIterTrain.last
-          //  thisIterTrain = thisIterTrain.init
-
-          //  //println("Sending " + nextShortOne + " to a local parser")
-
-          //  localParser ! nextShortOne
-          //  sentenceNumber += 1
-          //} else {
-          //  numFinishedParsers += 1
-          //}
-
 
           var prefixLength = 0
           val prefix = thisIterTrain.takeWhile( nextSent =>
@@ -1783,19 +1805,18 @@ package ShakesEM {
           } else {
             numFinishedParsers += 1
           }
-
         }
 
         println("All sentences sent")
 
-        //sentenceNumber += localParsers.size - 1
-
-
-        val totalParserCount = remoteParsers.size + localParsers.size
+        def totalParserCount = remoteParsers.size + localParsers.size -
+        deadHosts.size
 
 
         println( numFinishedParsers +
           " finished parsers at the beginning of the iteration" )
+        println( deadHosts.size +
+          " dead hosts at the beginning of the iteration")
 
         var parsedSentences = 0
 
@@ -1803,7 +1824,7 @@ package ShakesEM {
           receive {
             case s:String => println( s )
 
-            case FResult(f_i,scaledStringProb) =>
+            case FResult(f_i,scaledStringProb) => {
               f_i.keysIterator.foreach{ summandKey =>
                 val F_Key( _,_,lhs,left,right ) = summandKey
                 g2.f (lhs)(left)(right) =
@@ -1813,8 +1834,9 @@ package ShakesEM {
                         scaledStringProb
                     )
               }
+            }
 
-            case GResult(g_i,scaledStringProb) =>
+            case GResult(g_i,scaledStringProb) => {
               g_i.keysIterator.foreach{ summandKey =>
                 val G_Key( _, pos, word ) = summandKey
                 g2.g( (pos,word) ) = 
@@ -1824,6 +1846,7 @@ package ShakesEM {
                     scaledStringProb
                   )
               }
+            }
 
 
             case HResult(h_i,scaledStringProb) =>
@@ -1837,37 +1860,63 @@ package ShakesEM {
                   )
               }
 
+            case StringProbResult(scaledStringProb,scaledBy) =>
+              corpusLogProb = corpusLogProb + log( scaledStringProb ) -
+                log( scaledBy )
+
+
             case RemoteParserID(id:Int) => {
-              if( thisIterTrain.size > 0 ) {
-                var prefixLength = 0
-                val prefix = thisIterTrain.takeWhile( nextSent =>
-                  {
-                    prefixLength += nextSent.size
-                    prefixLength <= maxTerminalsPerPackageRemote
+
+              remoteParsers(id) !?(timeout, StillAlive) match {
+                case None => {
+                  println( RemoteParserID(id) + " timed out " +
+                  (numFinishedParsers,totalParserCount))
+                  deadHosts += RemoteParserID(id)
+                }
+                case Some(_) => {
+
+                  if( thisIterTrain.size > 0 ) {
+                    var prefixLength = 0
+                    val prefix = thisIterTrain.takeWhile( nextSent =>
+                      {
+                        prefixLength += nextSent.size
+                        prefixLength <= maxTerminalsPerPackageRemote
+                      }
+                    )
+
+                    val numberToSend = prefix.size
+                    val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
+                    
+
+                    thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
+
+
+                    sentenceNumber += numberToSend
+
+                    if( ceil((sentenceNumber-numberToSend)/ quietude ) !=
+                      ceil( (sentenceNumber/ quietude ) ) ) {
+                      println( "Sending " + numberToSend +
+                      " sentences to parser " + RemoteParserID(id) +
+                      ". Up to sentence number " +
+                      sentenceNumber )
+                    }
+
+
+                    //if( sentenceNumber % quietude < 10 )
+                    //  println( "Sending " + numberToSend + 
+                    //  " sentences to parser " + RemoteParserID(id) +
+                    //  ". Up to sentence number " +
+                    //  sentenceNumber + ".")
+
+                    reply( prefix )
+                  } else {
+                    numFinishedParsers += 1
+                    println( RemoteParserID(id) + " stopping")
+                    //+ (parsedSentences,trainingCorpus.size) )
                   }
-                )
-
-                val numberToSend = prefix.size
-                val numTerminals = prefix.foldLeft( 0 ) ( (a,b) => a + b.size )
-                
-
-                thisIterTrain = thisIterTrain.slice( numberToSend, thisIterTrain.size )
-
-                sentenceNumber += numberToSend
-
-
-                if( sentenceNumber % quietude < 10 )
-                  println( "Sending " + numberToSend + 
-                  " sentences to parser " + RemoteParserID(id) +
-                  ". Up to sentence number " +
-                  sentenceNumber + ".")
-
-                reply( prefix )
-              } else {
-                numFinishedParsers += 1
-                println( "Request DENIED " )
-                //+ (parsedSentences,trainingCorpus.size) )
+                }
               }
+
             }
 
             case LocalParserID(id:Int) => {
@@ -1888,17 +1937,21 @@ package ShakesEM {
 
                 sentenceNumber += numberToSend
 
+                if( ceil((sentenceNumber-numberToSend)/ quietude ) !=
+                  ceil( (sentenceNumber/ quietude ) ) ) {
+                  println( "Sending " + numberToSend +
+                    " sentences to parser " + RemoteParserID(id) +
+                    ". Up to sentence number " +
+                    sentenceNumber )
+                }
 
-                if( sentenceNumber % quietude < 10 )
-                  println( "Sending " + numberToSend + 
-                  " sentences to parser " + LocalParserID(id) +
-                  ". Up to sentence number " +
-                  sentenceNumber + ".")
 
                 reply( prefix )
+
+              
               } else {
                 numFinishedParsers += 1
-                println( "Request DENIED " )
+                println( LocalParserID(id) + " stopping" )
                 //+ (parsedSentences,trainingCorpus.size) )
               }
             }
@@ -1998,6 +2051,7 @@ package ShakesEM {
 
           }
         }
+          println( (numFinishedParsers,totalParserCount))
 
         //parsers.foreach( _ ! Stop )
 

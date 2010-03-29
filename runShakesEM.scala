@@ -39,7 +39,6 @@ package RunShakesEM {
       val initGram = new ShakesPCNF
   
       val poslist = fromPath(termFile).getLines("\n").toList
-      val hosts = fromPath(hostsPath).getLines("\n").toList
   
       initGram.randomizeGrammar(nonTermCount,poslist,16,0)
   
@@ -53,9 +52,12 @@ package RunShakesEM {
         import scala.actors.remote.Node
         import scala.actors.remote.RemoteActor._
         import scala.actors.AbstractActor
-  
+        
+        val timeout = 2000
+
         var g1 = initGram
         var g2 = g1.countlessCopy
+
   
         val trainingCorpus = new BracketedCorpus
         trainingCorpus.readCorpus( trainYieldSpec )
@@ -80,21 +82,39 @@ package RunShakesEM {
   
           someParsers
         }
+
+        val hostsList =
+        fromPath(hostsPath).getLines("\n").toList.map{_.split(' ')}
+
         def remoteParserConstructor( grammar:ShakesPCNF ) = {
-          var someParsers = (hosts map{ parserSpec:String =>
-              val Array(ip,port) = parserSpec.split(' ')
-              println( "Establishing connection with " + ip +":"+
-              port +"... ")
+          var someParsers = (hostsList map{ parserSpec =>
+              val Array(ip,port) = parserSpec
+              //println( "Establishing connection with " + ip +":"+
+              //port +"... ")
 
               select( Node(ip, port.toInt), 'parser )
           }).toList
 
-          (0 to (someParsers.size-1)) foreach{ index:Int =>
-            someParsers( index ) ! RemoteParserID( index )
+
+          (0 to (someParsers.size-1)) filter ( id =>
+            !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
+            someParsers( index ) !?(timeout, StillAlive) match {
+              case Some(_) => {
+                println( "Connected to " + RemoteParserID( index ) )
+                someParsers( index ) ! RemoteParserID( index )
+              }
+              case None => {
+                println( RemoteParserID(index) + " timed out")
+                deadHosts += RemoteParserID(index)
+              }
+            }
           }
   
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
-          someParsers foreach( _ ! grammar )
+          (0 to (someParsers.size - 1)) foreach ( index =>
+            if( ! deadHosts.contains( RemoteParserID(index)) )
+              someParsers foreach( _ ! grammar )
+          )
   
           someParsers
         }
@@ -103,7 +123,6 @@ package RunShakesEM {
   
       }
       manager.start
-  
     }
   }
 
@@ -157,11 +176,15 @@ package RunShakesEM {
   
         var g1 = initGram
         var g2 = g1.countlessCopy
+        val timeout = 2000
   
         val trainingCorpus = new StringsOnlyCorpus
         trainingCorpus.readCorpus( trainYieldSpec )
   
         val testSentences = fromPath(testStringsPath).getLines("\n").toList
+
+        val hostsList:List[Array[String]] =
+        fromPath(hostsPath).getLines("\n").toList.map{_.split(' ')}
   
   
         def stoppingCondition( numIter:Int, deltaLogProb:Double ) =
@@ -181,21 +204,36 @@ package RunShakesEM {
   
           someParsers
         }
+
         def remoteParserConstructor( grammar:ShakesPCNF ) = {
-          var someParsers = (hosts map{ parserSpec:String =>
-              val Array(ip,port) = parserSpec.split(' ')
-              println( "Establishing connection with " + ip +":"+
-              port +"... ")
+          var someParsers = (hostsList map{ parserSpec =>
+              val Array(ip,port) = parserSpec
+              //println( "Establishing connection with " + ip +":"+
+              //port +"... ")
 
               select( Node(ip, port.toInt), 'parser )
           }).toList
 
-          (0 to (someParsers.size-1)) foreach{ index:Int =>
-            someParsers( index ) ! RemoteParserID( index )
+
+          (0 to (someParsers.size-1)) filter ( id =>
+            !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
+            someParsers( index ) !?(timeout, StillAlive) match {
+              case Some(_) => {
+                println( "Connected to " + RemoteParserID( index ) )
+                someParsers( index ) ! RemoteParserID( index )
+              }
+              case None => {
+                println( RemoteParserID(index) + " timed out")
+                deadHosts += RemoteParserID(index)
+              }
+            }
           }
   
           //someParsers foreach( _ ! RemoteParserID( parserSpec ) )
-          someParsers foreach( _ ! grammar )
+          (0 to (someParsers.size - 1)) foreach ( index =>
+            if( ! deadHosts.contains( RemoteParserID(index)) )
+              someParsers foreach( _ ! grammar )
+          )
   
           someParsers
         }
