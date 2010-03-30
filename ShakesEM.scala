@@ -1095,8 +1095,9 @@ package ShakesEM {
 
       (0 to (ent.backMatcher.size-1) ) foreach{ split =>
         ent.backMatcher(split).foreach{ matches =>
-          matches match {
-            case RightHandSide( left, right ) => {
+          //matches match {
+            //case RightHandSide( left, right ) => {
+              val RightHandSide( left, right ) = matches
               val ruleProb = g.phrases (ent.l) (left) (right)
 
               val splitPoint = split + ent.start
@@ -1104,14 +1105,15 @@ package ShakesEM {
               val leftEnt = chart (ent.start) (splitPoint) (left)
               val rightEnt = chart (splitPoint) (ent.end) (right)
 
-              val toAddLeft = ent.op * ruleProb * rightEnt.ip
-              leftEnt.incOPProb( toAddLeft )
+              //val toAddLeft = ent.op * ruleProb * rightEnt.ip
+              leftEnt.incOPProb( ent.op * ruleProb * rightEnt.ip )
 
-              val toAddRight = ent.op * ruleProb * leftEnt.ip
-              rightEnt.incOPProb( toAddRight )
+              //val toAddRight = ent.op * ruleProb * leftEnt.ip
+              rightEnt.incOPProb( ent.op * ruleProb * leftEnt.ip )
 
-              leftEnt match{
-                case LexEntry(_) => {
+              //leftEnt match{
+              if(leftEnt.end - leftEnt.start == 1) {
+                //case LexEntry(_) => {
                   val g_Summand = leftEnt.ip * leftEnt.op
 
                   val RightHandSide( word, _ ) = leftEnt.backMatcher(0)(0)
@@ -1121,11 +1123,12 @@ package ShakesEM {
                   val h_Summand = leftEnt.ip * leftEnt.op
                   val h_Key = H_Key( leftEnt.start, leftEnt.end, leftEnt.l)
                   h_i = h_i.updated( h_Key, h_Summand )
-                }
-                case _ =>
+                //}
+                //case _ =>
               }
-              rightEnt match {
-                case LexEntry(_) => {
+              //rightEnt match {
+              if(rightEnt.end - rightEnt.start == 1) {
+                //case LexEntry(_) => {
                   val g_Summand = rightEnt.ip * rightEnt.op
 
                   val RightHandSide( word, _ ) = rightEnt.backMatcher(0)(0)
@@ -1135,17 +1138,17 @@ package ShakesEM {
                   val h_Summand = leftEnt.ip * leftEnt.op
                   val h_Key = H_Key( rightEnt.start, rightEnt.end, rightEnt.l)
                   h_i = h_i.updated( h_Key, h_Summand )
-                }
-                case _ => 
+                //}
+                //case _ => 
               }
 
               val f_Summand =
                 ent.op * ruleProb * leftEnt.ip * rightEnt.ip
               f_toAdd( (left,right) ) =
                   f_toAdd( (left,right) )+ f_Summand
-            }
-            case _ =>
-          }
+            //}
+            //case _ =>
+          //}
         }
       }
 
@@ -1743,7 +1746,7 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackageLocal = 1000//100
+        val maxTerminalsPerPackageLocal = 100//100
         val maxTerminalsPerPackageRemote = 50//100
 
         println( "Distributing to remote parsers" )
