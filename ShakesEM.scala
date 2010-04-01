@@ -986,7 +986,7 @@ package ShakesEM {
 
               //println("Computed outside probability")
 
-              (0 to (rootCell.backMatcher.length-1)).foreach{ split =>
+              (1 to (rootCell.backMatcher.length-1)).foreach{ split =>
                 //println("When determining toCompute, looking at split " + split)
                 val splitPoint = rootCell.start + split
                 rootCell.backMatcher(split).foreach{ children =>
@@ -1084,16 +1084,18 @@ package ShakesEM {
       //import collection.mutable.HashMap
       import math._
 
-      val h_Summand = ent.op * ent.ip
-      val h_Key = H_Key(ent.start,ent.end,ent.l)
-      h_i = h_i.updated( h_Key, h_Summand )
+      h_i += Pair( H_Key(ent.start,ent.end,ent.l), ent.op * ent.ip )
+      //val h_Summand = ent.op * ent.ip
+      //val h_Key = H_Key(ent.start,ent.end,ent.l)
+      //h_i( h_Key ) += h_Summand
+      //h_i = h_i.updated( h_Key, h_Summand )
 
       val f_toAdd = new MHashMap[ (String,String), Double] {
         override def default(key:(String,String)) = 0D
       }
 
 
-      (0 to (ent.backMatcher.size-1) ) foreach{ split =>
+      (1 to (ent.backMatcher.size-1) ) foreach{ split =>
         ent.backMatcher(split).foreach{ matches =>
           //matches match {
             //case RightHandSide( left, right ) => {
@@ -1114,30 +1116,49 @@ package ShakesEM {
               //leftEnt match{
               if(leftEnt.end - leftEnt.start == 1) {
                 //case LexEntry(_) => {
-                  val g_Summand = leftEnt.ip * leftEnt.op
+                  //val g_Summand = leftEnt.ip * leftEnt.op
 
                   val RightHandSide( word, _ ) = leftEnt.backMatcher(0)(0)
-                  val g_Key = G_Key(leftEnt.start, leftEnt.l, word )
-                  g_i = g_i.updated( g_Key, g_Summand )
+                  //val g_Key = G_Key(leftEnt.start, leftEnt.l, word )
+                  //g_i += Pair( g_Key, g_Summand )
+                  g_i += Pair(
+                    G_Key(leftEnt.start, leftEnt.l, word ),
+                    leftEnt.ip * leftEnt.op
+                  )
 
-                  val h_Summand = leftEnt.ip * leftEnt.op
-                  val h_Key = H_Key( leftEnt.start, leftEnt.end, leftEnt.l)
-                  h_i = h_i.updated( h_Key, h_Summand )
+                  //g_i = g_i.updated( g_Key, g_Summand )
+
+                  //val h_Summand = leftEnt.ip * leftEnt.op
+                  //val h_Key = H_Key( leftEnt.start, leftEnt.end, leftEnt.l)
+                  h_i += Pair(
+                    H_Key( leftEnt.start, leftEnt.end, leftEnt.l),
+                    leftEnt.ip * leftEnt.op
+                  )
+                  //h_i = h_i.updated( h_Key, h_Summand )
                 //}
                 //case _ =>
               }
               //rightEnt match {
               if(rightEnt.end - rightEnt.start == 1) {
                 //case LexEntry(_) => {
-                  val g_Summand = rightEnt.ip * rightEnt.op
+                  //val g_Summand = rightEnt.ip * rightEnt.op
 
                   val RightHandSide( word, _ ) = rightEnt.backMatcher(0)(0)
-                  val g_Key = G_Key(rightEnt.start, rightEnt.l, word )
-                  g_i = g_i.updated( g_Key, g_Summand )
+                  //val g_Key = G_Key(rightEnt.start, rightEnt.l, word )
+                  //g_i( g_Key ) += g_Summand
+                  g_i += Pair(
+                    G_Key(rightEnt.start, rightEnt.l, word ),
+                    rightEnt.ip * rightEnt.op
+                  )
+                  //g_i = g_i.updated( g_Key, g_Summand )
 
-                  val h_Summand = leftEnt.ip * leftEnt.op
-                  val h_Key = H_Key( rightEnt.start, rightEnt.end, rightEnt.l)
-                  h_i = h_i.updated( h_Key, h_Summand )
+                  //val h_Summand = leftEnt.ip * leftEnt.op
+                  //val h_Key = H_Key( rightEnt.start, rightEnt.end, rightEnt.l)
+                  h_i += Pair(
+                    H_Key( rightEnt.start, rightEnt.end, rightEnt.l),
+                    leftEnt.ip * leftEnt.op
+                  )
+                  //h_i = h_i.updated( h_Key, h_Summand )
                 //}
                 //case _ => 
               }
@@ -1158,7 +1179,9 @@ package ShakesEM {
         val summand:Double = f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
         (f_toAdd(k))
 
-        f_i = f_i.updated( F_Key(ent.start,ent.end,ent.l,left,right),summand)
+        f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) += //summand
+          f_toAdd(k)
+        //f_i = f_i.updated( F_Key(ent.start,ent.end,ent.l,left,right),summand)
         
       }
     }
@@ -1166,17 +1189,23 @@ package ShakesEM {
     /**
     * This stores intermediate counts of binary-branching nodes for this sentence.
     */
-    @serializable var f_i = new collection.immutable.HashMap[F_Key,Double] withDefaultValue(0D)
+    @serializable val f_i = new MHashMap[F_Key,Double] { // withDefaultValue(0D)
+      override def default( key:F_Key ) = 0D
+    }
     /**
     * This stores intermediate counts of unary-branching nodes for this sentence.
     */
     //var g_i = new IHashMap[(Int,String,String), Double] {
-    @serializable var g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
+    @serializable val g_i = new MHashMap[G_Key, Double] { //withDefaultValue(0D)
+      override def default( key:G_Key ) = 0D
+    }
 
     /**
     * This stores intermediate counts of non-terminal nodes for this sentence.
     */
-    @serializable var h_i = new IHashMap[H_Key, Double] withDefaultValue(0D)
+    @serializable val h_i = new MHashMap[H_Key, Double] {// withDefaultValue(0D)
+      override def default( key:H_Key ) = 0D
+    }
   }
 
   /**
@@ -1325,9 +1354,16 @@ package ShakesEM {
 
 
 
-                  f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
-                  g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-                  h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
+                  f_i.clear
+                  g_i.clear
+                  h_i.clear
+                  //f_i = new MHashMap[F_Key,Double]{ // withDefaultValue(0D)
+                  //  override def default(key:F_Key) = 0D
+                  //}
+                  //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
+                  //  override def default(key:G_Key) = 0D
+                  //}
+                  //h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
                   //if( stringCount % quietude == 0 )
                   //  println( parserID + " resizing chart...")
@@ -1372,9 +1408,18 @@ package ShakesEM {
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
-                  f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
-                  g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-                  h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
+                  //f_i = new MHashMap[F_Key,Double] { // withDefaultValue(0D)
+                  //  override def default( key:F_Key ) = 0D
+                  //}
+                  //g_i = new MHashMap[G_Key, Double] { // withDefaultValue(0D)
+                  //  override def default( key:G_Key ) = 0D
+                  //}
+                  //h_i = new MHashMap[H_Key, Double] { // withDefaultValue (0D)
+                  //  override def default( key:H_Key ) = 0D
+                  //}
+                  f_i.clear
+                  g_i.clear
+                  h_i.clear
                   bracketing = b
 
 
@@ -1433,9 +1478,18 @@ package ShakesEM {
 
 
 
-            f_i = new IHashMap[F_Key,Double] withDefaultValue(0D)
-            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-            h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
+            f_i.clear
+            g_i.clear
+            h_i.clear
+            //f_i = new MHashMap[F_Key,Double] {// withDefaultValue(0D)
+            //  override def default( key:F_Key ) = 0D
+            //}
+            //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
+            //  override def default( key:G_Key ) = 0D
+            //}
+            //h_i = new MHashMap[H_Key, Double] {// withDefaultValue (0D)
+            //  override def default( key:H_Key ) = 0D
+            //}
 
             //if( stringCount % quietude == 0 )
             //  println( parserID + " resizing chart...")
@@ -1467,9 +1521,18 @@ package ShakesEM {
             sender ! parserID
           }
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
-            f_i = new IHashMap[F_Key, Double] withDefaultValue(0D)
-            g_i = new IHashMap[G_Key, Double] withDefaultValue(0D)
-            h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
+            //f_i = new MHashMap[F_Key, Double] {// withDefaultValue(0D)
+            //  override def default( key:F_Key ) = 0D
+            //}
+            //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
+            //  override def default( key:G_Key ) = 0D
+            //}
+            //h_i = new MHashMap[H_Key, Double] { withDefaultValue (0D)
+            //  override def default( key:H_Key ) = 0D
+            //}
+            f_i.clear
+            g_i.clear
+            h_i.clear
             bracketing = b
 
 
