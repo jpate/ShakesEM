@@ -1937,7 +1937,6 @@ package ShakesEM {
 
 
             case RemoteParserID(id:Int) => {
-
               remoteParsers(id) !?(timeout, StillAlive) match {
                 case None => {
                   println( RemoteParserID(id) + " timed out ")
@@ -1986,7 +1985,6 @@ package ShakesEM {
                   }
                 }
               }
-
             }
 
             case LocalParserID(id:Int) => {
@@ -2117,7 +2115,7 @@ package ShakesEM {
             }
 
             case what:Any =>
-              //println("ShakesParserManager got something else: " + what)
+              println("ShakesParserManager got something else: " + what)
 
           }
         }
