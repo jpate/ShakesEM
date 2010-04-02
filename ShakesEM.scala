@@ -1397,6 +1397,7 @@ package ShakesEM {
                   sender ! GResult( g_i.toMap, scaledStringProb )
                   sender ! HResult( h_i.toMap, scaledStringProb )
                   sender ! StringProbResult( scaledStringProb, scaledBy )
+                  print(".")
 
                     //estimatesReply = ParsingResult(parserID,
                     //              scaledStringProb,
@@ -1460,6 +1461,7 @@ package ShakesEM {
                   reply( GResult( g_i.toMap, scaledStringProb ) )
                   reply( HResult( h_i.toMap, scaledStringProb ) )
                   reply( StringProbResult( scaledStringProb, scaledBy ) )
+                  print(".")
 
                 }
               }
@@ -1468,6 +1470,7 @@ package ShakesEM {
               //  println( parserID + " replying with estimates...")
               //reply(estimatesReply)
             //if( stringCount % quietude == 0 )
+            println("\n")
             if( stringCount % quietude < 10 )
               println( parserID + " asking for more...")
             sender ! parserID
