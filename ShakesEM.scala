@@ -28,6 +28,12 @@ package ShakesEM {
   import collection.immutable.{HashMap => IHashMap,HashSet => IHashSet}
   import collection.mutable.{HashMap => MHashMap, HashSet => MHashSet}
 
+  case class NTExpansion(lhs:String,left:String,right:String)
+  case class NTRevChild( left:String,right:String )
+  case class NTRevParent( lhs:String,prob:Double )
+
+  case class TermExpansion( pos:String, word:String)
+
   /**
   * <code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
   * for use with the ShakesEM library
@@ -43,31 +49,18 @@ package ShakesEM {
     * See Manning &amp; Schutze p. 396.
     * The defaults just make the incrementation code cleaner.
     */
-    val f = new MHashMap[
-      String,   
-      MHashMap[
-        String,
-        MHashMap[String,Double]
-      ]
-    ] {
-      override def default(lhs:String) = {
-        this += Pair( lhs,
-                      new MHashMap[String, MHashMap[String,Double]] {
-            override def default(left:String) = {
-              this += Pair( left,
-                            new MHashMap[String,Double] {
-                   override def default(right:String) = 0
-                }
-              )
-              this(left)
-            }
-          }
-        )
-        this(lhs)
-      }
+    //val f = new MHashMap[
+    //  String,   
+    //  MHashMap[
+    //    String,
+    //    MHashMap[String,Double]
+    //  ]
+    //] {
+    val f = new MHashMap[NTExpansion,Double] {
+      override def default(exp:NTExpansion) = 0
     }
-    val g = new MHashMap[(String,String),Double] {
-      override def default(key:(String,String)) = 0
+    val g = new MHashMap[TermExpansion,Double] {
+      override def default(key:TermExpansion) = 0
     }
     val h = new MHashMap[String,Double] {
       override def default(key:String) = 0
@@ -81,43 +74,32 @@ package ShakesEM {
     * this function lies in its side-effects.
     */
     def reestimateRules {
-      //reestimateCounter = reestimateCounter + 1
-      //println("REESTIMATION NUMBER" + reestimateCounter)
-      f.keysIterator.foreach{ lhs =>
-        f (lhs) .keysIterator.foreach{ left =>
-          f (lhs)(left) .keysIterator.foreach{ right =>
-            phrases (lhs)(left)(right) =
-              100000 * f (lhs)(left)(right) /
-              h (lhs)
-            if( phrases(lhs)(left)(right) == 0.0 ) {
-              phrases(lhs)(left) -= right
-              println("Removed a rule" + (lhs,left,right))
-            }
-          }
-          if( phrases(lhs)(left).isEmpty )
-            phrases(lhs) -= left
-        }
-        if( phrases(lhs).isEmpty )
-          phrases -= lhs
+      f.keysIterator.foreach{ exp =>
+        val NTExpansion(lhs,_,_) = exp
+          //phrases (lhs)(left)(right) =
+          phrases( exp ) =
+            100000 * f(exp) /
+            h (lhs)
       }
 
 
 
-      g.keysIterator.foreach{ k =>
-        lexicon (k._1) (k._2) =
-           100000 * g(k) /
-           h(k._1)
+      g.keysIterator.foreach{ exp =>
+        val TermExpansion( pos, _ ) = exp
+        lexicon ( exp ) =
+           100000 * g( exp ) /
+           h(pos)
       }
-      lexicon.keysIterator.foreach{ pos =>
-        lexicon(pos).keysIterator.foreach{ word =>
-          if( lexicon(pos)(word) == 0.0 ) {
-            lexicon(pos) -= word
-            println("Removed a rule" + (pos,word))
-          }
-        }
-        if( lexicon(pos).isEmpty )
-          lexicon -= pos
-      }
+      //lexicon.keysIterator.foreach{ pos =>
+      //  lexicon(pos).keysIterator.foreach{ word =>
+      //    if( lexicon(pos)(word) == 0.0 ) {
+      //      lexicon(pos) -= word
+      //      println("Removed a rule" + (pos,word))
+      //    }
+      //  }
+      //  if( lexicon(pos).isEmpty )
+      //    lexicon -= pos
+      //}
 
 
 
@@ -130,28 +112,29 @@ package ShakesEM {
 
 
     def normalize {
-      phrases.keysIterator.foreach{ lhs =>
-        var lhsTotal = 0D
-        phrases(lhs).keysIterator.foreach( left =>
-          phrases(lhs)(left).keysIterator.foreach( right =>
-              lhsTotal = lhsTotal + phrases(lhs)(left)(right)
-          )
-        )
-        phrases(lhs).keysIterator.foreach( left =>
-          phrases(lhs)(left).keysIterator.foreach( right =>
-            phrases(lhs)(left)(right) = phrases(lhs)(left)(right) / lhsTotal
-          )
-        )
+
+      val ntTotals = new MHashMap[String,Double] {
+        override def default( lhs:String ) = 0D
       }
 
-      lexicon.keysIterator.foreach{ pos =>
-        var posTotal = 0D
-        lexicon( pos ).keysIterator.foreach( word =>
-          posTotal = posTotal + lexicon(pos)(word)
-        )
-        lexicon(pos).keysIterator.foreach( word =>
-          lexicon(pos)(word) = lexicon(pos)(word) / posTotal
-        )
+      phrases.keysIterator.foreach{ exp =>
+        val NTExpansion( lhs, _, _ ) = exp
+        ntTotals ( lhs ) += phrases( exp )
+      }
+      phrases.keysIterator.foreach{ exp =>
+        val NTExpansion( lhs, _, _ ) = exp
+        phrases ( exp ) = phrases( exp ) / ntTotals(lhs)
+      }
+
+      ntTotals.clear
+
+      lexicon.keysIterator.foreach{ exp =>
+        val TermExpansion( pos, _ ) = exp
+        ntTotals( pos ) += lexicon( exp )
+      }
+      lexicon.keysIterator.foreach{ exp =>
+        val TermExpansion( pos, _ ) = exp
+        lexicon ( exp ) = lexicon( exp ) / ntTotals(pos)
       }
     }
 
@@ -171,141 +154,126 @@ package ShakesEM {
       for( lhs <- nonTermSymbols ) 
         for( left <- allSymbols )
           for( right <- allSymbols )
-            phrases(lhs)(left)(right) = r.nextDouble + centeredOn
+            //phrases(lhs)(left)(right) = r.nextDouble + centeredOn
+            phrases( NTExpansion( lhs, left, right ) ) = r.nextDouble + centeredOn
 
 
       for( pos <- nonTermSymbols )
         for( word <- termSymbols )
-          lexicon( pos ) ( word ) = r.nextDouble + centeredOn
+          lexicon( TermExpansion( pos, word ) ) = r.nextDouble + centeredOn
 
       normalize
       preCalcExps
     }
 
 
-    /**
-    * <p>Deletes re-write rules which have a probablity less than some threshold.
-    * Could be useful for speeding up estimation and saving memory in later
-    * iterations.</p>
-    * 
-    * @param cutoff The minimum probability for a re-write to remain.
-    */
-    def pruneRules(cutoff:Double) {
-      phrases.keysIterator.foreach{ lhs =>
-        phrases (lhs) .keysIterator.foreach{ left =>
-          phrases (lhs) (left) .keysIterator.foreach{ right =>
-            if( phrases(lhs)(left)(right) < cutoff )
-              phrases(lhs)(left) -= right
-          }
-          if( phrases(lhs)(left).size == 0 )
-            phrases(lhs) -= left
-        }
-        if( phrases (lhs) .size == 0 )
-          phrases -= lhs
-      }
-      lexicon.keysIterator.foreach{ pos =>
-        lexicon (pos) .keysIterator.foreach{ word =>
-          if( lexicon(pos)(word) < cutoff )
-            lexicon(pos) -= word
-        }
-        if( lexicon (pos) .size == 0 )
-          lexicon -= pos
-      }
-      preCalcExps
+
+        ///**
+        //* <p>lexicon, lexExps, phrases, and phrExps contain the actual grammatical
+        //* information. lexExps contains the same information as lexicon in a
+        //* different format to facilitate rule look-up. Similarly, phrExps contains
+        //* the same information as phrases in a different format to facilitate rule
+        //* look-up. The default values just help make incrementation easier.<p>
+        //*/
+        //var lexicon = new MHashMap[
+        //  String,       //  POS
+        //  MHashMap[
+        //    String,     //  WORD
+        //    Double      //  PROB
+        //  ]
+        //] {
+        //  override def default(pos:String) = {
+        //    this += Pair( pos,
+        //          new MHashMap[String,Double] {
+        //        override def default(word:String) = {
+        //          this += Pair( word, 0.0 )
+        //          this(word)
+        //        }
+        //      }
+        //    )
+        //    this(pos)
+        //  }
+        //}
+    var lexicon = new MHashMap[TermExpansion,Double] {
+      override def default( exp: TermExpansion ) = 0D
     }
 
-
-
-    /**
-    * <p>lexicon, lexExps, phrases, and phrExps contain the actual grammatical
-    * information. lexExps contains the same information as lexicon in a
-    * different format to facilitate rule look-up. Similarly, phrExps contains
-    * the same information as phrases in a different format to facilitate rule
-    * look-up. The default values just help make incrementation easier.<p>
-    */
-    var lexicon = new MHashMap[
-      String,       //  POS
-      MHashMap[
-        String,     //  WORD
-        Double      //  PROB
-      ]
-    ] {
-      override def default(pos:String) = {
-        this += Pair( pos,
-              new MHashMap[String,Double] {
-            override def default(word:String) = {
-              this += Pair( word, 0.0 )
-              this(word)
-            }
-          }
-        )
-        this(pos)
-      }
-    }
-    var lexExps = new MHashMap[
-      String,       //  WORD
-      List[(
-        String,     //  POS
-        Double      //  PROB
-      )]
-    ] {
-      override def default(word:String) = {
-        this += Pair( word, Nil )
-        this(word)
-      }
+      //var lexExps = new MHashMap[
+      //  String,       //  WORD
+      //  List[(
+      //    String,     //  POS
+      //    Double      //  PROB
+      //  )]
+      //] {
+      //  override def default(word:String) = {
+      //    this += Pair( word, Nil )
+      //    this(word)
+      //  }
+      //}
+      
+    var lexExps = new MHashMap[String,List[NTRevParent]] {
+      override def default( word:String ) = Nil
     }
     
-    var phrases = new MHashMap[
-      String,       //  LHS
-      MHashMap[
-        String,     //  LEFT
-        MHashMap[
-          String,   //  RIGHT
-          Double    //  PROB
-        ]
-      ]
-    ] {
-      override def default(lhs:String) = {
-        this += Pair( lhs,
-                      new MHashMap[String, MHashMap[String,Double]] {
-            override def default(left:String) = {
-              this += Pair( left, 
-                            new MHashMap[String,Double] {
-                  override def default(right:String) = {
-                    this += Pair( right, 0.0 )
-                    this(right)
-                  }
-                }
-              )
-              this(left)
-            }
-          }
-        )
-        this(lhs)
-      }
+      //var phrases = new MHashMap[
+      //  String,       //  LHS
+      //  MHashMap[
+      //    String,     //  LEFT
+      //    MHashMap[
+      //      String,   //  RIGHT
+      //      Double    //  PROB
+      //    ]
+      //  ]
+      //] {
+      //  override def default(lhs:String) = {
+      //    this += Pair( lhs,
+      //                  new MHashMap[String, MHashMap[String,Double]] {
+      //        override def default(left:String) = {
+      //          this += Pair( left, 
+      //                        new MHashMap[String,Double] {
+      //              override def default(right:String) = {
+      //                this += Pair( right, 0.0 )
+      //                this(right)
+      //              }
+      //            }
+      //          )
+      //          this(left)
+      //        }
+      //      }
+      //    )
+      //    this(lhs)
+      //  }
+      //}
+
+    var phrases = new MHashMap[ NTExpansion, Double] { 
+      override def default(exp:NTExpansion) = 0D
     }
-    var phrExps = new MHashMap[
-      String,       //  LEFT
-      MHashMap[
-        String,     //  RIGHT
-        List[(
-          String,   //  LHS
-          Double    //  PROB
-        )]
-      ]
-    ] {
-      override def default(left:String) = {
-        this += Pair( left,
-                      new MHashMap[String, List[(String,Double)]] {
-            override def default(right:String) = {
-              this += Pair( right, Nil )
-              this(right)
-            }
-          }
-        )
-        this(left)
-      }
+
+    var phrExps = new MHashMap[ NTRevChild, List[NTRevParent] ] {
+      override def default( key: NTRevChild ) = Nil
     }
+    //var phrExps = new MHashMap[
+    //  String,       //  LEFT
+    //  MHashMap[
+    //    String,     //  RIGHT
+    //    List[(
+    //      String,   //  LHS
+    //      Double    //  PROB
+    //    )]
+    //  ]
+    //] {
+    //  override def default(left:String) = {
+    //    this += Pair( left,
+    //                  new MHashMap[String, List[(String,Double)]] {
+    //        override def default(right:String) = {
+    //          this += Pair( right, Nil )
+    //          this(right)
+    //        }
+    //      }
+    //    )
+    //    this(left)
+    //  }
+    //}
 
 
     /**
@@ -325,9 +293,9 @@ package ShakesEM {
         if( line.length > 1 ) {
           val fields = line.split(' ')
 
-          phrases (fields(0)) (fields(1)) (fields(2)) += fields(3).toDouble
-          phrExps (fields(1)) (fields(2)) = (fields(0), fields(3).toDouble) ::
-                                            phrExps (fields(1)) (fields(2))
+          phrases (NTExpansion( fields(0), fields(1), fields(2))) += fields(3).toDouble
+          phrExps ( NTRevChild( fields(1), fields(2)) ) = NTRevParent(fields(0), fields(3).toDouble) ::
+            phrExps( NTRevChild(fields(1),fields(2)) )
         }
       )
     }
@@ -348,65 +316,65 @@ package ShakesEM {
       lines.foreach( line =>
         if( line.length > 1 ) {
           val fields = line.split(' ')
-          lexicon (fields(0)) (fields(1)) += fields(2).toDouble
-          lexExps (fields(1)) = (fields(0), fields(2).toDouble) ::
+          lexicon( TermExpansion(fields(0), fields(1)) ) += fields(2).toDouble
+          lexExps(fields(1)) = NTRevParent( fields(0), fields(2).toDouble ) ::
                                 lexExps(fields(1))
 
         }
       )
     }
 
-    /**
-    * Receives a probability in log space, takes it out of log space, and
-    * increments the probability of a binary rule by the probability.
-    *
-    * @param lhs The left hand side of the rule
-    * @param left The left child of the rule
-    * @param right The right child of the rule
-    * @param scoreIncrem The amount to increment the probability by (in log
-    * space)
-    */
-    def incPhraseScore(lhs:String,left:String,right:String,scoreIncrem:Double) {
-      phrases (lhs) (left) (right) += exp(scoreIncrem)
-    }
+      ///**
+      //* Receives a probability in log space, takes it out of log space, and
+      //* increments the probability of a binary rule by the probability.
+      //*
+      //* @param lhs The left hand side of the rule
+      //* @param left The left child of the rule
+      //* @param right The right child of the rule
+      //* @param scoreIncrem The amount to increment the probability by (in log
+      //* space)
+      //*/
+      //def incPhraseScore(lhs:String,left:String,right:String,scoreIncrem:Double) {
+      //  phrases (lhs) (left) (right) += exp(scoreIncrem)
+      //}
 
-    /**
-    * Receives a probability and increments the probability of a binary rule by
-    * the probability.
-    *
-    * @param lhs The left hand side of the rule
-    * @param left The left child of the rule
-    * @param right The right child of the rule
-    * @param probIncrem The amount to increment the probability by
-    */
-    def incPhraseProb(lhs:String,left:String,right:String,probIncrem:Double) {
-      phrases(lhs) (left) (right) += probIncrem
-    }
+      ///**
+      //* Receives a probability and increments the probability of a binary rule by
+      //* the probability.
+      //*
+      //* @param lhs The left hand side of the rule
+      //* @param left The left child of the rule
+      //* @param right The right child of the rule
+      //* @param probIncrem The amount to increment the probability by
+      //*/
+      //def incPhraseProb(lhs:String,left:String,right:String,probIncrem:Double) {
+      //  phrases(lhs) (left) (right) += probIncrem
+      //}
     
-    /**
-    * Receives a probability in log space, takes it out of log space, and
-    * increments the probability of a unary rule by the probability.
-    *
-    * @param pos The part of speech of the rule
-    * @param word The terminal production of the rule
-    * @param scoreIncrem The amount to increment the probability by (in log
-    * space)
-    */
-    def incLexScore(pos:String,word:String,scoreIncrem:Double) {
-      lexicon(pos) (word) += exp(scoreIncrem)
-    }
+      ///**
+      //* Receives a probability in log space, takes it out of log space, and
+      //* increments the probability of a unary rule by the probability.
+      //*
+      //* @param pos The part of speech of the rule
+      //* @param word The terminal production of the rule
+      //* @param scoreIncrem The amount to increment the probability by (in log
+      //* space)
+      //*/
+      //def incLexScore(pos:String,word:String,scoreIncrem:Double) {
+      //  lexicon(pos) (word) += exp(scoreIncrem)
+      //}
 
-    /**
-    * Receives a probability and increments the probability of a unary rule by
-    * the probability.
-    *
-    * @param pos The part of speech of the rule
-    * @param word The terminal production of the rule
-    * @param probIncrem The amount to increment the probability by 
-    */
-    def incLexProb(pos:String,word:String,probIncrem:Double) {
-      lexicon(pos) (word) += probIncrem
-    }
+      ///**
+      //* Receives a probability and increments the probability of a unary rule by
+      //* the probability.
+      //*
+      //* @param pos The part of speech of the rule
+      //* @param word The terminal production of the rule
+      //* @param probIncrem The amount to increment the probability by 
+      //*/
+      //def incLexProb(pos:String,word:String,probIncrem:Double) {
+      //  lexicon(pos) (word) += probIncrem
+      //}
     
     /**
     * Computes the value of phrExps on the basis of phrases and the value of
@@ -417,22 +385,19 @@ package ShakesEM {
       phrExps.clear
       lexExps.clear
 
-      phrExps.keysIterator.foreach{ phrExps(_).clear }
-      phrases.keysIterator.foreach( lhs =>
-        phrases (lhs) .keysIterator.foreach( left =>
-          phrases (lhs) (left).keysIterator.foreach ( right =>
-            phrExps (left) (right) = (lhs, phrases(lhs)(left)(right)) ::
-                                      phrExps (left) (right)
-          )
-        )
-      )
+      phrExps.clear
+      phrases.keysIterator.foreach{ exp =>
+        val NTExpansion( lhs, left, right ) = exp
+        phrExps( NTRevChild(left, right) ) =
+          NTRevParent(lhs, phrases( exp ))::
+          phrExps( NTRevChild(left, right) )
+      }
 
-      lexicon.keysIterator.foreach( pos =>
-        lexicon (pos) .keysIterator.foreach ( word =>
-          lexExps(word) = (pos, lexicon(pos)(word)) ::
-                          lexExps(word)
-        )
-      )
+      lexicon.keysIterator.foreach{ exp =>
+        val TermExpansion( pos, word ) = exp
+        lexExps(word) = NTRevParent(pos, lexicon( TermExpansion(pos,word))) ::
+          lexExps(word)
+      }
     }
 
     /**
@@ -444,18 +409,13 @@ package ShakesEM {
     */
     def countlessCopy:ShakesPCNF = {
       val copy = new ShakesPCNF
-      phrases.keysIterator.foreach( lhs =>
-        phrases (lhs) .keysIterator.foreach( left =>
-          phrases (lhs) (left) .keysIterator.foreach( right =>
-            copy.phrases(lhs)(left)(right) +=  0.0
-          )
-        )
+      phrases.keysIterator.foreach( exp =>
+        copy.phrases( exp ) +=  0.0
       )
-      lexicon.keysIterator.foreach( pos =>
-        lexicon (pos) .keysIterator.foreach( word =>
-          copy.lexicon(pos)(word) += 0.0
-        )
-      )
+      lexicon.keysIterator.foreach{ exp =>
+        val TermExpansion( pos, word ) = exp
+        copy.lexicon( TermExpansion(pos, word)) += 0.0
+      }
       copy.preCalcExps
       copy
     }
@@ -469,28 +429,28 @@ package ShakesEM {
       copy
     }
 
-    /**
-    * Clears out all counts from lexicon, phrases, lexExps and phrExps.
-    */
-    def resetGrammar {
-      phrExps.clear
-      lexExps.clear
-      phrases.keysIterator.foreach( lhs =>
-        phrases(lhs).keysIterator.foreach( left =>
-          phrases(lhs)(left).keysIterator.foreach{ right =>
-            phrases(lhs)(left).clear
-            phrases(lhs)(left)(right) += 0.0
-          }
-        )
-      )
-      lexicon.keysIterator.foreach( pos =>
-        lexicon(pos).keysIterator.foreach{ word =>
-          lexicon(pos).clear
-          lexicon(pos)(word) += 0.0
-        }
-      )
-      preCalcExps
-    }
+        ///**
+        //* Clears out all counts from lexicon, phrases, lexExps and phrExps.
+        //*/
+        //def resetGrammar {
+        //  phrExps.clear
+        //  lexExps.clear
+        //  phrases.keysIterator.foreach( lhs =>
+        //    phrases(lhs).keysIterator.foreach( left =>
+        //      phrases(lhs)(left).keysIterator.foreach{ right =>
+        //        phrases(lhs)(left).clear
+        //        phrases(lhs)(left)(right) += 0.0
+        //      }
+        //    )
+        //  )
+        //  lexicon.keysIterator.foreach( pos =>
+        //    lexicon(pos).keysIterator.foreach{ word =>
+        //      lexicon(pos).clear
+        //      lexicon(pos)(word) += 0.0
+        //    }
+        //  )
+        //  preCalcExps
+        //}
 
     /**
     * Produce a readable stringification of lexicon and phrases in the same
@@ -498,40 +458,15 @@ package ShakesEM {
     * @return A string representation of lexicon and phrases.
     */
     override def toString =
-      phrases.keysIterator.map{ lhs =>
-        phrases (lhs) .keysIterator.map{ left =>
-          phrases (lhs)(left) .keysIterator.map{ right =>
-            lhs + " " + left + " " + right + " " + 
-            ("%1.30f" format phrases(lhs)(left)(right) )
-          }.mkString("\n","\n","")
-        }.mkString("","","")
-      }.mkString("","","\n") +
-      lexicon.keysIterator.map{ pos =>
-        lexicon (pos) .keysIterator.map{ word =>
-          pos + " " + word + " " +
-          ("%1.30f" format lexicon(pos)(word) )
-        }.mkString("\n","\n","")
-      }.mkString("","","")
+      phrases.keysIterator.map{ exp =>
+        val NTExpansion( lhs, left, right ) = exp
+        lhs + " " + left + " " + right + " " + phrases( exp )
+      }.mkString("Phrases:\n\t","\n\t","\n") +
+      lexicon.keysIterator.map{ exp =>
+        val TermExpansion( pos, word ) = exp
+        pos + " " + word + " " +  " " + lexicon( exp )
+      }.mkString("Lexicon:\n\t","\n\t","")
 
-    /**
-    * Produce another readable stringification of lexicon and phrases. This is
-    * not readable by readGrammar or readLexicon, but I think it is a little bit
-    * easier for human eyes so I'm keeping it.
-    * @return A string representation of lexicon and phrases.
-    */
-    def prettyPrint =
-      phrases.keysIterator.map{ lhs =>
-        phrases (lhs) .keysIterator.map{ left =>
-          phrases (lhs)(left) .keysIterator.map{ right =>
-            lhs + " " + left + " " + right + " " + phrases(lhs)(left)(right)
-          }.mkString("\t","\n\t","\n")
-        }.mkString("","","")
-      }.mkString("Phrases:\n\n","","\n") +
-      lexicon.keysIterator.map{ pos =>
-        lexicon (pos) .keysIterator.map{ word =>
-          pos + " " + word + " " + lexicon(pos)(word)
-        }.mkString("\t","\n\t","")
-      }.mkString("Lexicon:\n\n","\n","")
   }
 
   // Use this to terminate parsers when we run out of sentences to give them.
@@ -561,7 +496,7 @@ package ShakesEM {
   */
   trait ShakesParser {
     import math._
-      //import collection.mutable.{HashMap => MHashMap}
+    //import collection.mutable.{HashMap => MHashMap}
     //import collection.immutable.{HashMap,HashSet}
 
     var parserID:ParserID
@@ -1058,7 +993,7 @@ package ShakesEM {
             case RightHandSide( left, right ) => {
               val splitPoint  = split + ent.start
 
-              val ruleProb =  g.phrases (ent.l)(left)(right)
+              val ruleProb =  g.phrases(NTExpansion(ent.l,left,right) )
               
               val leftEnt = chart( ent.start )( splitPoint )( left )
               val rightEnt = chart( splitPoint )( ent.end )( right )
@@ -1100,7 +1035,7 @@ package ShakesEM {
           //matches match {
             //case RightHandSide( left, right ) => {
               val RightHandSide( left, right ) = matches
-              val ruleProb = g.phrases (ent.l) (left) (right)
+              val ruleProb = g.phrases(NTExpansion(ent.l,left,right) )
 
               val splitPoint = split + ent.start
 
@@ -1221,14 +1156,15 @@ package ShakesEM {
     * @param index The index of the word.
     */
     def lexFill(w:String,index:Int) {
-      g.lexExps(w).foreach{ pos =>
-        val l = new LexEntry(pos._1)
+      g.lexExps(w).foreach{ exp =>
+        val NTRevParent( pos, prob ) = exp
+        val l = new LexEntry(pos)
         l.newExpansion(
           w,w,
           index,index,index+1,
-          wordScale * pos._2
+          wordScale * prob
         )
-        chart(index)(index+1) += Pair( pos._1, l)
+        chart(index)(index+1) += Pair( pos, l)
       }
     }
 
@@ -1241,11 +1177,12 @@ package ShakesEM {
       start+1 to (end-1) foreach{ k =>
         chart(start)(k).keysIterator.foreach{ left =>
           chart(k)(end).keysIterator.foreach{ right =>
-            g.phrExps (left)(right) .foreach{ phrase =>
-              val thisprob = phrase._2 * 
+            g.phrExps( NTRevChild(left, right) ).foreach{ parent =>
+              val NTRevParent( lhs, expProb) = parent
+              val thisprob =  expProb * 
                               chart(start)(k)(left).ip *
                               chart(k)(end)(right).ip
-                chart(start)(end)(phrase._1).newExpansion(
+                chart(start)(end)(lhs).newExpansion(
                   left, right,
                   start,k,end,
                   thisprob
@@ -1337,6 +1274,7 @@ package ShakesEM {
       loop {
         react {
           case itemList:List[ToParse] => {
+
             val numSentences = itemList.size
             val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
 
@@ -1672,27 +1610,32 @@ package ShakesEM {
       }
     }
     def lexFill( w:String, index:Int) {
-      val mlePOS = g.lexExps(w).foldLeft(g.lexExps(w)(0))( (l1, l2) =>
-        if( l1._2 > l2._2 )
-          l1 else l2
-      )
-      val l = new LexEntry( mlePOS._1 )
+      val NTRevParent(mlePOS,mleProb:Double) =
+        g.lexExps(w).reduceLeft{ (l1, l2) =>
+          val NTRevParent(_,prob1) = l1
+          val NTRevParent(_,prob2) = l2
+          if( prob1 > prob2 )
+            l1 else l2
+      }
+      
+      val l = new LexEntry( mlePOS )
       l.newExpansion(
         w,w,
         index, index, index+1,
-        wordScale * mlePOS._2
+        wordScale * mleProb
       )
-      chart(index)(index+1) += Pair( mlePOS._1, l)
+      chart(index)(index+1) += Pair( mlePOS, l)
     }
     def synFill( start:Int, end:Int) {
       start+1 to (end-1) foreach{ k =>
         chart(start)(k).keysIterator.foreach{ left =>
           chart(k)(end).keysIterator.foreach{ right =>
-            g.phrExps (left)(right) .foreach{ phrase =>
-              val thisprob = phrase._2 * 
+            g.phrExps( NTRevChild(left, right) ) . foreach{ parent =>
+              val NTRevParent(lhs, expProb) = parent
+              val thisprob =  expProb * 
                               chart(start)(k)(left).ip *
                               chart(k)(end)(right).ip
-                chart(start)(end)(phrase._1).newVitExpansion(
+                chart(start)(end)(lhs).newVitExpansion(
                   left, right,
                   start,k,end,
                   thisprob
@@ -1817,7 +1760,7 @@ package ShakesEM {
         //val maxTerminalsPerPackageRemote = 1000//100
         val maxTerminalsPerPackage = round(
           totalTermCount /
-          (remoteParsers.size + localParsers.size - deadHosts.size )
+          (remoteParsers.size + 0.5*remoteParsers.size - deadHosts.size )
         )
         println( maxTerminalsPerPackage +
           " terminals per package for this iteration")
@@ -1911,7 +1854,7 @@ package ShakesEM {
             case FResult(f_i,scaledStringProb) => {
               f_i.keysIterator.foreach{ summandKey =>
                 val F_Key( _,_,lhs,left,right ) = summandKey
-                g2.f (lhs)(left)(right) +=
+                g2.f( NTExpansion(lhs, left, right) ) +=
                   //g2.f (lhs)(left)(right) +
                   //  (
                       f_i (summandKey) /
@@ -1923,12 +1866,8 @@ package ShakesEM {
             case GResult(g_i,scaledStringProb) => {
               g_i.keysIterator.foreach{ summandKey =>
                 val G_Key( _, pos, word ) = summandKey
-                g2.g( (pos,word) ) += 
-                //g2.g( (pos,word) ) +
-                //  (
-                    g_i( summandKey ) /
-                    scaledStringProb
-                  //)
+                g2.g( TermExpansion(pos,word) ) += 
+                  g_i( summandKey ) / scaledStringProb
               }
             }
 
@@ -2063,22 +2002,15 @@ package ShakesEM {
 
               f_i.keysIterator.foreach{ summandKey =>
                 val F_Key( _,_,lhs,left,right ) = summandKey
-                g2.f (lhs)(left)(right) =
-                  g2.f (lhs)(left)(right) +
-                    (
+                g2.f( NTExpansion(lhs,left,right) ) +=
                       f_i (summandKey) /
                         scaledStringProb
-                    )
               }
 
               g_i.keysIterator.foreach{ summandKey =>
                 val G_Key( _, pos, word ) = summandKey
-                g2.g( (pos,word) ) = 
-                g2.g( (pos,word) ) +
-                  (
-                    g_i( summandKey ) /
-                    scaledStringProb
-                  )
+                g2.g( TermExpansion(pos,word) ) += 
+                  g_i( summandKey ) / scaledStringProb
               }
 
               h_i.keysIterator.foreach{ summandKey =>
