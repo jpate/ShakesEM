@@ -1864,20 +1864,17 @@ package ShakesEM {
 
 
             case FSums(f_Reply) => {
-              println("f_Reply received")
               f_Reply.keysIterator.foreach{ replyKey =>
                 g2.f( replyKey ) += f_Reply( replyKey )
               }
             }
 
             case GSums(g_Reply) =>  {
-              println("g_Reply received")
               g_Reply.keysIterator.foreach{ replyKey =>
                 g2.g( replyKey ) += g_Reply( replyKey )
               }
             }
             case HSums(h_Reply) => {
-              println("h_Reply received")
               h_Reply.keysIterator.foreach{ replyKey =>
                 g2.h( replyKey ) += h_Reply( replyKey )
               }
