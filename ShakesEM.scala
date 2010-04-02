@@ -1818,7 +1818,7 @@ package ShakesEM {
           ) foreach{ id =>
           println( "Checking parser " + RemoteParserID(id))
           remoteParsers(id) !?(timeout, StillAlive) match {
-            case Some(_) => {// println("this remote parser still alive" )
+            case Some(StillAlive) => {// println("this remote parser still alive" )
               var prefixLength = 0
               val prefix = thisIterTrain.takeWhile( nextSent =>
                 {
@@ -1849,6 +1849,8 @@ package ShakesEM {
               println( RemoteParserID(id) + " timed out; " + deadHosts.size +
               " dead parsers")
             }
+            case what:Any => println("Got back " + what +
+              " when trying to send out the first batch of sentences")
           }
         }
 
