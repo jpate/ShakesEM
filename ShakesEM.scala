@@ -57,13 +57,13 @@ package ShakesEM {
     //  ]
     //] {
     val f = new MHashMap[NTExpansion,Double] {
-      override def default(exp:NTExpansion) = 0
+      override def default(exp:NTExpansion) = 0D
     }
     val g = new MHashMap[TermExpansion,Double] {
-      override def default(key:TermExpansion) = 0
+      override def default(key:TermExpansion) = 0D
     }
     val h = new MHashMap[String,Double] {
-      override def default(key:String) = 0
+      override def default(key:String) = 0D
     }
 
 
@@ -1274,14 +1274,24 @@ package ShakesEM {
       loop {
         react {
           case itemList:List[ToParse] => {
-
             val numSentences = itemList.size
             val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
-
             if( stringCount % quietude < 10 )
               println( "Received " + numSentences + " sentences with " +
                 numTerminals + " total terminals")
-          
+
+            val f_Reply = new MHashMap[NTExpansion,Double] {
+              override def default(exp:NTExpansion) = 0D
+            }
+            val g_Reply = new MHashMap[TermExpansion,Double] {
+              override def default(key:TermExpansion) = 0D
+            }
+            val h_Reply = new MHashMap[String,Double] {
+              override def default(key:String) = 0D
+            }
+
+
+
 
             itemList foreach ( item => 
               item match {
@@ -1289,26 +1299,13 @@ package ShakesEM {
                   //if( stringCount % quietude == 0 )
                   //  println( parserID + " about to process string " + s )
 
-
-
                   f_i.clear
                   g_i.clear
                   h_i.clear
-                  //f_i = new MHashMap[F_Key,Double]{ // withDefaultValue(0D)
-                  //  override def default(key:F_Key) = 0D
-                  //}
-                  //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
-                  //  override def default(key:G_Key) = 0D
-                  //}
-                  //h_i = new IHashMap[H_Key, Double] withDefaultValue (0D)
 
-                  //if( stringCount % quietude == 0 )
-                  //  println( parserID + " resizing chart...")
                   val words = s.split(' ')
                   resize( words.size+1 )
 
-                  //if( stringCount % quietude == 0 )
-                  //  println( parserID + " parsing sentence...")
                   populateChart(words)
 
                   if( !root.contains("S") ) {
@@ -1318,43 +1315,37 @@ package ShakesEM {
 
                   val scaledBy = pow( wordScale, size - 1 )
 
-
-                    //if(stringCount >= quietude )
-                    //  stringCount = 0
-                    //else
                   stringCount += 1
 
-                    //reply( ParsingResult(parserID,
-                    //              scaledStringProb,
-                    //              f_i.toMap,
-                    //              g_i.toMap,
-                    //              h_i.toMap,
-                    //              scaledBy) )
 
-                  sender ! FResult( f_i.toMap, scaledStringProb )
-                  sender ! GResult( g_i.toMap, scaledStringProb )
-                  sender ! HResult( h_i.toMap, scaledStringProb )
+                  f_i.keysIterator.foreach{ summandKey =>
+                    val F_Key( _,_,lhs,left,right ) = summandKey
+                    f_Reply( NTExpansion(lhs, left, right) ) +=
+                      f_i (summandKey) / scaledStringProb
+                  }
+
+
+                  g_i.keysIterator.foreach{ summandKey =>
+                    val G_Key( _, pos, word ) = summandKey
+                    g_Reply( TermExpansion(pos,word) ) += 
+                      g_i( summandKey ) / scaledStringProb
+                  }
+
+                  h_i.keysIterator.foreach{ summandKey =>
+                    val H_Key( _ , _, label) = summandKey
+                    h_Reply(label) +=
+                        h_i(summandKey) / scaledStringProb
+                  }
+
+
+                  //sender ! FResult( f_i.toMap, scaledStringProb )
+                  //sender ! GResult( g_i.toMap, scaledStringProb )
+                  //sender ! HResult( h_i.toMap, scaledStringProb )
                   sender ! StringProbResult( scaledStringProb, scaledBy )
                   print(".")
-
-                    //estimatesReply = ParsingResult(parserID,
-                    //              scaledStringProb,
-                    //              f_i.toMap,
-                    //              g_i.toMap,
-                    //              h_i.toMap,
-                    //              scaledBy)::estimatesReply
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
-                  //f_i = new MHashMap[F_Key,Double] { // withDefaultValue(0D)
-                  //  override def default( key:F_Key ) = 0D
-                  //}
-                  //g_i = new MHashMap[G_Key, Double] { // withDefaultValue(0D)
-                  //  override def default( key:G_Key ) = 0D
-                  //}
-                  //h_i = new MHashMap[H_Key, Double] { // withDefaultValue (0D)
-                  //  override def default( key:H_Key ) = 0D
-                  //}
                   f_i.clear
                   g_i.clear
                   h_i.clear
@@ -1365,13 +1356,6 @@ package ShakesEM {
                   resize(words.size + 1)
 
 
-                  //if( stringCount % quietude == 0 ){
-                  //  println( parserID + " received sentence " + s)
-                  //  println( parserID + " received bracketing " + b)
-                  //}
-
-                  //if( stringCount % quietude == 0 )
-                  //  println( parserID + " parsing sentence...")
                   bracketedChartPopulation(words)
 
                   if( !root.contains("S") ) {
@@ -1379,65 +1363,57 @@ package ShakesEM {
                     println( s )
                   }
 
-                  //if( stringCount % quietude == 0 )
-                  //  println( parserID + " replying with estimates...")
-
                   val scaledBy = pow( wordScale , size - 1 )
 
-                  //if(stringCount >= quietude )
-                  //  stringCount = 0
-                  //else
                   stringCount += 1
 
-                  //reply( ParsingResult(parserID,
-                  //              scaledStringProb,
-                  //              f_i.toMap,
-                  //              g_i.toMap,
-                  //              h_i.toMap,
-                  //              scaledBy) )
-                  reply( FResult( f_i.toMap, scaledStringProb ) )
-                  reply( GResult( g_i.toMap, scaledStringProb ) )
-                  reply( HResult( h_i.toMap, scaledStringProb ) )
+
+                  f_i.keysIterator.foreach{ summandKey =>
+                    val F_Key( _,_,lhs,left,right ) = summandKey
+                    f_Reply( NTExpansion(lhs, left, right) ) +=
+                      f_i (summandKey) / scaledStringProb
+                  }
+
+
+                  g_i.keysIterator.foreach{ summandKey =>
+                    val G_Key( _, pos, word ) = summandKey
+                    g_Reply( TermExpansion(pos,word) ) += 
+                      g_i( summandKey ) / scaledStringProb
+                  }
+
+                  h_i.keysIterator.foreach{ summandKey =>
+                    val H_Key( _ , _, label) = summandKey
+                    h_Reply(label) +=
+                        h_i(summandKey) / scaledStringProb
+                  }
                   reply( StringProbResult( scaledStringProb, scaledBy ) )
                   print(".")
                 }
               }
             )
-              //if( stringCount % quietude == 0 )
-              //  println( parserID + " replying with estimates...")
-              //reply(estimatesReply)
-            //if( stringCount % quietude == 0 )
+
+            println("Sending back results...")
+            reply( FSums( f_Reply.toMap ) )
+            reply( GSums( g_Reply.toMap ) )
+            reply( HSums( h_Reply.toMap ) )
+
+
             println("\n")
+
             if( stringCount % quietude < 10 )
               println( parserID + " asking for more...")
+
             sender ! parserID
           }
+
           case StringToParse(s:String) => {
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " received string " + s )
-
-
-
             f_i.clear
             g_i.clear
             h_i.clear
-            //f_i = new MHashMap[F_Key,Double] {// withDefaultValue(0D)
-            //  override def default( key:F_Key ) = 0D
-            //}
-            //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
-            //  override def default( key:G_Key ) = 0D
-            //}
-            //h_i = new MHashMap[H_Key, Double] {// withDefaultValue (0D)
-            //  override def default( key:H_Key ) = 0D
-            //}
 
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " resizing chart...")
             val words = s.split(' ')
             resize( words.size+1 )
 
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " parsing sentence...")
             populateChart(words)
 
             if( !root.contains("S") ) {
@@ -1456,10 +1432,9 @@ package ShakesEM {
               stringCount += 1
       
             sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " asking for more...")
             sender ! parserID
           }
+
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
             //f_i = new MHashMap[F_Key, Double] {// withDefaultValue(0D)
             //  override def default( key:F_Key ) = 0D
@@ -1531,6 +1506,7 @@ package ShakesEM {
 
   @serializable case object StillAlive
 
+
   @serializable case class FResult(
     f_i:scala.collection.immutable.Map[F_Key,Double],
     scaledBy:Double
@@ -1543,6 +1519,17 @@ package ShakesEM {
     h_i:scala.collection.immutable.Map[H_Key,Double],
     scaledBy:Double
   )
+
+  @serializable case class FSums(
+    f_Reply:scala.collection.immutable.Map[NTExpansion,Double]
+  )
+  @serializable case class GSums(
+    f_Reply:scala.collection.immutable.Map[TermExpansion,Double]
+  )
+  @serializable case class HSums(
+    f_Reply:scala.collection.immutable.Map[String,Double]
+  )
+
   @serializable case class StringProbResult(
     scaledStringProb:Double,
     scaledBy:Double
@@ -1855,11 +1842,7 @@ package ShakesEM {
               f_i.keysIterator.foreach{ summandKey =>
                 val F_Key( _,_,lhs,left,right ) = summandKey
                 g2.f( NTExpansion(lhs, left, right) ) +=
-                  //g2.f (lhs)(left)(right) +
-                  //  (
-                      f_i (summandKey) /
-                        scaledStringProb
-                  //  )
+                  f_i (summandKey) / scaledStringProb
               }
             }
 
@@ -1871,26 +1854,40 @@ package ShakesEM {
               }
             }
 
-            case HResult(h_i,scaledStringProb) =>
+            case HResult(h_i,scaledStringProb) => {
               h_i.keysIterator.foreach{ summandKey =>
-                val H_Key(start,end,label) = summandKey
+                val H_Key( _ , _, label) = summandKey
                 g2.h(label) +=
-                  //g2.h(label) + 
-                  //(
-                    h_i(summandKey) /
-                    scaledStringProb
-                  //)
+                  h_i(summandKey) / scaledStringProb
               }
+            }
+
+
+            case FSums(f_Reply) => {
+              println("f_Reply received")
+              f_Reply.keysIterator.foreach{ replyKey =>
+                g2.f( replyKey ) += f_Reply( replyKey )
+              }
+            }
+
+            case GSums(g_Reply) =>  {
+              println("g_Reply received")
+              g_Reply.keysIterator.foreach{ replyKey =>
+                g2.g( replyKey ) += g_Reply( replyKey )
+              }
+            }
+            case HSums(h_Reply) => {
+              println("h_Reply received")
+              h_Reply.keysIterator.foreach{ replyKey =>
+                g2.h( replyKey ) += h_Reply( replyKey )
+              }
+            }
 
             case StringProbResult(scaledStringProb,scaledBy) =>
               corpusLogProb = corpusLogProb + log( scaledStringProb ) -
                 log( scaledBy )
 
-
             case RemoteParserID(id:Int) => {
-              //remoteParsers(id) !?(timeout, StillAlive) match {
-              //  case Some(StillAlive) => {
-
                   if( thisIterTrain.size > 0 ) {
                     var prefixLength = 0
                     val prefix = thisIterTrain.takeWhile( nextSent =>
@@ -1917,28 +1914,11 @@ package ShakesEM {
                       sentenceNumber )
                     }
 
-
-                    //if( sentenceNumber % quietude < 10 )
-                    //  println( "Sending " + numberToSend + 
-                    //  " sentences to parser " + RemoteParserID(id) +
-                    //  ". Up to sentence number " +
-                    //  sentenceNumber + ".")
-
                     reply( prefix )
                   } else {
                     numFinishedParsers += 1
                     println( RemoteParserID(id) + " stopping")
-                    //+ (parsedSentences,trainingCorpus.size) )
                   }
-                //}
-                //case None => {
-                //  deadHosts += RemoteParserID(id)
-                //  println( RemoteParserID(id) + " timed out " + deadHosts.size +
-                //    " dead parsers")
-                //}
-                //case what:Any => println("Got back " + what +
-                //  " when sending back additional items")
-              //}
             }
 
             case LocalParserID(id:Int) => {
