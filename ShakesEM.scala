@@ -1797,6 +1797,8 @@ package ShakesEM {
       var lastCorpusLogProb = 0.0
       var corpusLogProb = 0.0
 
+      val totalTermCount = trainingCorpus.toList.foldLeft(0)( (a,b) => a + b.size )
+
       while( ! stoppingCondition( iterationNum, deltaLogProb ) ) {
         val localParsers = localParserConstructor( g1 )
         val remoteParsers = remoteParserConstructor( g1 )
@@ -1805,13 +1807,20 @@ package ShakesEM {
           (a,b) => a.size > b.size 
         )*/
 
+
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
 
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
         val maxTerminalsPerPackageLocal = 100//100
-        val maxTerminalsPerPackageRemote = 1000//100
+        //val maxTerminalsPerPackageRemote = 1000//100
+        val maxTerminalsPerPackage = round(
+          totalTermCount /
+          (remoteParsers.size + localParsers.size - deadHosts.size )
+        )
+        println( maxTerminalsPerPackage +
+          " terminals per package for this iteration")
 
         println( "Distributing to remote parsers" )
         (0 to (remoteParsers.size-1)) filter ( index =>  
@@ -1824,7 +1833,7 @@ package ShakesEM {
               val prefix = thisIterTrain.takeWhile( nextSent =>
                 {
                   prefixLength += nextSent.size
-                  prefixLength <= maxTerminalsPerPackageRemote
+                  prefixLength <= maxTerminalsPerPackage
                 }
               )
 
@@ -1948,7 +1957,7 @@ package ShakesEM {
                     val prefix = thisIterTrain.takeWhile( nextSent =>
                       {
                         prefixLength += nextSent.size
-                        prefixLength <= maxTerminalsPerPackageRemote
+                        prefixLength <= maxTerminalsPerPackage
                       }
                     )
 
