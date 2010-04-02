@@ -1582,7 +1582,7 @@ package ShakesEM {
             println( "Parser now known as " + parserID )
           }
           case what:Any => {
-            println("got something else: "  + what)
+            println( parserID + "got something else: "  + what)
           }
         }
       }
@@ -1940,8 +1940,8 @@ package ShakesEM {
 
 
             case RemoteParserID(id:Int) => {
-              remoteParsers(id) !?(timeout, StillAlive) match {
-                case Some(StillAlive) => {
+              //remoteParsers(id) !?(timeout, StillAlive) match {
+              //  case Some(StillAlive) => {
 
                   if( thisIterTrain.size > 0 ) {
                     var prefixLength = 0
@@ -1982,15 +1982,15 @@ package ShakesEM {
                     println( RemoteParserID(id) + " stopping")
                     //+ (parsedSentences,trainingCorpus.size) )
                   }
-                }
-                case None => {
-                  deadHosts += RemoteParserID(id)
-                  println( RemoteParserID(id) + " timed out " + deadHosts.size +
-                    " dead parsers")
-                }
-                case what:Any => println("Got back " + what +
-                  " when sending back additional items")
-              }
+                //}
+                //case None => {
+                //  deadHosts += RemoteParserID(id)
+                //  println( RemoteParserID(id) + " timed out " + deadHosts.size +
+                //    " dead parsers")
+                //}
+                //case what:Any => println("Got back " + what +
+                //  " when sending back additional items")
+              //}
             }
 
             case LocalParserID(id:Int) => {
