@@ -1941,7 +1941,7 @@ package ShakesEM {
 
             case RemoteParserID(id:Int) => {
               remoteParsers(id) !?(timeout, StillAlive) match {
-                case Some(_) => {
+                case Some(StillAlive) => {
 
                   if( thisIterTrain.size > 0 ) {
                     var prefixLength = 0
@@ -1988,6 +1988,8 @@ package ShakesEM {
                   println( RemoteParserID(id) + " timed out " + deadHosts.size +
                     " dead parsers")
                 }
+                case what:Any => println("Got back " + what +
+                  " when sending back additional items")
               }
             }
 

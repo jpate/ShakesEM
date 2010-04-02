@@ -98,7 +98,7 @@ package RunShakesEM {
           (0 to (someParsers.size-1)) filter ( id =>
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
-              case Some(_) => {
+              case Some(StillAlive) => {
                 println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
                 someParsers( index ) ! grammar
@@ -108,6 +108,8 @@ package RunShakesEM {
                 println( RemoteParserID(index) + " timed out; " + deadHosts.size +
                   " dead parsers")
               }
+              case what:Any => println("Got back " + what +
+                " in remoteParserConstructor")
             }
           }
 
@@ -223,7 +225,7 @@ package RunShakesEM {
           (0 to (someParsers.size-1)) filter ( id =>
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
-              case Some(_) => {
+              case Some(StillAlive) => {
                 println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
                 someParsers( index ) ! grammar
@@ -233,6 +235,8 @@ package RunShakesEM {
                 println( RemoteParserID(index) + " timed out; " + deadHosts.size +
                   " dead parsers")
               }
+              case what:Any => println("Got back " + what +
+                " when trying to send out the first batch of sentences")
             }
           }
   
@@ -342,7 +346,7 @@ package RunShakesEM {
           (0 to (someParsers.size-1)) filter ( id =>
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
-              case Some(_) => {
+              case Some(StillAlive) => {
                 println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
                 someParsers( index ) ! grammar
@@ -352,6 +356,8 @@ package RunShakesEM {
                 println( RemoteParserID(index) + " timed out; " + deadHosts.size +
                   " dead parsers")
               }
+              case what:Any => println("Got back " + what +
+                " when trying to send out the first batch of sentences")
             }
           }
   
@@ -462,7 +468,7 @@ package RunShakesEM {
           (0 to (someParsers.size-1)) filter ( id =>
             !  deadHosts.contains(RemoteParserID(id))) foreach{ index:Int =>
             someParsers( index ) !?(timeout, StillAlive) match {
-              case Some(_) => {
+              case Some(StillAlive) => {
                 println( "Connecting to " + RemoteParserID( index ) )
                 someParsers( index ) ! RemoteParserID( index )
                 someParsers( index ) ! grammar
@@ -472,6 +478,8 @@ package RunShakesEM {
                 println( RemoteParserID(index) + " timed out; " + deadHosts.size +
                   " dead parsers")
               }
+              case what:Any => println("Got back " + what +
+                " in remoteParserConstructor")
             }
           }
 
