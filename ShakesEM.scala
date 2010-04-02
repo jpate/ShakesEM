@@ -1809,7 +1809,7 @@ package ShakesEM {
         var numFinishedParsers = 0
 
         val maxTerminalsPerPackageLocal = 100//100
-        val maxTerminalsPerPackageRemote = 50//100
+        val maxTerminalsPerPackageRemote = 200//100
 
         println( "Distributing to remote parsers" )
         (0 to (remoteParsers.size-1)) filter ( index =>  
@@ -1845,7 +1845,8 @@ package ShakesEM {
             }
             case None => { 
               deadHosts += RemoteParserID(id)
-              println( RemoteParserID(id) + " timed out" )
+              println( RemoteParserID(id) + " timed out; " + deadHosts.size +
+              " dead parsers")
             }
           }
         }
