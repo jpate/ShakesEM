@@ -1938,10 +1938,6 @@ package ShakesEM {
 
             case RemoteParserID(id:Int) => {
               remoteParsers(id) !?(timeout, StillAlive) match {
-                case None => {
-                  println( RemoteParserID(id) + " timed out ")
-                  deadHosts += RemoteParserID(id)
-                }
                 case Some(_) => {
 
                   if( thisIterTrain.size > 0 ) {
@@ -1983,6 +1979,11 @@ package ShakesEM {
                     println( RemoteParserID(id) + " stopping")
                     //+ (parsedSentences,trainingCorpus.size) )
                   }
+                }
+                case None => {
+                  deadHosts += RemoteParserID(id)
+                  println( RemoteParserID(id) + " timed out " + deadHosts.size +
+                    " dead parsers")
                 }
               }
             }
@@ -2115,7 +2116,8 @@ package ShakesEM {
             }
 
             case what:Any =>
-              println("ShakesParserManager got something else: " + what)
+              println("ShakesParserManager got something else: " + what +
+              " from " + sender)
 
           }
         }
