@@ -1462,7 +1462,6 @@ package ShakesEM {
                   reply( HResult( h_i.toMap, scaledStringProb ) )
                   reply( StringProbResult( scaledStringProb, scaledBy ) )
                   print(".")
-
                 }
               }
             )
@@ -1732,7 +1731,6 @@ package ShakesEM {
               println("WARNING: SENTENCE DID NOT PARSE")
               println( s )
             }
-
           }
         }
       }
@@ -1803,9 +1801,9 @@ package ShakesEM {
         val localParsers = localParserConstructor( g1 )
         val remoteParsers = remoteParserConstructor( g1 )
 
-        var thisIterTrain = trainingCorpus.toList.sortWith(
+        var thisIterTrain = trainingCorpus.toList/*.sortWith(
           (a,b) => a.size > b.size 
-        )
+        )*/
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
 
@@ -1924,7 +1922,6 @@ package ShakesEM {
                   )
               }
             }
-
 
             case HResult(h_i,scaledStringProb) =>
               h_i.keysIterator.foreach{ summandKey =>
