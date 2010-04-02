@@ -104,8 +104,9 @@ package RunShakesEM {
                 someParsers( index ) ! grammar
               }
               case None => {
-                println( RemoteParserID(index) + " timed out")
                 deadHosts += RemoteParserID(index)
+                println( RemoteParserID(index) + " timed out; " + deadHosts.size +
+                  " dead parsers")
               }
             }
           }
@@ -228,8 +229,9 @@ package RunShakesEM {
                 someParsers( index ) ! grammar
               }
               case None => {
-                println( RemoteParserID(index) + " timed out")
                 deadHosts += RemoteParserID(index)
+                println( RemoteParserID(index) + " timed out; " + deadHosts.size +
+                  " dead parsers")
               }
             }
           }
@@ -346,8 +348,9 @@ package RunShakesEM {
                 someParsers( index ) ! grammar
               }
               case None => {
-                println( RemoteParserID(index) + " timed out")
                 deadHosts += RemoteParserID(index)
+                println( RemoteParserID(index) + " timed out; " + deadHosts.size +
+                  " dead parsers")
               }
             }
           }
@@ -465,8 +468,9 @@ package RunShakesEM {
                 someParsers( index ) ! grammar
               }
               case None => {
-                println( RemoteParserID(index) + " timed out")
                 deadHosts += RemoteParserID(index)
+                println( RemoteParserID(index) + " timed out; " + deadHosts.size +
+                  " dead parsers")
               }
             }
           }

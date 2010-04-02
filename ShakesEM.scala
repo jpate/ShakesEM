@@ -1468,7 +1468,8 @@ package ShakesEM {
               //  println( parserID + " replying with estimates...")
               //reply(estimatesReply)
             //if( stringCount % quietude == 0 )
-            //  println( parserID + " asking for more...")
+            if( stringCount % quietude < 10 )
+              println( parserID + " asking for more...")
             sender ! parserID
           }
           case StringToParse(s:String) => {
