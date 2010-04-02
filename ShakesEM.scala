@@ -1337,7 +1337,6 @@ package ShakesEM {
       loop {
         react {
           case itemList:List[ToParse] => {
-
             val numSentences = itemList.size
             val numTerminals = itemList.foldLeft( 0 ) ( (a,b) => a + b.size )
 
