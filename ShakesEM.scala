@@ -1900,7 +1900,7 @@ package ShakesEM {
             case s:String => println( s )
 
             case FResult(f_i,scaledStringProb) => {
-              f_i.keysIterator.map{ summandKey =>
+              f_i.keysIterator.foreach{ summandKey =>
                 val F_Key( _,_,lhs,left,right ) = summandKey
                 g2.f (lhs)(left)(right) +=
                   //g2.f (lhs)(left)(right) +
@@ -1912,7 +1912,7 @@ package ShakesEM {
             }
 
             case GResult(g_i,scaledStringProb) => {
-              g_i.keysIterator.map{ summandKey =>
+              g_i.keysIterator.foreach{ summandKey =>
                 val G_Key( _, pos, word ) = summandKey
                 g2.g( (pos,word) ) += 
                 //g2.g( (pos,word) ) +
@@ -1924,7 +1924,7 @@ package ShakesEM {
             }
 
             case HResult(h_i,scaledStringProb) =>
-              h_i.keysIterator.map{ summandKey =>
+              h_i.keysIterator.foreach{ summandKey =>
                 val H_Key(start,end,label) = summandKey
                 g2.h(label) +=
                   //g2.h(label) + 
