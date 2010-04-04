@@ -1338,11 +1338,15 @@ package ShakesEM {
                   }
 
 
+                  f_i.clear
+                  g_i.clear
+                  h_i.clear
+
                   //sender ! FResult( f_i.toMap, scaledStringProb )
                   //sender ! GResult( g_i.toMap, scaledStringProb )
                   //sender ! HResult( h_i.toMap, scaledStringProb )
                   sender ! StringProbResult( scaledStringProb, scaledBy )
-                  print(".")
+                  //print(".")
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
@@ -1387,7 +1391,10 @@ package ShakesEM {
                         h_i(summandKey) / scaledStringProb
                   }
                   reply( StringProbResult( scaledStringProb, scaledBy ) )
-                  print(".")
+                  //print(".")
+                  f_i.clear
+                  g_i.clear
+                  h_i.clear
                 }
               }
             )
@@ -1397,6 +1404,9 @@ package ShakesEM {
             reply( GSums( g_Reply.toMap ) )
             reply( HSums( h_Reply.toMap ) )
 
+            f_i.clear
+            g_i.clear
+            h_i.clear
 
             println("\n")
 
