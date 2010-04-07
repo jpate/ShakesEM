@@ -49,13 +49,6 @@ package ShakesEM {
     * See Manning &amp; Schutze p. 396.
     * The defaults just make the incrementation code cleaner.
     */
-    //val f = new MHashMap[
-    //  String,   
-    //  MHashMap[
-    //    String,
-    //    MHashMap[String,Double]
-    //  ]
-    //] {
     val f = new MHashMap[NTExpansion,Double] {
       override def default(exp:NTExpansion) = 0D
     }
@@ -67,7 +60,6 @@ package ShakesEM {
     }
 
 
-    //var reestimateCounter = 0
 
     /**
     * Re-estimates a PCFG based on the counts in f, g, and h. All the action of
@@ -76,7 +68,6 @@ package ShakesEM {
     def reestimateRules {
       f.keysIterator.foreach{ exp =>
         val NTExpansion(lhs,_,_) = exp
-          //phrases (lhs)(left)(right) =
           phrases( exp ) =
             100000 * f(exp) /
             h (lhs)
@@ -90,18 +81,6 @@ package ShakesEM {
            100000 * g( exp ) /
            h(pos)
       }
-      //lexicon.keysIterator.foreach{ pos =>
-      //  lexicon(pos).keysIterator.foreach{ word =>
-      //    if( lexicon(pos)(word) == 0.0 ) {
-      //      lexicon(pos) -= word
-      //      println("Removed a rule" + (pos,word))
-      //    }
-      //  }
-      //  if( lexicon(pos).isEmpty )
-      //    lexicon -= pos
-      //}
-
-
 
       f.clear
       g.clear
@@ -168,82 +147,15 @@ package ShakesEM {
 
 
 
-        ///**
-        //* <p>lexicon, lexExps, phrases, and phrExps contain the actual grammatical
-        //* information. lexExps contains the same information as lexicon in a
-        //* different format to facilitate rule look-up. Similarly, phrExps contains
-        //* the same information as phrases in a different format to facilitate rule
-        //* look-up. The default values just help make incrementation easier.<p>
-        //*/
-        //var lexicon = new MHashMap[
-        //  String,       //  POS
-        //  MHashMap[
-        //    String,     //  WORD
-        //    Double      //  PROB
-        //  ]
-        //] {
-        //  override def default(pos:String) = {
-        //    this += Pair( pos,
-        //          new MHashMap[String,Double] {
-        //        override def default(word:String) = {
-        //          this += Pair( word, 0.0 )
-        //          this(word)
-        //        }
-        //      }
-        //    )
-        //    this(pos)
-        //  }
-        //}
     var lexicon = new MHashMap[TermExpansion,Double] {
       override def default( exp: TermExpansion ) = 0D
     }
 
-      //var lexExps = new MHashMap[
-      //  String,       //  WORD
-      //  List[(
-      //    String,     //  POS
-      //    Double      //  PROB
-      //  )]
-      //] {
-      //  override def default(word:String) = {
-      //    this += Pair( word, Nil )
-      //    this(word)
-      //  }
-      //}
       
     var lexExps = new MHashMap[String,List[NTRevParent]] {
       override def default( word:String ) = Nil
     }
     
-      //var phrases = new MHashMap[
-      //  String,       //  LHS
-      //  MHashMap[
-      //    String,     //  LEFT
-      //    MHashMap[
-      //      String,   //  RIGHT
-      //      Double    //  PROB
-      //    ]
-      //  ]
-      //] {
-      //  override def default(lhs:String) = {
-      //    this += Pair( lhs,
-      //                  new MHashMap[String, MHashMap[String,Double]] {
-      //        override def default(left:String) = {
-      //          this += Pair( left, 
-      //                        new MHashMap[String,Double] {
-      //              override def default(right:String) = {
-      //                this += Pair( right, 0.0 )
-      //                this(right)
-      //              }
-      //            }
-      //          )
-      //          this(left)
-      //        }
-      //      }
-      //    )
-      //    this(lhs)
-      //  }
-      //}
 
     var phrases = new MHashMap[ NTExpansion, Double] { 
       override def default(exp:NTExpansion) = 0D
@@ -252,29 +164,6 @@ package ShakesEM {
     var phrExps = new MHashMap[ NTRevChild, List[NTRevParent] ] {
       override def default( key: NTRevChild ) = Nil
     }
-    //var phrExps = new MHashMap[
-    //  String,       //  LEFT
-    //  MHashMap[
-    //    String,     //  RIGHT
-    //    List[(
-    //      String,   //  LHS
-    //      Double    //  PROB
-    //    )]
-    //  ]
-    //] {
-    //  override def default(left:String) = {
-    //    this += Pair( left,
-    //                  new MHashMap[String, List[(String,Double)]] {
-    //        override def default(right:String) = {
-    //          this += Pair( right, Nil )
-    //          this(right)
-    //        }
-    //      }
-    //    )
-    //    this(left)
-    //  }
-    //}
-
 
     /**
     * Reads a grammar from a file. Grammar should be in the format:
@@ -324,57 +213,6 @@ package ShakesEM {
       )
     }
 
-      ///**
-      //* Receives a probability in log space, takes it out of log space, and
-      //* increments the probability of a binary rule by the probability.
-      //*
-      //* @param lhs The left hand side of the rule
-      //* @param left The left child of the rule
-      //* @param right The right child of the rule
-      //* @param scoreIncrem The amount to increment the probability by (in log
-      //* space)
-      //*/
-      //def incPhraseScore(lhs:String,left:String,right:String,scoreIncrem:Double) {
-      //  phrases (lhs) (left) (right) += exp(scoreIncrem)
-      //}
-
-      ///**
-      //* Receives a probability and increments the probability of a binary rule by
-      //* the probability.
-      //*
-      //* @param lhs The left hand side of the rule
-      //* @param left The left child of the rule
-      //* @param right The right child of the rule
-      //* @param probIncrem The amount to increment the probability by
-      //*/
-      //def incPhraseProb(lhs:String,left:String,right:String,probIncrem:Double) {
-      //  phrases(lhs) (left) (right) += probIncrem
-      //}
-    
-      ///**
-      //* Receives a probability in log space, takes it out of log space, and
-      //* increments the probability of a unary rule by the probability.
-      //*
-      //* @param pos The part of speech of the rule
-      //* @param word The terminal production of the rule
-      //* @param scoreIncrem The amount to increment the probability by (in log
-      //* space)
-      //*/
-      //def incLexScore(pos:String,word:String,scoreIncrem:Double) {
-      //  lexicon(pos) (word) += exp(scoreIncrem)
-      //}
-
-      ///**
-      //* Receives a probability and increments the probability of a unary rule by
-      //* the probability.
-      //*
-      //* @param pos The part of speech of the rule
-      //* @param word The terminal production of the rule
-      //* @param probIncrem The amount to increment the probability by 
-      //*/
-      //def incLexProb(pos:String,word:String,probIncrem:Double) {
-      //  lexicon(pos) (word) += probIncrem
-      //}
     
     /**
     * Computes the value of phrExps on the basis of phrases and the value of
@@ -429,28 +267,6 @@ package ShakesEM {
       copy
     }
 
-        ///**
-        //* Clears out all counts from lexicon, phrases, lexExps and phrExps.
-        //*/
-        //def resetGrammar {
-        //  phrExps.clear
-        //  lexExps.clear
-        //  phrases.keysIterator.foreach( lhs =>
-        //    phrases(lhs).keysIterator.foreach( left =>
-        //      phrases(lhs)(left).keysIterator.foreach{ right =>
-        //        phrases(lhs)(left).clear
-        //        phrases(lhs)(left)(right) += 0.0
-        //      }
-        //    )
-        //  )
-        //  lexicon.keysIterator.foreach( pos =>
-        //    lexicon(pos).keysIterator.foreach{ word =>
-        //      lexicon(pos).clear
-        //      lexicon(pos)(word) += 0.0
-        //    }
-        //  )
-        //  preCalcExps
-        //}
 
     /**
     * Produce a readable stringification of lexicon and phrases in the same
@@ -496,8 +312,6 @@ package ShakesEM {
   */
   trait ShakesParser {
     import math._
-    //import collection.mutable.{HashMap => MHashMap}
-    //import collection.immutable.{HashMap,HashSet}
 
     var parserID:ParserID
     var g:ShakesPCNF
@@ -654,8 +468,6 @@ package ShakesEM {
             backMatcher += new ArrayBuffer[RightHandSide]
           )
           backMatcher( split - start ) += RightHandSide(left,right)
-
-          //println( "\t\t"+backMatcher(split-start).size)
 
           setIPProb( prob )
         }
@@ -900,8 +712,6 @@ package ShakesEM {
           }
         }
 
-        //println("Beginning to descend into a parsed sentence")
-
         toCompute(0, size - 1) += "S"
 
         while( !toCompute.isEmpty) {
@@ -912,40 +722,29 @@ package ShakesEM {
           val labels = toCompute( (start,end) )
           toCompute -= Tuple2(start,end)
 
-          //println("Looking at span "+(start,end))
-
           labels.foreach{ l =>
-              //println("looking at label " + l )
               val rootCell = chart(start)(end)(l)
               p( chart(start)(end)(l) )
 
-              //println("Computed outside probability")
-
               (1 to (rootCell.backMatcher.length-1)).foreach{ split =>
-                //println("When determining toCompute, looking at split " + split)
                 val splitPoint = rootCell.start + split
                 rootCell.backMatcher(split).foreach{ children =>
                   children match {
                     case RightHandSide( left, right ) => {
                       if( splitPoint - rootCell.start > 1 ) {
-                        //println("adding "+(rootCell.start,splitPoint,left))
                         toCompute( (rootCell.start, splitPoint)) += left
                         }
 
                       if( rootCell.end - splitPoint > 1) {
-                        //println("adding " + (splitPoint,rootCell.end,right))
                         toCompute ( (splitPoint, rootCell.end) ) += right
                       }
 
                     }
                     case _ =>
                   }
-                  //println("New children added" )
                 }
-                //println("Done looking at split " + split + " when determining toCompute")
               }
           }
-          //println("toCompute is " + toCompute)
         }
       }
     }
@@ -1016,14 +815,9 @@ package ShakesEM {
     * @param ent The entry to be scored and counted.
     */
     def computeOPWithEstimates(ent:Entry) {
-      //import collection.mutable.HashMap
       import math._
 
       h_i += Pair( H_Key(ent.start,ent.end,ent.l), ent.op * ent.ip )
-      //val h_Summand = ent.op * ent.ip
-      //val h_Key = H_Key(ent.start,ent.end,ent.l)
-      //h_i( h_Key ) += h_Summand
-      //h_i = h_i.updated( h_Key, h_Summand )
 
       val f_toAdd = new MHashMap[ (String,String), Double] {
         override def default(key:(String,String)) = 0D
@@ -1032,113 +826,76 @@ package ShakesEM {
 
       (1 to (ent.backMatcher.size-1) ) foreach{ split =>
         ent.backMatcher(split).foreach{ matches =>
-          //matches match {
-            //case RightHandSide( left, right ) => {
-              val RightHandSide( left, right ) = matches
-              val ruleProb = g.phrases(NTExpansion(ent.l,left,right) )
+          val RightHandSide( left, right ) = matches
+          val ruleProb = g.phrases(NTExpansion(ent.l,left,right) )
 
-              val splitPoint = split + ent.start
+          val splitPoint = split + ent.start
 
-              val leftEnt = chart (ent.start) (splitPoint) (left)
-              val rightEnt = chart (splitPoint) (ent.end) (right)
+          val leftEnt = chart (ent.start) (splitPoint) (left)
+          val rightEnt = chart (splitPoint) (ent.end) (right)
 
-              //val toAddLeft = ent.op * ruleProb * rightEnt.ip
-              leftEnt.incOPProb( ent.op * ruleProb * rightEnt.ip )
+          leftEnt.incOPProb( ent.op * ruleProb * rightEnt.ip )
 
-              //val toAddRight = ent.op * ruleProb * leftEnt.ip
-              rightEnt.incOPProb( ent.op * ruleProb * leftEnt.ip )
+          rightEnt.incOPProb( ent.op * ruleProb * leftEnt.ip )
 
-              //leftEnt match{
-              if(leftEnt.end - leftEnt.start == 1) {
-                //case LexEntry(_) => {
-                  //val g_Summand = leftEnt.ip * leftEnt.op
+          if(leftEnt.end - leftEnt.start == 1) {
+            val RightHandSide( word, _ ) = leftEnt.backMatcher(0)(0)
+            g_i += Pair(
+              G_Key(leftEnt.start, leftEnt.l, word ),
+              leftEnt.ip * leftEnt.op
+            )
 
-                  val RightHandSide( word, _ ) = leftEnt.backMatcher(0)(0)
-                  //val g_Key = G_Key(leftEnt.start, leftEnt.l, word )
-                  //g_i += Pair( g_Key, g_Summand )
-                  g_i += Pair(
-                    G_Key(leftEnt.start, leftEnt.l, word ),
-                    leftEnt.ip * leftEnt.op
-                  )
+            h_i += Pair(
+              H_Key( leftEnt.start, leftEnt.end, leftEnt.l),
+              leftEnt.ip * leftEnt.op
+            )
+          }
 
-                  //g_i = g_i.updated( g_Key, g_Summand )
+          if(rightEnt.end - rightEnt.start == 1) {
+            val RightHandSide( word, _ ) = rightEnt.backMatcher(0)(0)
+            g_i += Pair(
+              G_Key(rightEnt.start, rightEnt.l, word ),
+              rightEnt.ip * rightEnt.op
+            )
 
-                  //val h_Summand = leftEnt.ip * leftEnt.op
-                  //val h_Key = H_Key( leftEnt.start, leftEnt.end, leftEnt.l)
-                  h_i += Pair(
-                    H_Key( leftEnt.start, leftEnt.end, leftEnt.l),
-                    leftEnt.ip * leftEnt.op
-                  )
-                  //h_i = h_i.updated( h_Key, h_Summand )
-                //}
-                //case _ =>
-              }
-              //rightEnt match {
-              if(rightEnt.end - rightEnt.start == 1) {
-                //case LexEntry(_) => {
-                  //val g_Summand = rightEnt.ip * rightEnt.op
+            h_i += Pair(
+              H_Key( rightEnt.start, rightEnt.end, rightEnt.l),
+              leftEnt.ip * leftEnt.op
+            )
+          }
 
-                  val RightHandSide( word, _ ) = rightEnt.backMatcher(0)(0)
-                  //val g_Key = G_Key(rightEnt.start, rightEnt.l, word )
-                  //g_i( g_Key ) += g_Summand
-                  g_i += Pair(
-                    G_Key(rightEnt.start, rightEnt.l, word ),
-                    rightEnt.ip * rightEnt.op
-                  )
-                  //g_i = g_i.updated( g_Key, g_Summand )
-
-                  //val h_Summand = leftEnt.ip * leftEnt.op
-                  //val h_Key = H_Key( rightEnt.start, rightEnt.end, rightEnt.l)
-                  h_i += Pair(
-                    H_Key( rightEnt.start, rightEnt.end, rightEnt.l),
-                    leftEnt.ip * leftEnt.op
-                  )
-                  //h_i = h_i.updated( h_Key, h_Summand )
-                //}
-                //case _ => 
-              }
-
-              val f_Summand =
-                ent.op * ruleProb * leftEnt.ip * rightEnt.ip
-              f_toAdd( (left,right) ) =
-                  f_toAdd( (left,right) )+ f_Summand
-            //}
-            //case _ =>
-          //}
+          val f_Summand =
+            ent.op * ruleProb * leftEnt.ip * rightEnt.ip
+          f_toAdd( (left,right) ) =
+              f_toAdd( (left,right) )+ f_Summand
         }
       }
 
       f_toAdd .keysIterator.foreach{ k =>
         val(left,right) = k
-
-        val summand:Double = f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +
-        (f_toAdd(k))
-
-        f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) += //summand
+        f_i( F_Key(ent.start,ent.end,ent.l,left,right) ) +=
           f_toAdd(k)
-        //f_i = f_i.updated( F_Key(ent.start,ent.end,ent.l,left,right),summand)
-        
       }
     }
 
     /**
     * This stores intermediate counts of binary-branching nodes for this sentence.
     */
-    @serializable val f_i = new MHashMap[F_Key,Double] { // withDefaultValue(0D)
+    @serializable val f_i = new MHashMap[F_Key,Double] {
       override def default( key:F_Key ) = 0D
     }
     /**
     * This stores intermediate counts of unary-branching nodes for this sentence.
     */
     //var g_i = new IHashMap[(Int,String,String), Double] {
-    @serializable val g_i = new MHashMap[G_Key, Double] { //withDefaultValue(0D)
+    @serializable val g_i = new MHashMap[G_Key, Double] {
       override def default( key:G_Key ) = 0D
     }
 
     /**
     * This stores intermediate counts of non-terminal nodes for this sentence.
     */
-    @serializable val h_i = new MHashMap[H_Key, Double] {// withDefaultValue(0D)
+    @serializable val h_i = new MHashMap[H_Key, Double] {
       override def default( key:H_Key ) = 0D
     }
   }
@@ -1212,10 +969,7 @@ package ShakesEM {
           }
       }
 
-      //println("Inside pass complete with scaled string score " + stringScore)
-
       chartDescent( computeOPWithEstimates )
-      //println("Outside pass complete")
     }
 
     var bracketing:MHashSet[Bracketing] = new MHashSet // Initialize to empty set
@@ -1255,7 +1009,6 @@ package ShakesEM {
               synFill(i, j)
           }
       }
-      //println("Inside pass complete")
       chartDescent( computeOPWithEstimates )
     }
 
@@ -1296,8 +1049,6 @@ package ShakesEM {
             itemList foreach ( item => 
               item match {
                 case StringToParse( s:String ) => {
-                  //if( stringCount % quietude == 0 )
-                  //  println( parserID + " about to process string " + s )
 
                   f_i.clear
                   g_i.clear
@@ -1337,16 +1088,11 @@ package ShakesEM {
                         h_i(summandKey) / scaledStringProb
                   }
 
-
                   f_i.clear
                   g_i.clear
                   h_i.clear
 
-                  //sender ! FResult( f_i.toMap, scaledStringProb )
-                  //sender ! GResult( g_i.toMap, scaledStringProb )
-                  //sender ! HResult( h_i.toMap, scaledStringProb )
                   sender ! StringProbResult( scaledStringProb, scaledBy )
-                  //print(".")
                 }
 
                 case BracketedToParse( s:String, b:MHashSet[Bracketing] ) => {
@@ -1391,7 +1137,7 @@ package ShakesEM {
                         h_i(summandKey) / scaledStringProb
                   }
                   reply( StringProbResult( scaledStringProb, scaledBy ) )
-                  //print(".")
+
                   f_i.clear
                   g_i.clear
                   h_i.clear
@@ -1433,9 +1179,6 @@ package ShakesEM {
 
             val scaledBy = pow( wordScale, size - 1 )
 
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " replying with estimates...")
-
             if(stringCount >= quietude )
               stringCount = 0
             else
@@ -1446,15 +1189,7 @@ package ShakesEM {
           }
 
           case BracketedToParse(s:String,b:MHashSet[Bracketing]) => {  
-            //f_i = new MHashMap[F_Key, Double] {// withDefaultValue(0D)
-            //  override def default( key:F_Key ) = 0D
-            //}
-            //g_i = new MHashMap[G_Key, Double] {// withDefaultValue(0D)
-            //  override def default( key:G_Key ) = 0D
-            //}
-            //h_i = new MHashMap[H_Key, Double] { withDefaultValue (0D)
-            //  override def default( key:H_Key ) = 0D
-            //}
+
             f_i.clear
             g_i.clear
             h_i.clear
@@ -1465,13 +1200,6 @@ package ShakesEM {
             resize(words.size + 1)
 
 
-            //if( stringCount % quietude == 0 ){
-            //  println( parserID + " received sentence " + s)
-            //  println( parserID + " received bracketing " + b)
-            //}
-
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " parsing sentence...")
             bracketedChartPopulation(words)
 
             if( !root.contains("S") ) {
@@ -1479,17 +1207,12 @@ package ShakesEM {
               println( s )
             }
 
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " replying with estimates...")
-
             val scaledBy = pow( wordScale , size - 1 )
 
             stringCount += 1
 
             sender ! ParsingResult(parserID,scaledStringProb,f_i.toMap,g_i.toMap,h_i.toMap,scaledBy)
 
-            //if( stringCount % quietude == 0 )
-            //  println( parserID + " asking for more...")
             sender ! parserID
           }
           case StillAlive => reply( StillAlive )
@@ -1677,19 +1400,6 @@ package ShakesEM {
           }
 
           case s:String => parseAndPrint(s)
-            /*{
-            val words = s.split(' ')
-            resize(words.size + 1)
-
-            populateChart(words)
-
-            if( root.contains("S") ) {
-              println( prefix + ": " + root("S").viterbiString )
-            } else {
-              println("WARNING: SENTENCE DID NOT PARSE")
-              println( s )
-            }
-          }*/
         }
       }
     }
@@ -1713,8 +1423,6 @@ package ShakesEM {
     }
   }
 
-  //case class RemoteSpec(ip:String,port:Int)
-
   trait ShakesParserManager {
     import scala.actors.AbstractActor
     import math._
@@ -1735,13 +1443,11 @@ package ShakesEM {
     */
     def remoteParserConstructor( grammar:ShakesPCNF ):List[AbstractActor]
     def localParserConstructor( grammar:ShakesPCNF ):List[ShakesParser with Actor]
-    //def iterationCleanup( parsers:List[AbstractActor] ):Unit
 
     def useGrammar( trainedG:ShakesPCNF, curIterCount:Int ):Unit
     def finalCleanup( trainedGram:ShakesPCNF ):Unit
 
 
-    //val hostsList:List[Array[String]]
     val deadHosts = new MHashSet[RemoteParserID]
 
     val trainingCorpus:ShakesTrainCorpus
@@ -1761,9 +1467,7 @@ package ShakesEM {
         val localParsers = localParserConstructor( g1 )
         val remoteParsers = remoteParserConstructor( g1 )
 
-        var thisIterTrain = trainingCorpus.toList/*.sortWith(
-          (a,b) => a.size > b.size 
-        )*/
+        var thisIterTrain = trainingCorpus.toList
 
 
         println("Beginning to parse iteration " + iterationNum + "...\n\n")
@@ -1771,8 +1475,7 @@ package ShakesEM {
         var sentenceNumber = 0
         var numFinishedParsers = 0
 
-        val maxTerminalsPerPackageLocal = 100//100
-        //val maxTerminalsPerPackageRemote = 1000//100
+        val maxTerminalsPerPackageLocal = 100
         val maxTerminalsPerPackage = round(
           totalTermCount /
           (remoteParsers.size + 0.5*remoteParsers.size - deadHosts.size )
@@ -1786,7 +1489,7 @@ package ShakesEM {
           ) foreach{ id =>
           println( "Checking parser " + RemoteParserID(id))
           remoteParsers(id) !?(timeout, StillAlive) match {
-            case Some(StillAlive) => {// println("this remote parser still alive" )
+            case Some(StillAlive) => {
               var prefixLength = 0
               val prefix = thisIterTrain.takeWhile( nextSent =>
                 {
@@ -1979,7 +1682,6 @@ package ShakesEM {
               } else {
                 numFinishedParsers += 1
                 println( LocalParserID(id) + " stopping" )
-                //+ (parsedSentences,trainingCorpus.size) )
               }
             }
 
@@ -1996,9 +1698,6 @@ package ShakesEM {
 
               if( sentenceNumber % quietude == 0 )
                 println( "Estimates received from " + parserID )
-              //println( "f_i: \n" + f_i + "\n\n\n" )
-              //println( "g_i: \n" + g_i + "\n\n\n" )
-              //println( "h_i: \n" + h_i + "\n\n\n" )
 
 
               corpusLogProb = corpusLogProb + log( scaledStringProb ) -
@@ -2028,42 +1727,6 @@ package ShakesEM {
                   )
               }
 
-
-                //if( thisIterTrain isEmpty /*sentenceNumber >= trainingCorpus.size*/ ) {
-                //  println( parserID + " finished")
-                //  numFinishedParsers += 1
-                //} else {
-                //  parserID match {
-                //    case RemoteParserID(_) => {
-                //      val nextLongOne = thisIterTrain.head
-                //        if( nextLongOne.size > 10 ) {
-                //          sentenceNumber = sentenceNumber + 1
-                //          thisIterTrain = thisIterTrain.tail
-
-                //          if( sentenceNumber % quietude == 0 )
-                //            println( "Sending sentence number " + sentenceNumber +
-                //              " to parser " + parserID )
-
-                //          reply( nextLongOne )
-                //        } else {
-                //          println( parserID + " finished")
-                //          numFinishedParsers += 1
-                //        }
-                //    }
-                //    case LocalParserID(_) => {
-                //      sentenceNumber = sentenceNumber + 1
-
-                //      if( sentenceNumber % quietude == 0 )
-                //        println( "Sending sentence number " + sentenceNumber +
-                //          " to parser " + parserID )
-
-                //      val nextShortOne = thisIterTrain.last
-                //      thisIterTrain = thisIterTrain.init
-
-                //      reply( nextShortOne )
-                //    }
-                //  }
-                //}
             }
 
             case what:Any =>
@@ -2072,9 +1735,6 @@ package ShakesEM {
 
           }
         }
-          //println( (numFinishedParsers,totalParserCount))
-
-        //parsers.foreach( _ ! Stop )
 
         g2.reestimateRules
 
@@ -2095,7 +1755,7 @@ package ShakesEM {
         iterationNum = iterationNum + 1
 
         localParsers.foreach( _ ! Stop )
-        //iterationCleanup(parsers)
+
       }
       finalCleanup(g1)
       exit()
@@ -2121,8 +1781,6 @@ package ShakesEM {
   * Reads, stores, and makes useful a partially bracketed corpus.
   */
   class BracketedCorpus extends ShakesTrainCorpus {
-    //import collection.mutable.HashSet
-
     var bracketings:Array[MHashSet[Bracketing]] = Array()
     var strings:Array[String] = Array()
 
