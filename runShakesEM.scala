@@ -7,6 +7,30 @@ package RunShakesEM {
     var wordScale = 10000
   }
 
+  object viterbi {
+    def main( args:Array[String] ) {
+      import scala.io.Source._
+      val gramFile = args(0)
+      val lexFile = args(1)
+      val stringsFile = args(2)
+
+      val grammar = new ShakesPCNF
+      grammar.readLexicon( lexFile )
+      grammar.readGrammar( gramFile )
+
+      object viterbiParser extends ViterbiDefinitions {
+        var parserID:ParserID = LocalParserID(-1)
+        var g = grammar
+        var wordScale = 10000
+      }
+
+      val testSentences = fromPath( stringsFile ).getLines("\n").toList
+
+      testSentences.foreach( viterbiParser parseAndPrint( _ ) )
+
+    }
+  }
+
   object trainAndEvaluateBracketedMinIterAndConvergence {
     def main( args:Array[String] ) {
       import scala.io.Source._
@@ -20,8 +44,8 @@ package RunShakesEM {
       val hostsPath = args(5)
       val minIter = args(6).toInt
       val tolerance = args(7).toDouble
-      val randSeed = args(8).toDouble
-      val randomBase = args(9).toDouble
+      val randSeed = args(8).toInt
+      val randomBase = args(9).toInt
   
       println("nonTermCount: " + nonTermCount )
       println("termFile: " + termFile )
@@ -40,7 +64,7 @@ package RunShakesEM {
   
       val poslist = fromPath(termFile).getLines("\n").toList
   
-      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+      initGram.randomizeGrammar(nonTermCount,poslist,randSeed,randomBase)
   
       //initGram.readGrammar( gramFile )
       //initGram.readLexicon( lexFile )
@@ -142,8 +166,8 @@ package RunShakesEM {
       val hostsPath = args(5)
       val minIter = args(6).toInt
       val tolerance = args(7).toDouble
-      val randSeed = args(8).toDouble
-      val randomBase = args(9).toDouble
+      val randSeed = args(8).toInt
+      val randomBase = args(9).toInt
   
       println("nonTermCount: " + nonTermCount )
       println("termFile: " + termFile )
@@ -163,7 +187,7 @@ package RunShakesEM {
       val poslist = fromPath(termFile).getLines("\n").toList
       val hosts = fromPath(hostsPath).getLines("\n").toList
   
-      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+      initGram.randomizeGrammar(nonTermCount,poslist,randSeed,randomBase)
   
       //initGram.readGrammar( gramFile )
       //initGram.readLexicon( lexFile )

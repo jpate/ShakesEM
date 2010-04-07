@@ -1564,11 +1564,13 @@ package ShakesEM {
     val testSentences:List[String]
     def finalCleanup(trainedGram:ShakesPCNF) = {
       VitActor ! Evaluation("Convergence",trainedGram)
+
       testSentences.foreach( sent => VitActor ! sent )
+      
       VitActor ! Stop
     }
 
-    object VitActor extends ViterbiDefinitions {
+    object VitActor extends ViterbiDefinitions with Actor {
       var parserID:ParserID = LocalParserID(-1)
       var g = new ShakesPCNF
       var wordScale = 10000
@@ -1587,7 +1589,7 @@ package ShakesEM {
   /**
   * This provides chart filling definitions for viterbi parsing
   */
-  trait ViterbiDefinitions extends Actor with LocalDefinitions with ShakesParser {
+  trait ViterbiDefinitions extends /*Actor with*/ LocalDefinitions with ShakesParser {
     /**
     * This is the CYK parsing algorithm. Same time complexity as Earley for
     * completely ambiguous grammars, so (since we're doing full grammar
@@ -1645,6 +1647,21 @@ package ShakesEM {
 
     var prefix= ""
 
+    def parseAndPrint(s:String) {
+      val words = s.split(' ')
+      resize(words.size + 1)
+
+      populateChart(words)
+
+      if( root.contains("S") ) {
+        println( prefix + ": " + root("S").viterbiString )
+      } else {
+        println("WARNING: SENTENCE DID NOT PARSE")
+        println( s )
+      }
+
+    }
+
     def act() {
       loop {
         react {
@@ -1659,7 +1676,8 @@ package ShakesEM {
             exit()
           }
 
-          case s:String => {
+          case s:String => parseAndPrint(s)
+            /*{
             val words = s.split(' ')
             resize(words.size + 1)
 
@@ -1671,7 +1689,7 @@ package ShakesEM {
               println("WARNING: SENTENCE DID NOT PARSE")
               println( s )
             }
-          }
+          }*/
         }
       }
     }
