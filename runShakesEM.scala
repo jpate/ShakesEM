@@ -193,7 +193,8 @@ package RunShakesEM {
       //initGram.readLexicon( lexFile )
   
       
-      object manager extends Actor with ShakesParserManager with EveryOneHundred {
+      object manager extends Actor with ShakesParserManager with
+      EveryOneHundred {
         import collection.mutable.ArrayBuffer
         import scala.actors.remote.Node
         import scala.actors.remote.RemoteActor._

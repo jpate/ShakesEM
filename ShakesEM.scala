@@ -1223,7 +1223,7 @@ package ShakesEM {
           case trainedGram:ShakesPCNF => {
             g = trainedGram
             println( "Received a new grammar" )
-            reply( StillAlive )
+            //reply( StillAlive )
           }
           case RemoteParserID(id:Int) => {
             parserID = RemoteParserID(id)
@@ -1285,6 +1285,7 @@ package ShakesEM {
 
   trait EvaluatingManager {
     val testSentences:List[String]
+
     def finalCleanup(trainedGram:ShakesPCNF) = {
       VitActor ! Evaluation("Convergence",trainedGram)
 
@@ -1758,6 +1759,11 @@ package ShakesEM {
 
       }
       finalCleanup(g1)
+
+      val parsersToKill = remoteParserConstructor( new ShakesPCNF )
+
+      parsersToKill foreach ( _ ! Stop )
+
       exit()
     }
   }
