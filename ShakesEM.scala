@@ -1223,7 +1223,6 @@ package ShakesEM {
           case trainedGram:ShakesPCNF => {
             g = trainedGram
             println( "Received a new grammar" )
-            //reply( StillAlive )
           }
           case RemoteParserID(id:Int) => {
             parserID = RemoteParserID(id)
