@@ -416,8 +416,8 @@ package RunShakesEM {
       val hostsPath = args(5)
       val minIter = args(6).toInt
       val tolerance = args(7).toDouble
-      val randSeed = args(8).toDouble
-      val randomBase = args(9).toDouble
+      val randSeed = args(8).toInt
+      val randomBase = args(9).toInt
   
       println("nonTermCount: " + nonTermCount )
       println("termFile: " + termFile )
@@ -437,7 +437,7 @@ package RunShakesEM {
       val poslist = fromPath(termFile).getLines("\n").toList
       val hosts = fromPath(hostsPath).getLines("\n").toList
   
-      initGram.randomizeGrammar(nonTermCount,poslist,16,0)
+      initGram.randomizeGrammar(nonTermCount,poslist,randSeed,randomBase)
   
       //initGram.readGrammar( gramFile )
       //initGram.readLexicon( lexFile )
