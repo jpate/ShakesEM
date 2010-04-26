@@ -1,678 +1,734 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
-        <head><title>class ShakesPCNF in ShakesEM</title>
-        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.r0-b20100210001544)" name="generator"></meta><link href="../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../script.js"></script>
-        </head>
-        <body onload="init()">
-        <table summary="" class="navigation">
-        <tr>
-          <td class="navigation-links" valign="top">
-            <!-- <table><tr></tr></table> -->
-          </td>
-          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
-            <div class="doctitle-larger">Scala 2</div>
-          </td>
-        </tr>
-        <tr><td></td></tr>
-      </table>
-        
-      <div class="entity">
-        <a href="../ShakesEM$package.html" target="_self">ShakesEM</a>
-        <br></br>
-        <span class="entity">class  ShakesPCNF</span>
-      </div><hr></hr>
-      <div class="source">
-        [source: <a href="" class="ShakesEM/ShakesPCNF"><code>ShakesEM/ShakesPCNF.scala</code></a>]
-      </div><hr></hr>
-      <a name="ShakesPCNF"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>class</code>
-        <em>ShakesPCNF</em>
-      </dt>
-      <dd><code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a></dd>
-    </dl>
-      <dl><dd><code>ShakesPCNF</code> defines a Probabilistic Chomsky Normal Form grammar
-  for use with the ShakesEM library</dd></dl>
-      <dl></dl>
+        <head>
+          <title>Scaladoc for ShakesEM.ShakesPCNF</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		      <script type="text/javascript" src="../lib/jquery.js"></script>
+          
+      <link href="../lib/template.css" rel="stylesheet" type="text/css" media="screen" />
+      <script type="text/javascript" src="../lib/template.js"></script>
+      <script type="text/javascript" src="../lib/tools.tooltip.js"></script>
     
+        </head>
+        <body class="type">
+
+      <p id="owner"><a href="package.html" class="extype" name="ShakesEM">ShakesEM</a></p>
+
+      <div id="definition">
+        <img src="../lib/class_big.png" />
+        <h1>ShakesPCNF</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">ShakesPCNF</span><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment" id="comment"><div class="comment cmt"><p>ShakesPCNF defines a Probabilistic Chomsky Normal Form grammar
+for use with the ShakesEM library
+</p></div>
+            
+            
+            
+            
+          </div>
       
+      <div id="template">
 
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Value Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code> val</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#f" target="_self">f</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]]
+        <div id="mbrsel">
+          <div id="ancestors">
+                <h3>Inherited</h3>
+                <ol><li class="hideall">Hide All</li><li class="showall">Show all</li></ol>
+                <ol id="linearization"><li class="in" name="scala.AnyRef">AnyRef</li><li class="in" name="scala.Any">Any</li></ol>
+              </div>
+          <div id="visbl">
+            <h3>Visibility</h3>
+            <ol><li class="public in">Public</li><li class="all out">All</li></ol>
+          </div>
+        </div>
         
-        <div>Used in re-estimation of the PCFG. f Sums estimated counts for binary
-    branching nodes, g for unary branching nodes, and h for any non-terminal
-    node.
-    See Manning &amp; Schutze p. 396.
-    The defaults just make the incrementation code cleaner.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> val</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#g" target="_self">g</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>), <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> val</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#h" target="_self">h</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#lexExps" target="_self">lexExps</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/List">scala.List</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>)]]
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#lexicon" target="_self">lexicon</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#phrExps" target="_self">phrExps</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/List">scala.List</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>)]]]
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#phrases" target="_self">phrases</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]]
-        
-        
-      </td>
-    </tr>
-      </table>
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Method Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#copy" target="_self">copy</a></em>
-         : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#countlessCopy" target="_self">countlessCopy</a></em>
-         : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
-        
-        <div>Returns a ShakesPCNF which has the same lexicon, phrases, lexExps, and
-    phrExps but zero counts</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#incLexProb%28String%2CString%2CDouble%29" target="_self">incLexProb</a></em>
-        (<em>pos</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>word</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>probIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Receives a probability and increments the probability of a unary rule by
-    the probability.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#incLexScore%28String%2CString%2CDouble%29" target="_self">incLexScore</a></em>
-        (<em>pos</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>word</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>scoreIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Receives a probability in log space, takes it out of log space, and
-    increments the probability of a unary rule by the probability.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#incPhraseProb%28String%2CString%2CString%2CDouble%29" target="_self">incPhraseProb</a></em>
-        (<em>lhs</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>left</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>right</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>probIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Receives a probability and increments the probability of a binary rule by
-    the probability.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#incPhraseScore%28String%2CString%2CString%2CDouble%29" target="_self">incPhraseScore</a></em>
-        (<em>lhs</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>left</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>right</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>scoreIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Receives a probability in log space, takes it out of log space, and
-    increments the probability of a binary rule by the probability.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#normalize" target="_self">normalize</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#preCalcExps" target="_self">preCalcExps</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Computes the value of phrExps on the basis of phrases and the value of
-    lexExps on the basis of lexicon. Basically, keep these values in two forms
-    to save computation time at the expense of space.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#prettyPrint" target="_self">prettyPrint</a></em>
-         : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>
-        
-        <div>Produce another readable stringification of lexicon and phrases. This is
-    not readable by readGrammar or readLexicon, but I think it is a little bit
-    easier for human eyes so I'm keeping it.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#pruneRules%28Double%29" target="_self">pruneRules</a></em>
-        (<em>cutoff</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#randomizeGrammar%28Int%2CList%5BString%5D%2CInt%2CInt%29" target="_self">randomizeGrammar</a></em>
-        (<em>nonTermCount</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>termSymbols</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>], <em>randSeed</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>centeredOn</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#readGrammar%28String%29" target="_self">readGrammar</a></em>
-        (<em>gramPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Reads a grammar from a file. Grammar should be in the format:
-    <br/><br/>
-    <code>parent left-child right-child probability</code>
-    <br/><br/>
-    and contain only binary rules.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#readLexicon%28String%29" target="_self">readLexicon</a></em>
-        (<em>lexPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Reads a lexicon from a file. Lexicon should be in the format:
-    <br/><br/>
-    <code>part-of-speech word probability</code>
-    <br/><br/>
-    and contain only unary rules.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#readShakesGram%28String%29" target="_self">readShakesGram</a></em>
-        (<em>gramPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Reads output from a Shakes*Manager from a file. Grammar should contain
-    both unary and binary rules.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#reestimateRules" target="_self">reestimateRules</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Re-estimates a PCFG based on the counts in f, g, and h. All the action of
-    this function lies in its side-effects.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#resetGrammar" target="_self">resetGrammar</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Clears out all counts from lexicon, phrases, lexExps and phrExps.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>override def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesPCNF.html#toString%28%29" target="_self">toString</a></em>
-         : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>
-        
-        <div>Produce a readable stringification of lexicon and phrases in the same
-    format that readGrammar and readLexicon expect.</div>
-      </td>
-    </tr>
-      </table><table summary="" cellpadding="3" class="inherited">
-        <tr><td class="title" colspan="2">
-          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
-        </td></tr>
-        <tr><td class="signature" colspan="2">
-          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
-        </td></tr>
-      </table><table summary="" cellpadding="3" class="inherited">
-        <tr><td class="title" colspan="2">
-          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
-        </td></tr>
-        <tr><td class="signature" colspan="2">
-          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
-        </td></tr>
-      </table>
-
-
+        <div class="members" id="constructors">
+              <h3>Instance constructors</h3>
+              <ol><li visbl="pub" name="ShakesEM.ShakesPCNF#this">
+      <h4 class="signature">
+      <span class="kind">new</span>
+      <span class="symbol">
+        <span class="name">ShakesPCNF</span><span class="params">()</span>
+      </span>
+      </h4>
       
-
-<table summary="" cellpadding="3" class="member-detail">
-          <tr><td class="title">Value Details</td></tr>
-        </table><div><a name="f"></a><dl>
-      <dt>
+    </li></ol>
+            </div>        
         
-        <code></code>
-        <code>val</code>
-        <em>f</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]]
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Used in re-estimation of the PCFG. f Sums estimated counts for binary
-    branching nodes, g for unary branching nodes, and h for any non-terminal
-    node.
-    See Manning &amp; Schutze p. 396.
-    The defaults just make the incrementation code cleaner.</dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="g"></a><dl>
-      <dt>
         
-        <code></code>
-        <code>val</code>
-        <em>g</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>), <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="h"></a><dl>
-      <dt>
         
-        <code></code>
-        <code>val</code>
-        <em>h</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="lexicon"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>var</code>
-        <em>lexicon</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd><p>lexicon, lexExps, phrases, and phrExps contain the actual grammatical
-    information. lexExps contains the same information as lexicon in a
-    different format to facilitate rule look-up. Similarly, phrExps contains
-    the same information as phrases in a different format to facilitate rule
-    look-up. The default values just help make incrementation easier.<p></dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="lexExps"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>var</code>
-        <em>lexExps</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/List">scala.List</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>)]]
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="phrases"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>var</code>
-        <em>phrases</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>]]]
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="phrExps"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>var</code>
-        <em>phrExps</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="" target="contentFrame" class="scala/List">scala.List</a>[(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>)]]]
-      </dt>
-      <dd></dd>
-    </dl><hr></hr></div>
-<table summary="" cellpadding="3" class="member-detail">
-          <tr><td class="title">Method Details</td></tr>
-        </table><div><a name="reestimateRules"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>reestimateRules</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Re-estimates a PCFG based on the counts in f, g, and h. All the action of
-    this function lies in its side-effects.</dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="normalize"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>normalize</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="randomizeGrammar%28Int%2CList%5BString%5D%2CInt%2CInt%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>randomizeGrammar</em>(<em>nonTermCount</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>termSymbols</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>], <em>randSeed</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>centeredOn</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="pruneRules%28Double%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>pruneRules</em>(<em>cutoff</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd><p>Deletes re-write rules which have a probablity less than some threshold.
-    Could be useful for speeding up estimation and saving memory in later
-    iterations.</p></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>cutoff - </code>The minimum probability for a re-write to remain.</dd></dl>
-    <hr></hr>
-<a name="readShakesGram%28String%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>readShakesGram</em>(<em>gramPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Reads output from a Shakes*Manager from a file. Grammar should contain
-    both unary and binary rules.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>gramPath - </code>File path to the grammar (relative to current working    directory)</dd></dl>
-    <hr></hr>
-<a name="readGrammar%28String%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>readGrammar</em>(<em>gramPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Reads a grammar from a file. Grammar should be in the format:
-    <br/><br/>
-    <code>parent left-child right-child probability</code>
-    <br/><br/>
-    and contain only binary rules.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>gramPath - </code>File path to the grammar (relative to current working    directory)</dd></dl>
-    <hr></hr>
-<a name="readLexicon%28String%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>readLexicon</em>(<em>lexPath</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Reads a lexicon from a file. Lexicon should be in the format:
-    <br/><br/>
-    <code>part-of-speech word probability</code>
-    <br/><br/>
-    and contain only unary rules.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>gramPath - </code>File path to the grammar (relative to current working    directory)</dd></dl>
-    <hr></hr>
-<a name="incPhraseScore%28String%2CString%2CString%2CDouble%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>incPhraseScore</em>(<em>lhs</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>left</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>right</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>scoreIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Receives a probability in log space, takes it out of log space, and
-    increments the probability of a binary rule by the probability.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>lhs - </code>The left hand side of the rule</dd><dd><code>left - </code>The left child of the rule</dd><dd><code>right - </code>The right child of the rule</dd><dd><code>scoreIncrem - </code>The amount to increment the probability by (in log    space)</dd></dl>
-    <hr></hr>
-<a name="incPhraseProb%28String%2CString%2CString%2CDouble%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>incPhraseProb</em>(<em>lhs</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>left</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>right</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>probIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Receives a probability and increments the probability of a binary rule by
-    the probability.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>lhs - </code>The left hand side of the rule</dd><dd><code>left - </code>The left child of the rule</dd><dd><code>right - </code>The right child of the rule</dd><dd><code>probIncrem - </code>The amount to increment the probability by</dd></dl>
-    <hr></hr>
-<a name="incLexScore%28String%2CString%2CDouble%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>incLexScore</em>(<em>pos</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>word</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>scoreIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Receives a probability in log space, takes it out of log space, and
-    increments the probability of a unary rule by the probability.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>pos - </code>The part of speech of the rule</dd><dd><code>word - </code>The terminal production of the rule</dd><dd><code>scoreIncrem - </code>The amount to increment the probability by (in log    space)</dd></dl>
-    <hr></hr>
-<a name="incLexProb%28String%2CString%2CDouble%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>incLexProb</em>(<em>pos</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>word</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>probIncrem</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Receives a probability and increments the probability of a unary rule by
-    the probability.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>pos - </code>The part of speech of the rule</dd><dd><code>word - </code>The terminal production of the rule</dd><dd><code>probIncrem - </code>The amount to increment the probability by</dd></dl>
-    <hr></hr>
-<a name="preCalcExps"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>preCalcExps</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Computes the value of phrExps on the basis of phrases and the value of
-    lexExps on the basis of lexicon. Basically, keep these values in two forms
-    to save computation time at the expense of space.</dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="countlessCopy"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>countlessCopy</em> : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Returns a ShakesPCNF which has the same lexicon, phrases, lexExps, and
-    phrExps but zero counts</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>A ShakesPCNF with the same lexicon, phrases, lexExps, and phrExps    as the ShakesPCNF calling the function, but with all zero counts.</dd></dl>
-    <hr></hr>
-<a name="copy"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>copy</em> : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="resetGrammar"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>resetGrammar</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Clears out all counts from lexicon, phrases, lexExps and phrExps.</dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="toString%28%29"></a><dl>
-      <dt>
-        
-        <code>override</code>
-        <code>def</code>
-        <em>toString</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Produce a readable stringification of lexicon and phrases in the same
-    format that readGrammar and readLexicon expect.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>A string representation of lexicon and phrases.</dd></dl>
-    <hr></hr>
-<a name="prettyPrint"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>prettyPrint</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Produce another readable stringification of lexicon and phrases. This is
-    not readable by readGrammar or readLexicon, but I think it is a little bit
-    easier for human eyes so I'm keeping it.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>A string representation of lexicon and phrases.</dd></dl>
-    <hr></hr></div>
-
-
-    <hr></hr>
-        <table summary="" class="navigation">
-        <tr>
-          <td class="navigation-links" valign="top">
-            <!-- <table><tr></tr></table> -->
-          </td>
-          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
-            <div class="doctitle-larger">Scala 2</div>
-          </td>
-        </tr>
-        <tr><td></td></tr>
-      </table>
-      </body>
+        <div class="members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="scala.AnyRef#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.Any#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for dis-equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the receiver object is equivalent to the argument; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef###">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef → Any
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to cast the receiver object to be of type <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to cast the receiver object to be of type <code>T0</code>.</p><p>Note that the success of a cast at runtime is modulo Scala's erasure semantics.  Therefore the expression<code>1.asInstanceOf[String]</code> will throw a <code>ClassCastException</code> at runtime, while the expression<code>List(1).asInstanceOf[List[String]]</code> will not.  In the latter example, because the type argument is erased as
+part of compilation it is not possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the receiver object .</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#clone">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: AnyRef</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method creates and returns a copy of the receiver object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method creates and returns a copy of the receiver object .</p><p>The default implementation of the <code>clone</code> method is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a copy of the receiver object .</p></dd></dl><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#copy">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">copy</span><span class="result">: <a href="" class="extype" name="ShakesEM.ShakesPCNF">ShakesPCNF</a></span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#countlessCopy">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">countlessCopy</span><span class="result">: <a href="" class="extype" name="ShakesEM.ShakesPCNF">ShakesPCNF</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a ShakesPCNF which has the same lexicon, phrases, lexExps, and
+phrExps but zero counts
+</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a ShakesPCNF which has the same lexicon, phrases, lexExps, and
+phrExps but zero counts
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A ShakesPCNF with the same lexicon, phrases, lexExps, and phrExps
+as the ShakesPCNF calling the function, but with all zero counts . 
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#eq">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p><p>The <code>eq</code> method implements an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence relation] on
+non-null instances of <code>AnyRef</code>:
+ * It is reflexive: for any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(x)</code> returns <code>true</code>.
+ * It is symmetric: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, <code>x.eq(y)</code> returns <code>true</code> if and
+   only if <code>y.eq(x)</code> returns <code>true</code>.
+ * It is transitive: for any non-null instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.eq(y)</code> returns <code>true</code>   and <code>y.eq(z)</code> returns <code>true</code>, then <code>x.eq(z)</code> returns <code>true</code>.</p><p>Additionally, the <code>eq</code> method has three other properties.
+ * It is consistent: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, multiple invocations of
+   <code>x.eq(y)</code> consistently returns <code>true</code> or consistently returns <code>false</code>.
+ * For any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(null)</code> and <code>null.eq(x)</code> returns <code>false</code>.
+ * <code>null.eq(null)</code> returns <code>true</code>.</p><p>When overriding the <code>equals</code> or <code>hashCode</code> methods, it is important to ensure that their behavior is
+consistent with reference equality.  Therefore, if two objects are references to each other (<code>o1 eq o2</code>), they
+should be equal to each other (<code>o1 == o2</code>) and they should hash to the same value (<code>o1.hashCode == o2.hashCode</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the argument is a reference to the receiver object; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#equals">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p><p>The default implementations of this method is an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence
+relation]:
+ * It is reflexive: for any instance <code>x</code> of type <code>Any</code>, <code>x.equals(x)</code> should return <code>true</code>.
+ * It is symmetric: for any instances <code>x</code> and <code>y</code> of type <code>Any</code>, <code>x.equals(y)</code> should return <code>true</code> if and
+   only if <code>y.equals(x)</code> returns <code>true</code>.
+ * It is transitive: for any instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.equals(y)</code> returns <code>true</code> and
+   <code>y.equals(z)</code> returns <code>true</code>, then <code>x.equals(z)</code> should return <code>true</code>.</p><p>If you override this method, you should verify that your implementation remains an equivalence relation.
+Additionally, when overriding this method it is often necessary to override <code>hashCode</code> to ensure that objects
+that are "equal" (<code>o1.equals(o2)</code> returns <code>true</code>) hash to the same 
+scala.Int
+(<code>o1.hashCode.equals(o2.hashCode)</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#f">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">f</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<a href="NTExpansion.html" class="extype" name="ShakesEM.NTExpansion">NTExpansion</a>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Used in re-estimation of the PCFG .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Used in re-estimation of the PCFG .  f Sums estimated counts for binary
+branching nodes, g for unary branching nodes, and h for any non-terminal
+node.
+See Manning &amp; Schutze p. 396.
+The defaults just make the incrementation code cleaner.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#finalize">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object .</p><p>The details of when and if the <code>finalize</code> method are invoked, as well as the interaction between <code>finalize</code>and non-local returns and exceptions, are all platform dependent.</p></div><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#g">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">g</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<a href="TermExpansion.html" class="extype" name="ShakesEM.TermExpansion">TermExpansion</a>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#getClass">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: java.lang.Class[_]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a representation that corresponds to the dynamic class of the receiver object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a representation that corresponds to the dynamic class of the receiver object .</p><p>The nature of the representation is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a representation that corresponds to the dynamic class of the receiver object .</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#h">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">h</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<span class="extype" name="java.lang.String">String</span>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#hashCode">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a hash code value for the object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a hash code value for the object .</p><p>The default hashing algorithm is platform dependent.</p><p>Note that it is allowed for two objects to have identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>) yet
+not be equal (<code>o1.equals(o2)</code> returns <code>false</code>).  A degenerate implementation could always return <code>0</code>.
+However, it is required that if two objects are equal (<code>o1.equals(o2)</code> returns <code>true</code>) that they have
+identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>).  Therefore, when overriding this method, be sure
+to verify that the behavior is consistent with the <code>equals</code> method.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the hash code value for the object .</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p><p>Note that the test result of the test is modulo Scala's erasure semantics.  Therefore the expression<code>1.isInstanceOf[String]</code> will return <code>false</code>, while the expression <code>List(1).isInstanceOf[List[String]]</code> will
+return <code>true</code>.  In the latter example, because the type argument is erased as part of compilation it is not
+possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is an instance of erasure of type <code>T0</code>; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#lexExps">
+      <h4 class="signature">
+      <span class="kind">var</span>
+      <span class="symbol">
+        <span class="name">lexExps</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<span class="extype" name="java.lang.String">String</span>, <span class="extype" name="scala.collection.immutable.List">List</span>[<a href="NTRevParent.html" class="extype" name="ShakesEM.NTRevParent">NTRevParent</a>]] {...}</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#lexicon">
+      <h4 class="signature">
+      <span class="kind">var</span>
+      <span class="symbol">
+        <span class="name">lexicon</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<a href="TermExpansion.html" class="extype" name="ShakesEM.TermExpansion">TermExpansion</a>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#ne">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference dis-equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the argument is not a reference to the receiver object; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#normalize">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">normalize</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#notify">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up a single thread that is waiting on the receiver object's monitor .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up a single thread that is waiting on the receiver object's monitor .</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#notifyAll">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up all threads that are waiting on the receiver object's monitor .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up all threads that are waiting on the receiver object's monitor .</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#phrExps">
+      <h4 class="signature">
+      <span class="kind">var</span>
+      <span class="symbol">
+        <span class="name">phrExps</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<a href="NTRevChild.html" class="extype" name="ShakesEM.NTRevChild">NTRevChild</a>, <span class="extype" name="scala.collection.immutable.List">List</span>[<a href="NTRevParent.html" class="extype" name="ShakesEM.NTRevParent">NTRevParent</a>]] {...}</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#phrases">
+      <h4 class="signature">
+      <span class="kind">var</span>
+      <span class="symbol">
+        <span class="name">phrases</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<a href="NTExpansion.html" class="extype" name="ShakesEM.NTExpansion">NTExpansion</a>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#preCalcExps">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">preCalcExps</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Computes the value of phrExps on the basis of phrases and the value of
+lexExps on the basis of lexicon .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Computes the value of phrExps on the basis of phrases and the value of
+lexExps on the basis of lexicon .  Basically, keep these values in two forms
+to save computation time at the expense of space.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#randomizeGrammar">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">randomizeGrammar</span><span class="params">(<span name="nonTermCount">nonTermCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="termSymbols">termSymbols: <span class="extype" name="scala.collection.immutable.List">List</span>[<span class="extype" name="java.lang.String">String</span>]</span>, <span name="randSeed">randSeed: <span class="extype" name="scala.Int">Int</span></span>, <span name="centeredOn">centeredOn: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#readGrammar">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">readGrammar</span><span class="params">(<span name="gramPath">gramPath: <span class="extype" name="java.lang.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Reads a grammar from a file .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Reads a grammar from a file .  Grammar should be in the format:
+<br/><br/>
+parent left-child right-child probability
+<br/><br/>
+and contain only binary rules.
+</p></div><dl class="paramcmts block"><dt class="param">gramPath</dt><dd class="cmt"><p>File path to the grammar (relative to current working
+directory)
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#readLexicon">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">readLexicon</span><span class="params">(<span name="lexPath">lexPath: <span class="extype" name="java.lang.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Reads a lexicon from a file .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Reads a lexicon from a file .  Lexicon should be in the format:
+<br/><br/>
+part-of-speech word probability
+<br/><br/>
+and contain only unary rules.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#reestimateRules">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">reestimateRules</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Re-estimates a PCFG based on the counts in f, g, and h .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Re-estimates a PCFG based on the counts in f, g, and h .  All the action of
+this function lies in its side-effects.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#synchronized">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: T0</span>)</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesPCNF#toString">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Produce a readable stringification of lexicon and phrases in the same
+format that readGrammar and readLexicon expect .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Produce a readable stringification of lexicon and phrases in the same
+format that readGrammar and readLexicon expect .</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A string representation of lexicon and phrases . 
+</p></dd></dl><div class="block">
+          definition classes: <a href="" class="extype" name="ShakesEM.ShakesPCNF">ShakesPCNF</a> → AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li></ol>
+            </div>
+                
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
       </html>

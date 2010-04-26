@@ -1,464 +1,811 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
-        <head><title>trait ShakesParser in ShakesEM</title>
-        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.r0-b20100210001544)" name="generator"></meta><link href="../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../script.js"></script>
+        <head>
+          <title>Scaladoc for ShakesEM.ShakesParser</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		      <script type="text/javascript" src="../lib/jquery.js"></script>
+          
+      <link href="../lib/template.css" rel="stylesheet" type="text/css" media="screen" />
+      <script type="text/javascript" src="../lib/template.js"></script>
+      <script type="text/javascript" src="../lib/tools.tooltip.js"></script>
+    
         </head>
-        <body onload="init()">
-        <table summary="" class="navigation">
-        <tr>
-          <td class="navigation-links" valign="top">
-            <!-- <table><tr></tr></table> -->
-          </td>
-          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
-            <div class="doctitle-larger">Scala 2</div>
-          </td>
-        </tr>
-        <tr><td></td></tr>
-      </table>
-        
-      <div class="entity">
-        <a href="../ShakesEM$package.html" target="_self">ShakesEM</a>
-        <br></br>
-        <span class="entity">trait  ShakesParser</span>
-      </div><hr></hr>
-      <div class="source">
-        [source: <a href="" class="ShakesEM/ShakesParser"><code>ShakesEM/ShakesParser.scala</code></a>]
-      </div><hr></hr>
-      <a name="ShakesParser"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>trait</code>
-        <em>ShakesParser</em>
-      </dt>
-      <dd><code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a></dd>
-    </dl>
-      <dl><dd>This defines what a parser must have, without giving an explicit definition
-  for certain functions we might want to change (such as re-estimation
-  functions). This must be extended by providing at least the actual parsing
-  functions synFill, lexFill, and populateChart. Other functions can of course
-  be provided as well, for example computeOPWithEstimates to provide outside
-  probability estimates.</dd></dl>
-      <dl></dl>
-    <dl>
-      <dt style="margin:10px 0 0 20px;"><b>Direct Known Subclasses:</b></dt>
-      <dd><a href="../ShakesEM/ShakesFullCYKParser.html" target="_self">ShakesFullCYKParser</a>, <a href="../ShakesEM/ShakesViterbiParser.html" target="_self">ShakesViterbiParser</a></dd>
-      </dl><hr></hr>
+        <body class="type">
+
+      <p id="owner"><a href="package.html" class="extype" name="ShakesEM">ShakesEM</a></p>
+
+      <div id="definition">
+        <img src="../lib/trait_big.png" />
+        <h1>ShakesParser</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">trait</span>
+      <span class="symbol">
+        <span class="name">ShakesParser</span><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment" id="comment"><div class="comment cmt"><p>This defines what a parser must have, without giving an explicit definition
+for certain functions we might want to change (such as re-estimation
+functions) .  This must be extended by providing at least the actual parsing
+functions synFill, lexFill, and populateChart. Other functions can of course
+be provided as well, for example computeOPWithEstimates to provide outside
+probability estimates.
+</p></div><div class="block">
+            known subclasses: <a href="ViterbiDefinitions.html" class="extype" name="ShakesEM.ViterbiDefinitions">ViterbiDefinitions</a>, <a href="CountingDefinitions.html" class="extype" name="ShakesEM.CountingDefinitions">CountingDefinitions</a>
+          </div>
+            
+            
+            
+            
+          </div>
       
+      <div id="template">
 
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Value Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#g" target="_self">g</a></em>
-         : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
+        <div id="mbrsel">
+          <div id="ancestors">
+                <h3>Inherited</h3>
+                <ol><li class="hideall">Hide All</li><li class="showall">Show all</li></ol>
+                <ol id="linearization"><li class="in" name="scala.AnyRef">AnyRef</li><li class="in" name="scala.Any">Any</li></ol>
+              </div>
+          <div id="visbl">
+            <h3>Visibility</h3>
+            <ol><li class="public in">Public</li><li class="all out">All</li></ol>
+          </div>
+        </div>
         
+                
         
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract var</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#wordScale" target="_self">wordScale</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
-        
-        
-      </td>
-    </tr>
-      </table>
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Method Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#chartDescent%28%28ShakesParser.this.Entry%29%3D%3EAnyRef%29" target="_self">chartDescent</a></em>
-        (<em>p</em> : (<a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Start at the root node and visit other nodes in a complete parse, making
-    sure to visit a node only if all parent nodes are already visited, and
-    apply a function to the entries of each node. Used for outside pass and
-    gathering estimated counts. By allowing arbitrary functions of entries, we
-    can change how we estimate a count easily; just call chartDescent but use
-    a different estimation function.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#clear" target="_self">clear</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Clear out the entries of the chart.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#lexFill%28String%2CInt%29" target="_self">lexFill</a></em>
-        (<em>w</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>index</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Used in the CYK parser. Fills in the parts-of-speech of a word.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#populateChart%28Array%5BString%5D%29" target="_self">populateChart</a></em>
-        (<em>s</em> : <a href="" target="contentFrame" class="scala/Array">scala.Array</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>This is the CYK parsing algorithm. Same time complexity as Earley for
-    completely ambiguous grammars, so (since we're doing full grammar
-    induction) just use CYK. There's also a paper (Li and Alagappan something)
-    suggesting it has better average-case space complexity for completely
-    ambiguous grammars.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#resize%28Int%29" target="_self">resize</a></em>
-        (<em>sentLen</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Resize the chart.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#root" target="_self">root</a></em>
-         : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a>]
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#scaledStringProb" target="_self">scaledStringProb</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#size" target="_self">size</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#stringProb" target="_self">stringProb</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code> def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#stringScore" target="_self">stringScore</a></em>
-         : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-        
-        <div></div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract def</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.html#synFill%28Int%2CInt%29" target="_self">synFill</a></em>
-        (<em>start</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>end</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-        
-        <div>Used in the CYK parser. Fills in one (non-terminal) span's worth of the
-    chart.</div>
-      </td>
-    </tr>
-      </table><table summary="" cellpadding="3" class="inherited">
-        <tr><td class="title" colspan="2">
-          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
-        </td></tr>
-        <tr><td class="signature" colspan="2">
-          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
-        </td></tr>
-      </table><table summary="" cellpadding="3" class="inherited">
-        <tr><td class="title" colspan="2">
-          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
-        </td></tr>
-        <tr><td class="signature" colspan="2">
-          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
-        </td></tr>
-      </table>
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Class Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code>abstract class</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a></em>
-        (<em>label</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>)<code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
-        
-        
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>case class</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.LexEntry.html" target="_self">LexEntry</a></em>
-        (<code>val </code><em>label</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>)<code> extends </code><a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
-        
-        <div>Unary-branching terminal entries.</div>
-      </td>
-    </tr>
-<tr>
-      <td class="modifiers" valign="top"> 
-        <code>case class</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.SynEntry.html" target="_self">SynEntry</a></em>
-        (<code>val </code><em>label</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>)<code> extends </code><a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
-        
-        <div>Binary-branching non-terminal entries.</div>
-      </td>
-    </tr>
-      </table>
-<table summary="" cellpadding="3" class="member">
-      <tr><td class="title" colspan="2">Object Summary</td></tr>
-      <tr>
-      <td class="modifiers" valign="top"> 
-        <code> object</code>
-      </td>
-      <td class="signature">
-        <em><a href="../ShakesEM/ShakesParser.chart$object.html" target="_self">chart</a></em>
-        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
-        
-        <div>This is the chart itself.</div>
-      </td>
-    </tr>
-      </table>
+        <div class="members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="ShakesEM.ShakesParser.Entry">
+      <h4 class="signature"><a href="ShakesParser$Entry.html">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">Entry</span><span class="result"> extends AnyRef</span>
+      </span>
+      </a></h4>
       
-
-<table summary="" cellpadding="3" class="member-detail">
-          <tr><td class="title">Value Details</td></tr>
-        </table><div><a name="g"></a><dl>
-      <dt>
+            
+            <div class="fullcomment"><div class="block">
+          attributes: abstract 
+        </div></div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser.LexEntry">
+      <h4 class="signature"><a href="ShakesParser$LexEntry.html">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">LexEntry</span><span class="params">(<span name="label">label: String</span>)</span><span class="result"> extends Entry with Product</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">Unary-branching terminal entries .</p>
+    </li><li visbl="pub" name="ShakesEM.ShakesParser.SynEntry">
+      <h4 class="signature"><a href="ShakesParser$SynEntry.html">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">SynEntry</span><span class="params">(<span name="label">label: String</span>)</span><span class="result"> extends Entry with Product</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">Binary-branching non-terminal entries .</p>
+    </li></ol>
+            </div>
         
-        <code>abstract</code>
-        <code>var</code>
-        <em>g</em> : <a href="../ShakesEM/ShakesPCNF.html" target="_self">ShakesPCNF</a>
-      </dt>
-      <dd></dd>
-    </dl><hr></hr>
-<a name="wordScale"></a><dl>
-      <dt>
-        
-        <code>abstract</code>
-        <code>var</code>
-        <em>wordScale</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
-      </dt>
-      <dd></dd>
-    </dl><hr></hr></div>
-<table summary="" cellpadding="3" class="member-detail">
-          <tr><td class="title">Method Details</td></tr>
-        </table><div><a name="size"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>size</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>The size of the chart</dd></dl>
-    <hr></hr>
-<a name="root"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>root</em> : <a href="" target="contentFrame" class="scala/collection/mutable/HashMap">scala.collection.mutable.HashMap</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a>]
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>The root cell of the chart</dd></dl>
-    <hr></hr>
-<a name="resize%28Int%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>resize</em>(<em>sentLen</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Resize the chart.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>The - </code>new size for the chart</dd></dl>
-    <hr></hr>
-<a name="clear"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>clear</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Clear out the entries of the chart.</dd></dl>
-      <dl></dl>
-    <hr></hr>
-<a name="synFill%28Int%2CInt%29"></a><dl>
-      <dt>
-        
-        <code>abstract</code>
-        <code>def</code>
-        <em>synFill</em>(<em>start</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>end</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Used in the CYK parser. Fills in one (non-terminal) span's worth of the
-    chart.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>start - </code>The start index of the span.</dd><dd><code>end - </code>The end index of the span.</dd></dl>
-    <hr></hr>
-<a name="lexFill%28String%2CInt%29"></a><dl>
-      <dt>
-        
-        <code>abstract</code>
-        <code>def</code>
-        <em>lexFill</em>(<em>w</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <em>index</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Used in the CYK parser. Fills in the parts-of-speech of a word.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>w - </code>The word.</dd><dd><code>index - </code>The index of the word.</dd></dl>
-    <hr></hr>
-<a name="populateChart%28Array%5BString%5D%29"></a><dl>
-      <dt>
-        
-        <code>abstract</code>
-        <code>def</code>
-        <em>populateChart</em>(<em>s</em> : <a href="" target="contentFrame" class="scala/Array">scala.Array</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>This is the CYK parsing algorithm. Same time complexity as Earley for
-    completely ambiguous grammars, so (since we're doing full grammar
-    induction) just use CYK. There's also a paper (Li and Alagappan something)
-    suggesting it has better average-case space complexity for completely
-    ambiguous grammars.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>s - </code>The input sentence (an array of terminals)</dd><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>A parse chart with labels and inside and outside probabilities.</dd></dl>
-    <hr></hr>
-<a name="scaledStringProb"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>scaledStringProb</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>The inside probability of the sentence, before de-scaling, and not    in log-space.</dd></dl>
-    <hr></hr>
-<a name="stringProb"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>stringProb</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>The inside probability of the sentence not in log-space.</dd></dl>
-    <hr></hr>
-<a name="stringScore"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>stringScore</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Double.html" target="_self">Double</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd></dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Returns</b></dt><dd>The inside probability of the sentence in log-space.</dd></dl>
-    <hr></hr>
-<a name="chartDescent%28%28ShakesParser.this.Entry%29%3D%3EAnyRef%29"></a><dl>
-      <dt>
-        
-        <code></code>
-        <code>def</code>
-        <em>chartDescent</em>(<em>p</em> : (<a href="../ShakesEM/ShakesParser.Entry.html" target="_self">Entry</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
-      </dt>
-      <dd></dd>
-    </dl>
-      <dl><dd>Start at the root node and visit other nodes in a complete parse, making
-    sure to visit a node only if all parent nodes are already visited, and
-    apply a function to the entries of each node. Used for outside pass and
-    gathering estimated counts. By allowing arbitrary functions of entries, we
-    can change how we estimate a count easily; just call chartDescent but use
-    a different estimation function.</dd></dl>
-      <dl><dt style="margin:10px 0 0 20px;">
-        <b>Parameters</b></dt><dd><code>p - </code>The function to be applied</dd></dl>
-    <hr></hr></div>
-
-
-    <hr></hr>
-        <table summary="" class="navigation">
-        <tr>
-          <td class="navigation-links" valign="top">
-            <!-- <table><tr></tr></table> -->
-          </td>
-          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
-            <div class="doctitle-larger">Scala 2</div>
-          </td>
-        </tr>
-        <tr><td></td></tr>
-      </table>
-      </body>
+        <div class="members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="scala.AnyRef#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.Any#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for dis-equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the receiver object is equivalent to the argument; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef###">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef → Any
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to cast the receiver object to be of type <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to cast the receiver object to be of type <code>T0</code>.</p><p>Note that the success of a cast at runtime is modulo Scala's erasure semantics.  Therefore the expression<code>1.asInstanceOf[String]</code> will throw a <code>ClassCastException</code> at runtime, while the expression<code>List(1).asInstanceOf[List[String]]</code> will not.  In the latter example, because the type argument is erased as
+part of compilation it is not possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the receiver object .</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser.chart">
+      <h4 class="signature"><a href="ShakesParser$chart$.html">
+      <span class="kind">object</span>
+      <span class="symbol">
+        <span class="name">chart</span><span class="result"> extends AnyRef</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">This is the chart itself .</p>
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#chartDescent">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">chartDescent</span><span class="params">(<span name="p">p: (<a href="ShakesParser$Entry.html" class="extype" name="ShakesEM.ShakesParser.Entry">Entry</a>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Start at the root node and visit other nodes in a complete parse, making
+sure to visit a node only if all parent nodes are already visited, and
+apply a function to the entries of each node .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Start at the root node and visit other nodes in a complete parse, making
+sure to visit a node only if all parent nodes are already visited, and
+apply a function to the entries of each node .  Used for outside pass and
+gathering estimated counts. By allowing arbitrary functions of entries, we
+can change how we estimate a count easily; just call chartDescent but use
+a different estimation function.</p></div><dl class="paramcmts block"><dt class="param">p</dt><dd class="cmt"><p>The function to be applied
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#clone">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: AnyRef</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method creates and returns a copy of the receiver object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method creates and returns a copy of the receiver object .</p><p>The default implementation of the <code>clone</code> method is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a copy of the receiver object .</p></dd></dl><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#eq">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p><p>The <code>eq</code> method implements an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence relation] on
+non-null instances of <code>AnyRef</code>:
+ * It is reflexive: for any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(x)</code> returns <code>true</code>.
+ * It is symmetric: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, <code>x.eq(y)</code> returns <code>true</code> if and
+   only if <code>y.eq(x)</code> returns <code>true</code>.
+ * It is transitive: for any non-null instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.eq(y)</code> returns <code>true</code>   and <code>y.eq(z)</code> returns <code>true</code>, then <code>x.eq(z)</code> returns <code>true</code>.</p><p>Additionally, the <code>eq</code> method has three other properties.
+ * It is consistent: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, multiple invocations of
+   <code>x.eq(y)</code> consistently returns <code>true</code> or consistently returns <code>false</code>.
+ * For any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(null)</code> and <code>null.eq(x)</code> returns <code>false</code>.
+ * <code>null.eq(null)</code> returns <code>true</code>.</p><p>When overriding the <code>equals</code> or <code>hashCode</code> methods, it is important to ensure that their behavior is
+consistent with reference equality.  Therefore, if two objects are references to each other (<code>o1 eq o2</code>), they
+should be equal to each other (<code>o1 == o2</code>) and they should hash to the same value (<code>o1.hashCode == o2.hashCode</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the argument is a reference to the receiver object; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#equals">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p><p>The default implementations of this method is an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence
+relation]:
+ * It is reflexive: for any instance <code>x</code> of type <code>Any</code>, <code>x.equals(x)</code> should return <code>true</code>.
+ * It is symmetric: for any instances <code>x</code> and <code>y</code> of type <code>Any</code>, <code>x.equals(y)</code> should return <code>true</code> if and
+   only if <code>y.equals(x)</code> returns <code>true</code>.
+ * It is transitive: for any instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.equals(y)</code> returns <code>true</code> and
+   <code>y.equals(z)</code> returns <code>true</code>, then <code>x.equals(z)</code> should return <code>true</code>.</p><p>If you override this method, you should verify that your implementation remains an equivalence relation.
+Additionally, when overriding this method it is often necessary to override <code>hashCode</code> to ensure that objects
+that are "equal" (<code>o1.equals(o2)</code> returns <code>true</code>) hash to the same 
+scala.Int
+(<code>o1.hashCode.equals(o2.hashCode)</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#finalize">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object .</p><p>The details of when and if the <code>finalize</code> method are invoked, as well as the interaction between <code>finalize</code>and non-local returns and exceptions, are all platform dependent.</p></div><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#firstStart">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">firstStart</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: abstract 
+        </div></div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#g">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">g</span><span class="result">: <a href="ShakesPCNF.html" class="extype" name="ShakesEM.ShakesPCNF">ShakesPCNF</a></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: abstract 
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#getClass">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: java.lang.Class[_]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a representation that corresponds to the dynamic class of the receiver object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a representation that corresponds to the dynamic class of the receiver object .</p><p>The nature of the representation is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a representation that corresponds to the dynamic class of the receiver object .</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#hashCode">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a hash code value for the object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a hash code value for the object .</p><p>The default hashing algorithm is platform dependent.</p><p>Note that it is allowed for two objects to have identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>) yet
+not be equal (<code>o1.equals(o2)</code> returns <code>false</code>).  A degenerate implementation could always return <code>0</code>.
+However, it is required that if two objects are equal (<code>o1.equals(o2)</code> returns <code>true</code>) that they have
+identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>).  Therefore, when overriding this method, be sure
+to verify that the behavior is consistent with the <code>equals</code> method.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the hash code value for the object .</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p><p>Note that the test result of the test is modulo Scala's erasure semantics.  Therefore the expression<code>1.isInstanceOf[String]</code> will return <code>false</code>, while the expression <code>List(1).isInstanceOf[List[String]]</code> will
+return <code>true</code>.  In the latter example, because the type argument is erased as part of compilation it is not
+possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is an instance of erasure of type <code>T0</code>; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#lexFill">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">lexFill</span><span class="params">(<span name="w">w: <span class="extype" name="java.lang.String">String</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Used in the CYK parser .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Used in the CYK parser .  Fills in the parts-of-speech of a word.</p></div><dl class="paramcmts block"><dt class="param">w</dt><dd class="cmt"><p>The word .</p></dd><dt class="param">index</dt><dd class="cmt"><p>The index of the word . 
+</p></dd></dl><div class="block">
+          attributes: abstract 
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#ne">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference dis-equality .</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the argument is not a reference to the receiver object; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#notify">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up a single thread that is waiting on the receiver object's monitor .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up a single thread that is waiting on the receiver object's monitor .</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#notifyAll">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up all threads that are waiting on the receiver object's monitor .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up all threads that are waiting on the receiver object's monitor .</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#parserID">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">parserID</span><span class="result">: <a href="ParserID.html" class="extype" name="ShakesEM.ParserID">ParserID</a></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: abstract 
+        </div></div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#populateChart">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">populateChart</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="java.lang.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This is the CYK parsing algorithm .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This is the CYK parsing algorithm .  Same time complexity as Earley for
+completely ambiguous grammars, so (since we're doing full grammar
+induction) just use CYK. There's also a paper (Li and Alagappan something)
+suggesting it has better average-case space complexity for completely
+ambiguous grammars.</p></div><dl class="paramcmts block"><dt class="param">s</dt><dd class="cmt"><p>The input sentence (an array of terminals)</p></dd><dt>returns</dt><dd class="cmt"><p>A parse chart with labels and inside and outside probabilities . 
+</p></dd></dl><div class="block">
+          attributes: abstract 
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#resize">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">resize</span><span class="params">(<span name="sentLen">sentLen: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"> Resize the chart .</p>
+            <div class="fullcomment"><div class="comment cmt"><p> Resize the chart .</p></div><dl class="paramcmts block"><dt class="param">sentLen</dt><dd class="cmt"><p>The new size for the chart
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#root">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">root</span><span class="result">: <span class="extype" name="scala.collection.mutable.HashMap">HashMap</span>[<span class="extype" name="java.lang.String">String</span>, <a href="ShakesParser$Entry.html" class="extype" name="ShakesEM.ShakesParser.Entry">Entry</a>]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">no summary matey</p>
+            <div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The root cell of the chart
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#scaledStringProb">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">scaledStringProb</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">no summary matey</p>
+            <div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The inside probability of the sentence, before de-scaling, and not
+in log-space . 
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#size">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">size</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">no summary matey</p>
+            <div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The size of the chart
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#stringProb">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">stringProb</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">no summary matey</p>
+            <div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The inside probability of the sentence not in log-space . 
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#stringScore">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">stringScore</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">no summary matey</p>
+            <div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>The inside probability of the sentence in log-space . 
+</p></dd></dl>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#synFill">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">synFill</span><span class="params">(<span name="start">start: <span class="extype" name="scala.Int">Int</span></span>, <span name="end">end: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Used in the CYK parser .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Used in the CYK parser .  Fills in one (non-terminal) span's worth of the
+chart.</p></div><dl class="paramcmts block"><dt class="param">start</dt><dd class="cmt"><p>The start index of the span .</p></dd><dt class="param">end</dt><dd class="cmt"><p>The end index of the span . 
+</p></dd></dl><div class="block">
+          attributes: abstract 
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#synchronized">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: T0</span>)</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#toString">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a string representation of the object .</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a string representation of the object .</p><p>The default representation is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a string representation of the object .</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="ShakesEM.ShakesParser#wordScale">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">wordScale</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: abstract 
+        </div></div>
+          
+    </li></ol>
+            </div>
+                
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
       </html>

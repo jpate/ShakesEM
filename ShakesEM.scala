@@ -602,7 +602,7 @@ package ShakesEM {
 
 
       /**
-      * @treturn The size of the chart.
+      * @return The size of the chart.
       */
       def size = matrix.size
 
@@ -1488,8 +1488,8 @@ package ShakesEM {
           ! (deadHosts.contains(RemoteParserID( index )))
           ) foreach{ id =>
           println( "Checking parser " + RemoteParserID(id))
-          remoteParsers(id) !?(timeout, StillAlive) match {
-            case Some(StillAlive) => {
+          //remoteParsers(id) !?(timeout, StillAlive) match {
+          //  case Some(StillAlive) => {
               var prefixLength = 0
               val prefix = thisIterTrain.takeWhile( nextSent =>
                 {
@@ -1514,15 +1514,15 @@ package ShakesEM {
               } else {
                 numFinishedParsers += 1
               }
-            }
-            case None => { 
-              deadHosts += RemoteParserID(id)
-              println( RemoteParserID(id) + " timed out; " + deadHosts.size +
-              " dead parsers")
-            }
-            case what:Any => println("Got back " + what +
-              " when trying to send out the first batch of sentences")
-          }
+            //}
+          //  case None => { 
+          //    deadHosts += RemoteParserID(id)
+          //    println( RemoteParserID(id) + " timed out; " + deadHosts.size +
+          //    " dead parsers")
+          //  }
+          //  case what:Any => println("Got back " + what +
+          //    " when trying to send out the first batch of sentences")
+          //}
         }
 
 
