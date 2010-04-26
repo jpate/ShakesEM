@@ -1478,7 +1478,7 @@ package ShakesEM {
         val maxTerminalsPerPackageLocal = 100
         val maxTerminalsPerPackage = round(
           totalTermCount /
-          (remoteParsers.size - deadHosts.size )
+          (remoteParsers.size + 4*localParsers.size - deadHosts.size )
         )
         println( maxTerminalsPerPackage +
           " terminals per package for this iteration")
