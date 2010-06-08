@@ -62,16 +62,40 @@ package ShakesEM {
 
 
 
-    /**
-    * Re-estimates a PCFG based on the counts in f, g, and h. All the action of
-    * this function lies in its side-effects.
-    */
-    def reestimateRules {
+        /////**
+        ////* Re-estimates a PCFG based on the counts in f, g, and h. All the action of
+        ////* this function lies in its side-effects.
+        ////*/
+        ////def reestimateRules {
+        ////  f.keysIterator.foreach{ exp =>
+        ////    val NTExpansion(lhs,_,_) = exp
+        ////      phrases( exp ) =
+        ////        100000 * f(exp) /
+        ////        h (lhs)
+        ////  }
+
+
+
+        ////  g.keysIterator.foreach{ exp =>
+        ////    val TermExpansion( pos, _ ) = exp
+        ////    lexicon ( exp ) =
+        ////       100000 * g( exp ) /
+        ////       h(pos)
+        ////  }
+
+        ////  f.clear
+        ////  g.clear
+        ////  h.clear
+        ////  normalize
+        ////  preCalcExps
+        ////}
+
+    def reestimateRules( p:(Double => Double) ) {
       f.keysIterator.foreach{ exp =>
         val NTExpansion(lhs,_,_) = exp
           phrases( exp ) =
-            100000 * f(exp) /
-            h (lhs)
+            p( 100000 * f(exp) ) /
+            p( h (lhs) )
       }
 
 
@@ -79,8 +103,8 @@ package ShakesEM {
       g.keysIterator.foreach{ exp =>
         val TermExpansion( pos, _ ) = exp
         lexicon ( exp ) =
-           100000 * g( exp ) /
-           h(pos)
+           p( 100000 * g( exp ) ) /
+           p( h(pos) )
       }
 
       f.clear
@@ -89,6 +113,7 @@ package ShakesEM {
       normalize
       preCalcExps
     }
+
 
 
     def normalize {
@@ -1309,6 +1334,39 @@ package ShakesEM {
     }
   }
 
+  trait StandardEMManager {
+    def mapPartialCounts( x:Double ) = x
+  }
+
+  trait MeanFieldInfinitePCFGManager {
+    import math._
+    //def mapPartialCounts( x:Double)  = digamma
+
+    /**
+    * This is a translation of code obtained from Percy Liang (which apparently
+    * was ``stolen from Radford Neal's fbm package,'' into scala.
+    *
+    * @param input the number which you want to take digamma of
+    * @returns digamma of input
+    *
+    */
+    def mapPartialCounts( input:Double ) = 
+      if( input <= 0 ) {
+        Double.NegativeInfinity
+      } else {
+        var r = 0D
+        var x = input
+        while( x <= 5 ) {
+          r -= 1/x
+          x += 1
+        }
+        val f = 1/(x*x)
+        val t = f*(-1/12.0 + f*(1/120.0 + f*(-1/252.0 + f*(1/240.0 + f*(-1/132.0
+            + f*(691/32760.0 + f*(-1/12.0 + f*3617/8160.0)))))));
+        r + log(x) - 0.5/x + t;
+      }
+  }
+
   /**
   * This provides chart filling definitions for viterbi parsing
   */
@@ -1447,6 +1505,7 @@ package ShakesEM {
     def useGrammar( trainedG:ShakesPCNF, curIterCount:Int ):Unit
     def finalCleanup( trainedGram:ShakesPCNF ):Unit
 
+    def mapPartialCounts( count:Double ):Double
 
     val deadHosts = new MHashSet[RemoteParserID]
 
@@ -1736,7 +1795,7 @@ package ShakesEM {
           }
         }
 
-        g2.reestimateRules
+        g2.reestimateRules( mapPartialCounts )
 
         g1 = g2
         g2 = g1.countlessCopy
