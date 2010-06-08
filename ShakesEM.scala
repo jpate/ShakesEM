@@ -22,6 +22,7 @@
 * @version 0.20_remote
 * @author John K Pate
 */
+
 package ShakesEM {
   import scala.actors.Actor
   import scala.actors.Actor._
@@ -671,7 +672,6 @@ package ShakesEM {
     * suggesting it has better average-case space complexity for completely
     * ambiguous grammars.
     * @param s The input sentence (an array of terminals)
-    * @return A parse chart with labels and inside and outside probabilities.
     */
     def populateChart(s:Array[String]):Unit
 
