@@ -1338,6 +1338,9 @@ package ShakesEM {
     def mapPartialCounts( x:Double ) = x
   }
 
+  /**
+  * Use this for a mean-field approximation to the Infinite PCFG
+  */
   trait MeanFieldInfinitePCFGManager {
     import math._
     //def mapPartialCounts( x:Double)  = digamma
